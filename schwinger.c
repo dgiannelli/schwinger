@@ -13,8 +13,8 @@ int main(int argc, char *argv[])
 
     for (i=0; i<N; i++)
     {
-        HeatBathRight(lattice, L);
-        HeatBathTop(lattice, L);
+        HeatBathRight(lattice, &S, L);
+        HeatBathTop(lattice, &S, L);
         plaquetteSum += GetPlaquetteMean(lattice, L);
     }
 

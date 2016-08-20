@@ -22,7 +22,8 @@ int main(int argc, char *argv[])
         count++;
     }
     mean /= (double) count;
-    printf("Mean: %e\n", mean);
+    printf("\n**** Checking the correlation with blocking method up to block of size %i ****\n\n", MAX_BLOCK-1);
+    printf("**** Mean: %.10e\n", mean);
 
     if (fseek(file, 0, SEEK_SET)) {printf("**** ERROR seeking to start of file\n"); return 1;}
 

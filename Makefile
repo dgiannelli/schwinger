@@ -21,5 +21,5 @@ blocking.exe: blocking.c
 	$(CC) $(CFLAGS) -o blocking.exe blocking.c
 
 clean:
-	rm *.exe *.o *.dat *.pdf
+	@rm -f *.exe *.o *.dat 
 

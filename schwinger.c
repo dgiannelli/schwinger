@@ -7,14 +7,13 @@
 #define IMAX 1000 //Number of measurement
 #define ITHERM 10 //Number of thermalization iteration
 
-#define BETA 1. //Action beta parameter
+#define BETA 4. //Action beta parameter
 
 int main(int argc, char *argv[])
 {
     srand(997);
     SiteType **lattice = NewLattice(N);
     int i;
-    double plaquetteSum = 0.;
 
     FILE *cloverFile = fopen("clover.dat", "w");
 
@@ -24,15 +23,14 @@ int main(int argc, char *argv[])
         if (i>=ITHERM) 
         {
             const double clover = GetRandomClover(lattice, N);
-            fprintf(cloverFile, "%.10e\n", 1. - clover);
-            plaquetteSum += clover;
+            fprintf(cloverFile, "%.15e\n", clover);
         }
     }
 
     fclose(cloverFile);
     DeleteLattice(lattice, N);
 
-    printf("Plaquette energy mean value (1 - Re plaq): %f\n", 1. - plaquetteSum/(IMAX-ITHERM));
+    printf("\n**** Saved in clover.dat %i clover measures at beta = %.2f ****\n\n", IMAX, BETA);
 
     return 0;
 }

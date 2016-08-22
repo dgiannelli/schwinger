@@ -54,7 +54,7 @@ double GetRandomClover(SiteType **lattice, int N)
 
     double cloverSum = 0.;
 
-    //First petal
+    //First petal (topright corner, then counterclockwise)
     cloverSum += cos(phi1-phi2+lattice[(nx+1)%N][ny].topLink-lattice[nx][(ny+1)%N].rightLink);
 
     //Second petal
@@ -100,7 +100,8 @@ void RightMetropolis(SiteType **lattice, int nx, int ny, double beta, int N)
      *       phi5
      *        -
      *
-     * Metropolis step to change phi proposing phiNew
+     * Metropolis step to change phi proposing phiNew.
+     * For more information, see factSheet.pdf
      */
     const double phi1 = lattice[(nx+1)%N][ny].topLink;
     const double phi2 = lattice[nx][(ny+1)%N].rightLink;
@@ -109,12 +110,12 @@ void RightMetropolis(SiteType **lattice, int nx, int ny, double beta, int N)
     const double phi5 = lattice[nx][(ny+N-1)%N].rightLink;
     const double phi6 = lattice[(nx+1)%N][(ny+N-1)%N].topLink;
 
-    const double phiMean = 0.5*(phi1-phi2-phi3+phi4-phi5-phi6);
+    const double phiBar = 0.5*(phi1-phi2-phi3+phi4-phi5-phi6);
 
     const double phi = lattice[nx][ny].rightLink;
     const double phiNew = 2.*M_PI*XI;
 
-    if ( XI < exp(2.*beta*( cos(phiNew + phiMean) - cos(phi + phiMean) )) )
+    if ( XI < exp(2.*beta*( cos(phiNew + phiBar) - cos(phi + phiBar) )) )
     {
         lattice[nx][ny].rightLink = phiNew;
     }
@@ -136,12 +137,12 @@ void TopMetropolis(SiteType **lattice, int nx, int ny, double beta, int N)
     const double phi5 = lattice[(nx+N-1)%N][ny].topLink;
     const double phi6 = lattice[(nx+N-1)%N][ny].rightLink;
 
-    const double phiMean = 0.5*(phi1+phi2-phi3+phi4+phi5-phi6);
+    const double phiBar = 0.5*(phi1+phi2-phi3+phi4+phi5-phi6);
 
     const double phi = lattice[nx][ny].topLink;
     const double phiNew = 2.*M_PI*XI;
 
-    if ( XI < exp(2.*beta*( cos(phiNew - phiMean) - cos(phi - phiMean) )) )
+    if ( XI < exp(2.*beta*( cos(phiNew - phiBar) - cos(phi - phiBar) )) )
     {
         lattice[nx][ny].topLink = phiNew; 
     }

@@ -4,14 +4,14 @@
 #include "lattice.h"
 
 #define N 20 //Lattice size
-#define IMAX 1000 //Number of measurement
+#define IMAX 10000 //Number of measurement
 #define ITHERM 10 //Number of thermalization iteration
 
 #define BETA 4. //Action beta parameter
 
 int main(int argc, char *argv[])
 {
-    srand(997);
+    srand(577);
     SiteType **lattice = NewLattice(N);
     int i;
 

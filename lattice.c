@@ -113,7 +113,7 @@ void RightMetropolis(SiteType **lattice, int nx, int ny, double beta, int n)
     const double phiBar = 0.5*(phi1-phi2-phi3+phi4-phi5-phi6);
 
     const double phi = lattice[nx][ny].rightLink;
-    const double phiNew = 2.*M_PI*XI;
+    const double phiNew = phi + (XI-0.5);
 
     if ( XI < exp(2.*beta*( cos(phiNew + phiBar) - cos(phi + phiBar) )) )
     {
@@ -140,7 +140,7 @@ void TopMetropolis(SiteType **lattice, int nx, int ny, double beta, int n)
     const double phiBar = 0.5*(phi1+phi2-phi3+phi4+phi5-phi6);
 
     const double phi = lattice[nx][ny].topLink;
-    const double phiNew = 2.*M_PI*XI;
+    const double phiNew = phi + (XI-0.5);
 
     if ( XI < exp(2.*beta*( cos(phiNew - phiBar) - cos(phi - phiBar) )) )
     {

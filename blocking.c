@@ -47,7 +47,7 @@ int main(int argc, char *argv[])
     variance /= count - 1;
 
     printf("samples | block |       error\n");
-    printf("%7i |     1 | %.5e\n", count, sqrt(variance/count) );
+    printf("%7li |     1 | %.5e\n", count, sqrt(variance/count) );
 
     int block, countNew;
     for(block=2; block<MAX_BLOCK; block++)
@@ -66,7 +66,7 @@ int main(int argc, char *argv[])
         }
         variance -= count*pow(mean,2);
         variance /= count - 1;
-        printf("%7i | %5i | %.5e\n", count, block, sqrt(variance/count) );
+        printf("%7li | %5i | %.5e\n", count, block, sqrt(variance/count) );
     }
 
 

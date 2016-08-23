@@ -5,18 +5,18 @@
 
 #define XI ( ((double) rand())/((double) RAND_MAX) )
 
-SiteType **NewLattice(int N)
+SiteType **NewLattice(int n)
 {
     SiteType **lattice;
     int i, j;
-    lattice = (SiteType**) malloc(N*sizeof(SiteType*));
-    for (i=0; i<N; i++)
+    lattice = (SiteType**) malloc(n*sizeof(SiteType*));
+    for (i=0; i<n; i++)
     {
-        lattice[i] = (SiteType*) malloc(N*sizeof(SiteType));
+        lattice[i] = (SiteType*) malloc(n*sizeof(SiteType));
     }
-    for (i=0; i<N; i++)
+    for (i=0; i<n; i++)
     {
-        for (j=0; j<N; j++)
+        for (j=0; j<n; j++)
         {
             lattice[i][j].rightLink = 0.;
             lattice[i][j].topLink = 0.;
@@ -25,20 +25,20 @@ SiteType **NewLattice(int N)
     return lattice;
 }
 
-void DeleteLattice(SiteType **lattice, int N)
+void DeleteLattice(SiteType **lattice, int n)
 {
     int i;
-    for (i=0; i<N; i++)
+    for (i=0; i<n; i++)
     {
         free(lattice[i]);
     }
     free(lattice);
 }
 
-double GetRandomClover(SiteType **lattice, int N)
+double GetRandomClover(SiteType **lattice, int n)
 {
-    const int nx = rand()%N;
-    const int ny = rand()%N;
+    const int nx = rand()%n;
+    const int ny = rand()%n;
 
     /*
      *      phi2
@@ -49,46 +49,46 @@ double GetRandomClover(SiteType **lattice, int N)
      */
     const double phi1 = lattice[nx][ny].rightLink;
     const double phi2 = lattice[nx][ny].topLink;
-    const double phi3 = lattice[(nx+N-1)%N][ny].rightLink;
-    const double phi4 = lattice[nx][(ny+N-1)%N].topLink;
+    const double phi3 = lattice[(nx+n-1)%n][ny].rightLink;
+    const double phi4 = lattice[nx][(ny+n-1)%n].topLink;
 
     double cloverSum = 0.;
 
     //First petal (topright corner, then counterclockwise)
-    cloverSum += cos(phi1-phi2+lattice[(nx+1)%N][ny].topLink-lattice[nx][(ny+1)%N].rightLink);
+    cloverSum += cos(phi1-phi2+lattice[(nx+1)%n][ny].topLink-lattice[nx][(ny+1)%n].rightLink);
 
     //Second petal
-    cloverSum += cos(phi3+phi2-lattice[(nx+N-1)%N][(ny+1)%N].rightLink-lattice[(nx+N-1)%N][ny].topLink);
+    cloverSum += cos(phi3+phi2-lattice[(nx+n-1)%n][(ny+1)%n].rightLink-lattice[(nx+n-1)%n][ny].topLink);
 
     //Third petal
-    cloverSum += cos(phi4-phi3+lattice[(nx+N-1)%N][(ny+N-1)%N].rightLink-lattice[(nx+N-1)%N][(ny+N-1)%N].topLink);
+    cloverSum += cos(phi4-phi3+lattice[(nx+n-1)%n][(ny+n-1)%n].rightLink-lattice[(nx+n-1)%n][(ny+n-1)%n].topLink);
 
     //Fourth petal
-    cloverSum += cos(-phi1-phi4+lattice[nx][(ny+N-1)%N].rightLink+lattice[(nx+1)%N][(ny+N-1)%N].topLink);
+    cloverSum += cos(-phi1-phi4+lattice[nx][(ny+n-1)%n].rightLink+lattice[(nx+1)%n][(ny+n-1)%n].topLink);
 
     return cloverSum/4.;
 }
 
-void SweepLattice(SiteType **lattice, double beta, int N)
+void SweepLattice(SiteType **lattice, double beta, int n)
 {
     int nx,ny;
-    for (nx=0; nx<N; nx++)
+    for (nx=0; nx<n; nx++)
     {
-        for (ny=0; ny<N; ny++)
+        for (ny=0; ny<n; ny++)
         {
-            RightMetropolis(lattice, nx, ny, beta, N);
+            RightMetropolis(lattice, nx, ny, beta, n);
         }
     }
-    for (nx=0; nx<N; nx++)
+    for (nx=0; nx<n; nx++)
     {
-        for (ny=0; ny<N; ny++)
+        for (ny=0; ny<n; ny++)
         {
-            TopMetropolis(lattice, nx, ny, beta, N);
+            TopMetropolis(lattice, nx, ny, beta, n);
         }
     }
 }
 
-void RightMetropolis(SiteType **lattice, int nx, int ny, double beta, int N)
+void RightMetropolis(SiteType **lattice, int nx, int ny, double beta, int n)
 {
     /*
      *       phi2
@@ -103,12 +103,12 @@ void RightMetropolis(SiteType **lattice, int nx, int ny, double beta, int N)
      * Metropolis step to change phi proposing phiNew.
      * For more information, see factSheet.pdf
      */
-    const double phi1 = lattice[(nx+1)%N][ny].topLink;
-    const double phi2 = lattice[nx][(ny+1)%N].rightLink;
+    const double phi1 = lattice[(nx+1)%n][ny].topLink;
+    const double phi2 = lattice[nx][(ny+1)%n].rightLink;
     const double phi3 = lattice[nx][ny].topLink;
-    const double phi4 = lattice[nx][(ny+N-1)%N].topLink;
-    const double phi5 = lattice[nx][(ny+N-1)%N].rightLink;
-    const double phi6 = lattice[(nx+1)%N][(ny+N-1)%N].topLink;
+    const double phi4 = lattice[nx][(ny+n-1)%n].topLink;
+    const double phi5 = lattice[nx][(ny+n-1)%n].rightLink;
+    const double phi6 = lattice[(nx+1)%n][(ny+n-1)%n].topLink;
 
     const double phiBar = 0.5*(phi1-phi2-phi3+phi4-phi5-phi6);
 
@@ -121,7 +121,7 @@ void RightMetropolis(SiteType **lattice, int nx, int ny, double beta, int N)
     }
 }
 
-void TopMetropolis(SiteType **lattice, int nx, int ny, double beta, int N)
+void TopMetropolis(SiteType **lattice, int nx, int ny, double beta, int n)
 {
     /*
      *      phi4  phi3
@@ -131,11 +131,11 @@ void TopMetropolis(SiteType **lattice, int nx, int ny, double beta, int N)
      *      phi6  phi1
      */
     const double phi1 = lattice[nx][ny].rightLink;
-    const double phi2 = lattice[(nx+1)%N][ny].topLink;
-    const double phi3 = lattice[nx][(ny+1)%N].rightLink;
-    const double phi4 = lattice[(nx+N-1)%N][(ny+1)%N].rightLink;
-    const double phi5 = lattice[(nx+N-1)%N][ny].topLink;
-    const double phi6 = lattice[(nx+N-1)%N][ny].rightLink;
+    const double phi2 = lattice[(nx+1)%n][ny].topLink;
+    const double phi3 = lattice[nx][(ny+1)%n].rightLink;
+    const double phi4 = lattice[(nx+n-1)%n][(ny+1)%n].rightLink;
+    const double phi5 = lattice[(nx+n-1)%n][ny].topLink;
+    const double phi6 = lattice[(nx+n-1)%n][ny].rightLink;
 
     const double phiBar = 0.5*(phi1+phi2-phi3+phi4+phi5-phi6);
 

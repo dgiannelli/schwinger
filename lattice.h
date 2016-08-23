@@ -8,16 +8,16 @@ typedef struct SiteStruct
     double plaquette;
 } SiteType;
 
-SiteType **NewLattice(int N);
+SiteType **NewLattice(int n);
 
-void DeleteLattice(SiteType **lattice, int N);
+void DeleteLattice(SiteType **lattice, int n);
 
-double GetRandomClover(SiteType **lattice, int N);
+double GetRandomClover(SiteType **lattice, int n);
 
-void SweepLattice(SiteType **lattice, double beta, int N);
+void SweepLattice(SiteType **lattice, double beta, int n);
 
-void RightMetropolis(SiteType **lattice, int nx, int ny, double beta, int N);
+void RightMetropolis(SiteType **lattice, int nx, int ny, double beta, int n);
 
-void TopMetropolis(SiteType **lattice, int nx, int ny, double beta, int N);
+void TopMetropolis(SiteType **lattice, int nx, int ny, double beta, int n);
 
 #endif

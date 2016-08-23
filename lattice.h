@@ -12,7 +12,7 @@ SiteType **NewLattice(int n);
 
 void DeleteLattice(SiteType **lattice, int n);
 
-double GetRandomClover(SiteType **lattice, int n);
+double GetPlaquetteMean(SiteType **lattice, int n);
 
 void SweepLattice(SiteType **lattice, double beta, int n);
 

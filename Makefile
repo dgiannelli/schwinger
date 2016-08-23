@@ -6,7 +6,7 @@ schwingerPlot: schwinger clover.py
 
 schwinger: schwinger.exe blocking.exe
 	./schwinger.exe
-	./blocking.exe clover.dat
+	./blocking.exe plaquette.dat
 
 test: test.exe
 	./test.exe

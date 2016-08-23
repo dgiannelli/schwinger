@@ -35,38 +35,21 @@ void DeleteLattice(SiteType **lattice, int n)
     free(lattice);
 }
 
-double GetRandomClover(SiteType **lattice, int n)
+double GetPlaquetteMean(SiteType **lattice, int n)
 {
-    const int nx = rand()%n;
-    const int ny = rand()%n;
+    int nx, ny;
+    double plaquetteSum = 0.;
+    
+    for (nx=0; nx<n; nx++)
+    {
+        for (ny=0; ny<n; ny++)
+        {
+            plaquetteSum += cos(lattice[nx][ny].rightLink - lattice[nx][ny].topLink +\
 
-    /*
-     *      phi2
-     *       |
-     * phi3 - - phi1
-     *       |
-     *      phi4
-     */
-    const double phi1 = lattice[nx][ny].rightLink;
-    const double phi2 = lattice[nx][ny].topLink;
-    const double phi3 = lattice[(nx+n-1)%n][ny].rightLink;
-    const double phi4 = lattice[nx][(ny+n-1)%n].topLink;
-
-    double cloverSum = 0.;
-
-    //First petal (topright corner, then counterclockwise)
-    cloverSum += cos(phi1-phi2+lattice[(nx+1)%n][ny].topLink-lattice[nx][(ny+1)%n].rightLink);
-
-    //Second petal
-    cloverSum += cos(phi3+phi2-lattice[(nx+n-1)%n][(ny+1)%n].rightLink-lattice[(nx+n-1)%n][ny].topLink);
-
-    //Third petal
-    cloverSum += cos(phi4-phi3+lattice[(nx+n-1)%n][(ny+n-1)%n].rightLink-lattice[(nx+n-1)%n][(ny+n-1)%n].topLink);
-
-    //Fourth petal
-    cloverSum += cos(-phi1-phi4+lattice[nx][(ny+n-1)%n].rightLink+lattice[(nx+1)%n][(ny+n-1)%n].topLink);
-
-    return cloverSum/4.;
+                            lattice[(nx+1)%n][ny].topLink - lattice[nx][(ny+1)].rightLink);
+        }
+    }
+    return plaquetteSum/(n*n);
 }
 
 void SweepLattice(SiteType **lattice, double beta, int n)
@@ -110,12 +93,13 @@ void RightMetropolis(SiteType **lattice, int nx, int ny, double beta, int n)
     const double phi5 = lattice[nx][(ny+n-1)%n].rightLink;
     const double phi6 = lattice[(nx+1)%n][(ny+n-1)%n].topLink;
 
-    const double phiBar = 0.5*(phi1-phi2-phi3+phi4-phi5-phi6);
-
     const double phi = lattice[nx][ny].rightLink;
-    const double phiNew = phi + 2.*(XI-0.5);
+    const double phiNew = 2.*M_PI*XI;
 
-    if ( XI < exp(2.*beta*( cos(phiNew + phiBar) - cos(phi + phiBar) )) )
+    const double DeltaS = 2.*beta*( -cos(phiNew+phi1-phi2-phi3) - cos(phi5+phi6-phiNew-phi4) \
+                                    +cos(phi   +phi1-phi2-phi3) + cos(phi5+phi6-phi   -phi4) );
+
+    if ( XI < exp(-DeltaS) )
     {
         lattice[nx][ny].rightLink = phiNew;
     }
@@ -137,12 +121,13 @@ void TopMetropolis(SiteType **lattice, int nx, int ny, double beta, int n)
     const double phi5 = lattice[(nx+n-1)%n][ny].topLink;
     const double phi6 = lattice[(nx+n-1)%n][ny].rightLink;
 
-    const double phiBar = 0.5*(phi1+phi2-phi3+phi4+phi5-phi6);
-
     const double phi = lattice[nx][ny].topLink;
-    const double phiNew = phi + 2.*(XI-0.5);
+    const double phiNew = 2.*M_PI*XI;
 
-    if ( XI < exp(2.*beta*( cos(phiNew - phiBar) - cos(phi - phiBar) )) )
+    const double DeltaS = 2.*beta*( -cos(phi1+phi2-phi3-phiNew) - cos(phi6+phiNew-phi4-phi5) \
+                                    +cos(phi1+phi2-phi3-phi   ) + cos(phi6+phi   -phi4-phi5) );
+
+    if ( XI < exp(-DeltaS) )
     {
         lattice[nx][ny].topLink = phiNew; 
     }

@@ -13,24 +13,25 @@ int main(int argc, char *argv[])
 {
     srand(577);
     SiteType **lattice = NewLattice(N);
+    double plaquette;
     int i;
 
-    FILE *cloverFile = fopen("clover.dat", "w");
+    FILE *plaquetteFile = fopen("plaquette.dat", "w");
 
     for (i=0; i<ITHERM+IMAX; i++)
     {
         SweepLattice(lattice, BETA, N);
         if (i>=ITHERM) 
         {
-            const double clover = GetRandomClover(lattice, N);
-            fprintf(cloverFile, "%.15e\n", clover);
+            plaquette = GetPlaquetteMean(lattice, N);
+            fprintf(plaquetteFile, "%.15e\n", plaquette);
         }
     }
 
-    fclose(cloverFile);
+    fclose(plaquetteFile);
     DeleteLattice(lattice, N);
 
-    printf("\n**** Saved in clover.dat %i clover measures at beta = %.2f ****\n\n", IMAX, BETA);
+    printf("\n**** Saved in plaquette.dat %i plaquette measures at beta = %.2f ****\n\n", IMAX, BETA);
 
     return 0;
 }

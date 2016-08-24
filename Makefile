@@ -5,8 +5,8 @@ default: schwinger.exe jackknife.exe
 	./schwinger.exe
 	./jackknife.exe plaquette.dat
 
-heatBath: schwingerHeathBath.exe jackknife.exe
-	./schwingerHeathBath.exe
+heatBath: schwingerHeatBath.exe jackknife.exe
+	./schwingerHeatBath.exe
 	./jackknife.exe plaquette.dat
 
 stdlib: schwingerStdlib.exe jackknife.exe
@@ -18,7 +18,7 @@ stdlib: schwingerStdlib.exe jackknife.exe
 schwinger.exe: schwinger.o lattice.o metropolis.o randomGsl.o
 	$(CC) $(CFLAGS) -o $@ $^
 
-schwingerHeatBath.exe: schwinger.o lattice.o heathBath.o randomGsl.o
+schwingerHeatBath.exe: schwinger.o lattice.o heatBath.o randomGsl.o
 	$(CC) $(CFLAGS) -o $@ $^
 
 schwingerStdlib.exe: schwinger.o lattice.o metropolis.o randomStdlib.o
@@ -38,7 +38,7 @@ lattice.o: lattice.c lattice.h sampling.h
 metropolis.o: metropolis.c sampling.h lattice.h random.h
 	$(CC) $(CFLAGS) -c -o $@ $<
 
-heathBath.o: heathBath.c sampling.h lattice.h random.h
+heatBath.o: heatBath.c sampling.h lattice.h random.h
 	$(CC) $(CFLAGS) -c -o $@ $<
 
 randomGsl.o: randomGsl.c sampling.h lattice.h random.h

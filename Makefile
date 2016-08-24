@@ -1,33 +1,51 @@
 CC = gcc
-CFLAGS = -O3 -lm -Wall
+CFLAGS = -O3 -Wall -lm -lgsl -lgslblas
 
-schwingerPlot: schwinger clover.py
-	python clover.py
-
-schwinger: schwinger.exe blocking.exe
+default: schwinger.exe jackknife.exe
 	./schwinger.exe
-	./blocking.exe plaquette.dat
+	./jackknife.exe plaquette.dat
 
-test: test.exe
-	./test.exe
+heatBath: schwingerHeathBath.exe jackknife.exe
+	./schwingerHeathBath.exe
+	./jackknife.exe plaquette.dat
 
-test.exe: test.o lattice.o
-	$(CC) $(CFLAGS) -o test.exe test.o lattice.o
+stdlib: schwingerStdlib.exe jackknife.exe
+	./schwingerStdlib.exe
+	./jackknife.exe plaquette.dat
 
-schwinger.exe: schwinger.o lattice.o
-	$(CC) $(CFLAGS) -o schwinger.exe schwinger.o lattice.o
+####
 
-test.o: test.c lattice.h
-	$(CC) $(CFLAGS) -c -o test.o test.c
+schwinger.exe: schwinger.o lattice.o metropolis.o randomGsl.o
+	$(CC) $(CFLAGS) -o $@ $^
+
+schwingerHeatBath.exe: schwinger.o lattice.o heathBath.o randomGsl.o
+	$(CC) $(CFLAGS) -o $@ $^
+
+schwingerStdlib.exe: schwinger.o lattice.o metropolis.o randomStdlib.o
+	$(CC) $(CFLAGS) -o $@ $^
+
+jackknife.exe: jackknife.c
+	$(CC) $(CFLAGS) -o $@ $<
+
+####
 
 schwinger.o: schwinger.c lattice.h
-	$(CC) $(CFLAGS) -c -o schwinger.o schwinger.c
+	$(CC) $(CFLAGS) -c -o $@ $<
 
-lattice.o: lattice.c lattice.h
-	$(CC) $(CFLAGS) -c -o lattice.o lattice.c
+lattice.o: lattice.c lattice.h sampling.h
+	$(CC) $(CFLAGS) -c -o $@ $<
 
-blocking.exe: blocking.c
-	$(CC) $(CFLAGS) -o blocking.exe blocking.c
+metropolis.o: metropolis.c sampling.h lattice.h random.h
+	$(CC) $(CFLAGS) -c -o $@ $<
+
+heathBath.o: heathBath.c sampling.h lattice.h random.h
+	$(CC) $(CFLAGS) -c -o $@ $<
+
+randomGsl.o: randomGsl.c sampling.h lattice.h random.h
+	$(CC) $(CFLAGS) -c -o $@ $<
+
+randomStdlib.o: randomStdlib.c sampling.h lattice.h random.h
+	$(CC) $(CFLAGS) -c -o $@ $<
 
 clean:
 	@rm -f *.exe *.o *.dat 

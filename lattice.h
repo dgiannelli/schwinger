@@ -1,3 +1,8 @@
+/*
+ * In this file is defined the struct of the lattice element and are declared 
+ * all the lattice operations that are called in the main program.
+ */
+
 #ifndef LATTICE_H
 #define LATTICE_H
 
@@ -15,9 +20,5 @@ void DeleteLattice(SiteType **lattice, int n);
 double GetPlaquetteMean(SiteType **lattice, int n);
 
 void SweepLattice(SiteType **lattice, double beta, int n);
-
-void RightMetropolis(SiteType **lattice, int nx, int ny, double beta, int n);
-
-void TopMetropolis(SiteType **lattice, int nx, int ny, double beta, int n);
 
 #endif

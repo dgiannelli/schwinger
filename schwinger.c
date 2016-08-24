@@ -3,9 +3,9 @@
  */
 
 #include <stdio.h>
-#include <stdlib.h>
 
 #include "lattice.h"
+#include "random.h"
 
 #define N 20 //Lattice size
 #define IMAX 10000 //Number of measurement
@@ -15,7 +15,7 @@
 
 int main(int argc, char *argv[])
 {
-    srand(577);
+    RndInit();
     SiteType **lattice = NewLattice(N);
     double plaquette;
     int i;
@@ -28,12 +28,13 @@ int main(int argc, char *argv[])
         if (i>=ITHERM) 
         {
             plaquette = GetPlaquetteMean(lattice, N);
-            fprintf(plaquetteFile, "%.15e\n", plaquette);
+            fprintf(plaquetteFile, "%.16e\n", plaquette);
         }
     }
 
     fclose(plaquetteFile);
     DeleteLattice(lattice, N);
+    RndFinalize();
 
     printf("\n**** Saved in plaquette.dat %i plaquette measures at beta = %.2f ****\n\n", IMAX, BETA);
 

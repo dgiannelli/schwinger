@@ -1,5 +1,5 @@
 CC = gcc
-CFLAGS = -O3 -Wall -lm -lgsl -lgslblas
+CFLAGS = -O3 -Wall -lm -lgsl -lgslcblas
 
 default: schwinger.exe jackknife.exe
 	./schwinger.exe

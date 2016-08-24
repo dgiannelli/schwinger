@@ -16,5 +16,5 @@ void RndFinalize()
 
 double RndUniform()
 {
-    return gsl_rng_uniform();
+    return gsl_rng_uniform(r);
 }

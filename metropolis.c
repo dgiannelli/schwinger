@@ -26,12 +26,12 @@ void SampleRightLink(SiteType **lattice, int nx, int ny, double beta, int n)
     const double phi6 = lattice[(nx+1)%n][(ny+n-1)%n].topLink;
 
     const double phi = lattice[nx][ny].rightLink;
-    const double phiNew = 2.*M_PI*XI;
+    const double phiNew = 2.*M_PI*RndUniform();
 
     const double DeltaS = 2.*beta*( -cos(phiNew+phi1-phi2-phi3) - cos(phi5+phi6-phiNew-phi4) \
                                     +cos(phi   +phi1-phi2-phi3) + cos(phi5+phi6-phi   -phi4) );
 
-    if ( XI < exp(-DeltaS) )
+    if ( RndUniform() < exp(-DeltaS) )
     {
         lattice[nx][ny].rightLink = phiNew;
     }
@@ -57,12 +57,12 @@ void SampleTopLink(SiteType **lattice, int nx, int ny, double beta, int n)
     const double phi6 = lattice[(nx+n-1)%n][ny].rightLink;
 
     const double phi = lattice[nx][ny].topLink;
-    const double phiNew = 2.*M_PI*XI;
+    const double phiNew = 2.*M_PI*RndUniform();
 
     const double DeltaS = 2.*beta*( -cos(phi1+phi2-phi3-phiNew) - cos(phi6+phiNew-phi4-phi5) \
                                     +cos(phi1+phi2-phi3-phi   ) + cos(phi6+phi   -phi4-phi5) );
 
-    if ( XI < exp(-DeltaS) )
+    if ( RndUniform() < exp(-DeltaS) )
     {
         lattice[nx][ny].topLink = phiNew; 
     }

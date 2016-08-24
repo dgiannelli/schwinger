@@ -3,6 +3,7 @@
  * and all the operation on the lattice that are used in the main program.
  */
 
+#include <stdlib.h>
 #include <math.h>
 
 #include "lattice.h"

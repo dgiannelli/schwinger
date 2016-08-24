@@ -50,7 +50,7 @@ double GetPlaquetteMean(SiteType **lattice, int n)
         {
             plaquetteSum += cos(lattice[nx][ny].rightLink - lattice[nx][ny].topLink +\
 
-                            lattice[(nx+1)%n][ny].topLink - lattice[nx][(ny+1)].rightLink);
+                            lattice[(nx+1)%n][ny].topLink - lattice[nx][(ny+1)%n].rightLink);
         }
     }
     return plaquetteSum/(n*n);

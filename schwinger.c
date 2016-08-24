@@ -9,7 +9,7 @@
 
 #define N 20 //Lattice size
 #define IMAX 10000 //Number of measurement
-#define ITHERM 10 //Number of thermalization iteration
+#define ITHERM 50 //Number of thermalization iteration
 
 #define BETA 4. //Action beta parameter
 

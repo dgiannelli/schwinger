@@ -2,77 +2,61 @@
 #include <stdlib.h>
 #include <math.h>
 
-#define MAX_BLOCK 5
+typedef struct dataListElementStruct
+{
+    double data;
+    struct dataListElementStruct *next;
+} dataListElementType;
+typedef dataListElementType *dataListType;
 
 int main(int argc, char *argv[])
 {
     if (argc != 2) {printf("**** ERROR, you should insert one filename\n"); return 1;}
 
     FILE *file = fopen(argv[1], "r");
-
     if (file == NULL) {printf("**** ERROR opening the file\n"); return 1;}
 
-    double data1, data2, mean = 0.;
+    dataListType dataList = NULL, aux;
+    double data, dataSum = 0.;
     long int count = 0;
 
-
-    while (fscanf(file,"%lf", &data1) != -1)
+    while (fscanf(file,"%lf", &data) != -1)
     {
-        mean += data1;
+        dataSum += data;
         count++;
+
+        aux = malloc(sizeof(dataListElementType));
+        aux->data = data;
+        aux->next = dataList;
+        dataList = aux;
     }
-    mean /= (double) count;
-    printf("\n**** Checking the correlation with blocking method up to block of size %i ****\n\n", MAX_BLOCK-1);
-    printf("**** Mean: %.10e\n", mean);
 
-    if (fseek(file, 0, SEEK_SET)) {printf("**** ERROR seeking to start of file\n"); return 1;}
+    fclose(file);
 
-    double *dataArray = malloc((count/2)*sizeof(double));
-    double variance=0.;
+    const double mean = dataSum / (double)count;
+
+    printf("\n**** Computing mean and his error with Jackknife method ****\n\n");
+    printf("**** Mean: %.16e\n", mean);
+
+    double meanJack = 0.;
+    double varJack = 0.;
     int i;
-    for (i=0; i<count/2; i++)
+    for (i=0; i<count; i++)
     {
-        fscanf(file,"%lf%lf", &data1, &data2);
-        variance += pow(data1,2) + pow(data2,2);
-        dataArray[i] = 0.5 * (data1 + data2);
+        meanJack = (dataSum - dataList->data) / (double)(count - 1);
+        varJack += pow( (meanJack)-mean , 2 );
+        meanJack = 0.;
+
+        aux = dataList;
+        dataList = dataList->next;
+        free(aux);
     }
 
-    if (count%2 == 1)
-    {
-        fscanf(file,"%lf", &data1);
-        variance += pow(data1,2);
-    }
+    varJack *= (double)(count-1) / count;
 
-    variance -= count*pow(mean,2);
-    variance /= count - 1;
-
-    printf("samples | block |       error\n");
-    printf("%7li |     1 | %.5e\n", count, sqrt(variance/count) );
-
-    int block, countNew;
-    for(block=2; block<MAX_BLOCK; block++)
-    {
-        variance = 0.;
-        count /= 2;
-        countNew = 0;
-        for (i=0; i<count; i++)
-        {
-            variance += pow(dataArray[i],2);
-            if (i%2 == 1 && block<MAX_BLOCK-1)
-            {
-                dataArray[countNew] = 0.5 * (dataArray[i] + dataArray[i-1]);
-                countNew++;
-            }
-        }
-        variance -= count*pow(mean,2);
-        variance /= count - 1;
-        printf("%7li | %5i | %.5e\n", count, block, sqrt(variance/count) );
-    }
-
-
-    free(dataArray);
+    printf("  samples |     error\n");
+    printf("%9li | %.3e\n", count, sqrt(varJack) );
 
     return 0;
 }
-
 

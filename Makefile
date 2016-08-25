@@ -1,9 +1,14 @@
 CC = gcc
 CFLAGS = -O3 -Wall -lm -lgsl -lgslcblas
 
-default: schwinger.exe jackknife.exe
-	./schwinger.exe
-	./jackknife.exe plaquette.dat
+default: jackknife.exe schwinger
+	./$< plaquette.dat
+
+jackknife: jackknife.exe plaquette.dat
+	./$^
+
+blocking: blocking.exe plaquette.dat
+	./$^
 
 heatBath: schwingerHeatBath.exe jackknife.exe
 	./schwingerHeatBath.exe
@@ -12,6 +17,17 @@ heatBath: schwingerHeatBath.exe jackknife.exe
 stdlib: schwingerStdlib.exe jackknife.exe
 	./schwingerStdlib.exe
 	./jackknife.exe plaquette.dat
+
+####
+
+schwinger: schwinger.exe
+	./$<
+
+schwingerHeatBath: schwingerHeatBath.exe
+	./$<
+
+schwingerStdlib: schwingerStdlib.exe
+	./$<
 
 ####
 
@@ -25,6 +41,9 @@ schwingerStdlib.exe: schwinger.o lattice.o metropolis.o randomStdlib.o
 	$(CC) $(CFLAGS) -o $@ $^
 
 jackknife.exe: jackknife.c
+	$(CC) $(CFLAGS) -o $@ $<
+
+blocking.exe: blocking.c
 	$(CC) $(CFLAGS) -o $@ $<
 
 ####

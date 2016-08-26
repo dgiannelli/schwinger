@@ -1,22 +1,21 @@
 CC = gcc
-CFLAGS = -O3 -Wall -lm -lgsl -lgslcblas
+CFLAGS = -std=c99 -O3 -Wall -lm -lgsl -lgslcblas
 
-default: jackknife.exe schwinger
+####
+
+default: blockingAll.exe schwinger
 	./$< plaquette.dat
 
-jackknife: jackknife.exe plaquette.dat
+heatBath: blockingAll.exe schwingerHeatBath
+	./$< plaquette.dat
+
+stdlib: blockingAll.exe schwingerStdlib
+	./$< plaquette.dat
+
+####
+
+blockingAll: blockingAll.exe plaquette.dat
 	./$^
-
-blocking: blocking.exe plaquette.dat
-	./$^
-
-heatBath: schwingerHeatBath.exe jackknife.exe
-	./schwingerHeatBath.exe
-	./jackknife.exe plaquette.dat
-
-stdlib: schwingerStdlib.exe jackknife.exe
-	./schwingerStdlib.exe
-	./jackknife.exe plaquette.dat
 
 ####
 
@@ -40,10 +39,7 @@ schwingerHeatBath.exe: schwinger.o lattice.o heatBath.o randomGsl.o
 schwingerStdlib.exe: schwinger.o lattice.o metropolis.o randomStdlib.o
 	$(CC) $(CFLAGS) -o $@ $^
 
-jackknife.exe: jackknife.c
-	$(CC) $(CFLAGS) -o $@ $<
-
-blocking.exe: blocking.c
+blockingAll.exe: blockingAll.c
 	$(CC) $(CFLAGS) -o $@ $<
 
 ####

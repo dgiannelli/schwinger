@@ -1,1 +1,7 @@
- Program that simulates a Schwinger model on a lattice with a pure gauge action, and measures the plaquette value. 
+Program that simulates a Schwinger model on a lattice with a pure gauge action, and measures the plaquette value. 
+Serial version.
+
+make default, to run the program with Metropolis algorithm and gsl default random generator.
+make heatBath, to use instead an heatBath algorithm
+make stdlib, to use rand() from stdlib
+

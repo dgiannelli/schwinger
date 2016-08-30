@@ -25,13 +25,15 @@ void SampleRightLink(SiteType **lattice, int nx, int ny, double beta, int n)
     const double phi5 = lattice[nx][(ny+n-1)%n].rightLink;
     const double phi6 = lattice[(nx+1)%n][(ny+n-1)%n].topLink;
 
+    const double phiA = phi1 - phi2 - phi3;
+    const double phiB = phi4 - phi5 - phi6;
     const double phi = lattice[nx][ny].rightLink;
-    const double phiNew = 2.*M_PI*RndUniform();
+    const double phiNew = 2.*M_PI*( RndUniform() - 0.5 );
 
-    const double DeltaS = beta*( -cos(phiNew+phi1-phi2-phi3) - cos(phi5+phi6-phiNew-phi4) \
-                                 +cos(phi   +phi1-phi2-phi3) + cos(phi5+phi6-phi   -phi4) );
+    const double rate = exp(beta*( +cos(phiNew+phiA) + cos(phiNew+phiB) \
+                                   -cos(phi   +phiA) - cos(phi   +phiB) ));
 
-    if ( RndUniform() < exp(-DeltaS) )
+    if ( RndUniform() < rate )
     {
         lattice[nx][ny].rightLink = phiNew;
     }
@@ -56,13 +58,15 @@ void SampleTopLink(SiteType **lattice, int nx, int ny, double beta, int n)
     const double phi5 = lattice[(nx+n-1)%n][ny].topLink;
     const double phi6 = lattice[(nx+n-1)%n][ny].rightLink;
 
+    const double phiA = phi1 + phi2 - phi3;
+    const double phiB = phi4 + phi5 - phi6;
     const double phi = lattice[nx][ny].topLink;
-    const double phiNew = 2.*M_PI*RndUniform();
+    const double phiNew = 2.*M_PI*( RndUniform() - 0.5 );
 
-    const double DeltaS = beta*( -cos(phi1+phi2-phi3-phiNew) - cos(phi6+phiNew-phi4-phi5) \
-                                 +cos(phi1+phi2-phi3-phi   ) + cos(phi6+phi   -phi4-phi5) );
+    const double rate = exp(beta*( +cos(phiNew-phiA) + cos(phiNew-phiB) \
+                                   -cos(phi   -phiA) - cos(phi   -phiB) ));
 
-    if ( RndUniform() < exp(-DeltaS) )
+    if ( RndUniform() < rate )
     {
         lattice[nx][ny].topLink = phiNew; 
     }

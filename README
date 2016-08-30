@@ -4,3 +4,5 @@ make default, to run the program with a Metropolis-Hastings step and the gsl def
 make metropolis, to use instead a simpler Metropolis algorithm
 make stdlib, to use instead rand() from stdlib
 
+See factSheet.pdf for more informations about the heat bath algorithm I used.
+

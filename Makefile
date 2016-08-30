@@ -1,5 +1,5 @@
 CC = gcc
-CFLAGS = -std=c99 -O3 -Wall -lm -lgsl -lgslcblas
+CFLAGS = -std=gnu11 -O3 -Wall -lm -lgsl -lgslcblas
 
 ####
 

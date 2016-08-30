@@ -1,16 +1,15 @@
 CC = gcc
 CFLAGS = -std=gnu11 -O3 -Wall -lm -lgsl -lgslcblas
 
+.PHONY: default metropolis stdlib blockingAll schwinger schwingerMetropolis schwingerStdlib clean
+
 ####
 
-default: blockingAll.exe schwinger
-	./$< plaquette.dat
+default: schwinger blockingAll
 
-heatBath: blockingAll.exe schwingerHeatBath
-	./$< plaquette.dat
+metropolis: schwingerMetropolis blockingAll
 
-stdlib: blockingAll.exe schwingerStdlib
-	./$< plaquette.dat
+stdlib: schwingerStdlib blockingAll
 
 ####
 
@@ -22,7 +21,7 @@ blockingAll: blockingAll.exe plaquette.dat
 schwinger: schwinger.exe
 	./$<
 
-schwingerHeatBath: schwingerHeatBath.exe
+schwingerMetropolis: schwingerMetropolis.exe
 	./$<
 
 schwingerStdlib: schwingerStdlib.exe
@@ -30,17 +29,17 @@ schwingerStdlib: schwingerStdlib.exe
 
 ####
 
-schwinger.exe: schwinger.o lattice.o metropolis.o randomGsl.o
+schwinger.exe: schwinger.o lattice.o metropolisHastings.o randomGsl.o
 	$(CC) $(CFLAGS) -o $@ $^
 
-schwingerHeatBath.exe: schwinger.o lattice.o heatBath.o randomGsl.o
+schwingerMetropolis.exe: schwinger.o lattice.o metropolis.o randomGsl.o
 	$(CC) $(CFLAGS) -o $@ $^
 
-schwingerStdlib.exe: schwinger.o lattice.o metropolis.o randomStdlib.o
+schwingerStdlib.exe: schwinger.o lattice.o metropolisHastings.o randomStdlib.o
 	$(CC) $(CFLAGS) -o $@ $^
 
 blockingAll.exe: blockingAll.c
-	$(CC) $(CFLAGS) -o $@ $<
+	$(CC) $(CFLAGS) -o $@ $^
 
 ####
 
@@ -50,18 +49,23 @@ schwinger.o: schwinger.c lattice.h
 lattice.o: lattice.c lattice.h sampling.h
 	$(CC) $(CFLAGS) -c -o $@ $<
 
-metropolis.o: metropolis.c sampling.h lattice.h random.h
-	$(CC) $(CFLAGS) -c -o $@ $<
+metropolisHastings.o: ./samplingImplements/metropolisHastings.c sampling.h lattice.h random.h
+	cp $< sampling.c
+	$(CC) $(CFLAGS) -c -o $@ sampling.c
 
-heatBath.o: heatBath.c sampling.h lattice.h random.h
-	$(CC) $(CFLAGS) -c -o $@ $<
+metropolis.o: ./samplingImplements/metropolis.c sampling.h lattice.h random.h
+	cp $< sampling.c
+	$(CC) $(CFLAGS) -c -o $@ sampling.c
 
-randomGsl.o: randomGsl.c sampling.h lattice.h random.h
-	$(CC) $(CFLAGS) -c -o $@ $<
+randomGsl.o: ./randomImplements/randomGsl.c sampling.h lattice.h random.h
+	cp $< random.c
+	$(CC) $(CFLAGS) -c -o $@ random.c
 
-randomStdlib.o: randomStdlib.c sampling.h lattice.h random.h
-	$(CC) $(CFLAGS) -c -o $@ $<
+randomStdlib.o: ./randomImplements/randomStdlib.c sampling.h lattice.h random.h
+	cp $< random.c
+	$(CC) $(CFLAGS) -c -o $@ random.c
 
 clean:
 	@rm -f *.exe *.o *.dat 
+	@rm -f sampling.c random.c
 

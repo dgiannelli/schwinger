@@ -3,6 +3,9 @@
 #include "lattice.h"
 #include "random.h"
 
+int succ = 0;
+int total = 0;
+
 void SampleRightLink(SiteType **lattice, int nx, int ny, double beta, int n)
 {
     /*
@@ -36,7 +39,9 @@ void SampleRightLink(SiteType **lattice, int nx, int ny, double beta, int n)
     if ( RndUniform() < rate )
     {
         lattice[nx][ny].rightLink = phiNew;
+        succ++;
     }
+    total++;
 }
 
 void SampleTopLink(SiteType **lattice, int nx, int ny, double beta, int n)
@@ -69,5 +74,7 @@ void SampleTopLink(SiteType **lattice, int nx, int ny, double beta, int n)
     if ( RndUniform() < rate )
     {
         lattice[nx][ny].topLink = phiNew; 
+        succ++;
     }
+    total++;
 }

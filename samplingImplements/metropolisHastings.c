@@ -3,6 +3,9 @@
 #include "lattice.h"
 #include "random.h"
 
+int succ = 0;
+int total = 0;
+
 void SampleRightLink(SiteType **lattice, int nx, int ny, double beta, int n)
 {
     /*
@@ -30,17 +33,21 @@ void SampleRightLink(SiteType **lattice, int nx, int ny, double beta, int n)
     const double phiBar = 0.5*(phiA + phiB);
     const double phi = lattice[nx][ny].rightLink;
 
-    const double a = exp(-beta*M_PI*M_PI);
-    const double E = a + ( 1. - a ) * RndUniform();
-    const double phiNew = sqrt(-log(E)/beta)*cos(2.*M_PI*RndUniform()) - phiBar;
-
-    const double rate = exp(beta*( +cos(phiNew+phiA) + cos(phiNew+phiB) + pow( (phiNew+phiBar) , 2 ) \
-                                   -cos(phi   +phiA) - cos(phi   +phiB) - pow( (phi   +phiBar) , 2 ) ));
-
-    if ( RndUniform() < rate )
+    //const double E = RndUniform();
+    //const double phiNew = sqrt(-log(E)/beta)*cos(2.*M_PI*RndUniform()) - phiBar;
+    double phiNew = RndNormal(sqrt(1./2./beta)) - phiBar;
+    if ( fabs(phiNew) < M_PI )
     {
-        lattice[nx][ny].rightLink = phiNew;
+        const double rate = exp(beta*( +cos(phiNew+phiA) + cos(phiNew+phiB) + pow( (phiNew+phiBar) , 2 ) \
+                                       -cos(phi   +phiA) - cos(phi   +phiB) - pow( (phi   +phiBar) , 2 ) ));
+
+        if ( RndUniform() < rate )
+        {
+            lattice[nx][ny].rightLink = phiNew;
+            succ++;
+        }
     }
+    total++;
 }
 
 void SampleTopLink(SiteType **lattice, int nx, int ny, double beta, int n)
@@ -67,15 +74,20 @@ void SampleTopLink(SiteType **lattice, int nx, int ny, double beta, int n)
     const double phiBar = 0.5*(phiA + phiB);
     const double phi = lattice[nx][ny].topLink;
 
-    const double a = exp(-beta*M_PI*M_PI);
-    const double E = a + ( 1. - a ) * RndUniform();
-    const double phiNew = sqrt(-log(E)/beta)*cos(2.*M_PI*RndUniform()) + phiBar;
-
-    const double rate = exp(beta*( +cos(phiNew-phiA) + cos(phiNew-phiB) + pow( (phiNew-phiBar) , 2 ) \
-                                   -cos(phi   -phiA) - cos(phi   -phiB) - pow( (phi   -phiBar) , 2 ) ));
-
-    if ( RndUniform() < rate )
+    //const double E = RndUniform();
+    //const double phiNew = sqrt(-log(E)/beta)*cos(2.*M_PI*RndUniform()) + phiBar;
+    const double phiNew = RndNormal(sqrt(1./2./beta)) + phiBar;
+    if ( fabs(phiNew) < M_PI )
     {
-        lattice[nx][ny].topLink = phiNew; 
+        const double rate = exp(beta*( +cos(phiNew-phiA) + cos(phiNew-phiB) + pow( (phiNew-phiBar) , 2 ) \
+                                       -cos(phi   -phiA) - cos(phi   -phiB) - pow( (phi   -phiBar) , 2 ) ));
+
+        if ( RndUniform() < rate )
+        {
+            lattice[nx][ny].topLink = phiNew; 
+            succ++;
+        }
     }
+    total++;
 }
+

@@ -1,4 +1,5 @@
 #include <gsl/gsl_rng.h>
+#include <gsl/gsl_randist.h>
 
 #include "random.h"
 
@@ -23,3 +24,9 @@ double RndUniform()
 {
     return gsl_rng_uniform(r);
 }
+
+double RndNormal(double sigma)
+{
+    return gsl_ran_gaussian(r, sigma);
+}
+

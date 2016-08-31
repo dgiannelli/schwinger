@@ -13,6 +13,8 @@
 
 #define BETA 4. //Action beta parameter
 
+extern int succ, total;
+
 int main(int argc, char *argv[])
 {
     RndInit();
@@ -37,6 +39,7 @@ int main(int argc, char *argv[])
     RndFinalize();
 
     printf("\n**** Saved in plaquette.dat %i plaquette measures at beta = %.2f ****\n\n", IMAX, BETA);
+    printf("Acceptance ratio: %f\n", (float)succ/total);
 
     return 0;
 }

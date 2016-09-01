@@ -8,7 +8,7 @@
 #include "random.h"
 
 #define N 20 //Lattice size
-#define IMAX 10000 //Number of measurement
+#define IMAX 30000 //Number of measurement
 #define ITHERM 50 //Number of thermalization iteration
 
 #define BETA 4. //Action beta parameter

@@ -48,13 +48,30 @@ double GetPlaquetteMean(SiteType **lattice, int n)
     {
         for (ny=0; ny<n; ny++)
         {
-            plaquetteSum += cos(lattice[nx][ny].rightLink - lattice[nx][ny].topLink +\
+            plaquetteSum += cos( lattice[nx][ny].rightLink - lattice[nx][ny].topLink \
 
-                            lattice[(nx+1)%n][ny].topLink - lattice[nx][(ny+1)%n].rightLink);
+                               + lattice[(nx+1)%n][ny].topLink - lattice[nx][(ny+1)%n].rightLink);
         }
     }
     return plaquetteSum/(n*n);
 }
+
+double GetCharge(SiteType **lattice, int n)
+{
+    int nx, ny;
+    double charge = 0.;
+
+    for (nx=0; nx<n; nx++)
+    {
+        for (ny=0; ny<n; ny++)
+        {
+            charge += FitInterval( lattice[nx][ny].rightLink - lattice[nx][ny].topLink \
+                                 + lattice[(nx+1)%n][ny].topLink - lattice[nx][(ny+1)%n].rightLink);
+        }
+    }
+    return charge/2./M_PI;
+}
+
 
 void SweepLattice(SiteType **lattice, double beta, int n)
 {
@@ -73,5 +90,10 @@ void SweepLattice(SiteType **lattice, double beta, int n)
             SampleTopLink(lattice, nx, ny, beta, n);
         }
     }
+}
+
+double FitInterval(double x)
+{
+    return x - floor( (x+M_PI) / (2.*M_PI) ) * 2.*M_PI;
 }
 

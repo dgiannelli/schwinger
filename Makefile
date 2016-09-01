@@ -1,41 +1,25 @@
 CC = gcc
 CFLAGS = -std=gnu11 -O3 -Wall -lm -lgsl -lgslcblas
 
-.PHONY: default metropolis stdlib blockingAll schwinger schwingerMetropolis schwingerStdlib clean
+.PHONY: plaquette plaquetteMetropolis plaquettteStdlib blockingAll clean
 
 ####
 
-default: schwinger blockingAll
+plaquette: plaquette.exe blockingAll.exe
 
-metropolis: schwingerMetropolis blockingAll
+plaquetteMetropolis: plaquetteMetropolis blockingAll.exe
 
-stdlib: schwingerStdlib blockingAll
-
-####
-
-blockingAll: blockingAll.exe plaquette.dat
-	./$^
+plaquetteStdlib: plaquetteStdlib blockingAll.exe
 
 ####
 
-schwinger: schwinger.exe
-	./$<
-
-schwingerMetropolis: schwingerMetropolis.exe
-	./$<
-
-schwingerStdlib: schwingerStdlib.exe
-	./$<
-
-####
-
-schwinger.exe: schwinger.o lattice.o metropolisHastings.o randomGsl.o
+plaquette.exe: plaquette.o lattice.o metropolisHastings.o randomGsl.o
 	$(CC) $(CFLAGS) -o $@ $^
 
-schwingerMetropolis.exe: schwinger.o lattice.o metropolis.o randomGsl.o
+plaquetteMetropolis.exe: plaquette.o lattice.o metropolis.o randomGsl.o
 	$(CC) $(CFLAGS) -o $@ $^
 
-schwingerStdlib.exe: schwinger.o lattice.o metropolisHastings.o randomStdlib.o
+plaquetteStdlib.exe: plaquette.o lattice.o metropolisHastings.o randomStdlib.o
 	$(CC) $(CFLAGS) -o $@ $^
 
 blockingAll.exe: blockingAll.c
@@ -43,27 +27,31 @@ blockingAll.exe: blockingAll.c
 
 ####
 
-schwinger.o: schwinger.c lattice.h
+plaquette.o: plaquette.c lattice.h
 	$(CC) $(CFLAGS) -c -o $@ $<
 
 lattice.o: lattice.c lattice.h sampling.h
 	$(CC) $(CFLAGS) -c -o $@ $<
 
 metropolisHastings.o: ./samplingImplements/metropolisHastings.c sampling.h lattice.h random.h
-	cp $< sampling.c
+	@cp $< sampling.c
 	$(CC) $(CFLAGS) -c -o $@ sampling.c
+	@rm sampling.c
 
 metropolis.o: ./samplingImplements/metropolis.c sampling.h lattice.h random.h
-	cp $< sampling.c
+	@cp $< sampling.c
 	$(CC) $(CFLAGS) -c -o $@ sampling.c
+	@rm sampling.c
 
 randomGsl.o: ./randomImplements/randomGsl.c sampling.h lattice.h random.h
-	cp $< random.c
+	@cp $< random.c
 	$(CC) $(CFLAGS) -c -o $@ random.c
+	@rm random.c
 
 randomStdlib.o: ./randomImplements/randomStdlib.c sampling.h lattice.h random.h
-	cp $< random.c
+	@cp $< random.c
 	$(CC) $(CFLAGS) -c -o $@ random.c
+	@rm random.c
 
 clean:
 	@rm -f *.exe *.o *.dat 

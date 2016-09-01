@@ -39,16 +39,14 @@ void SampleRightLink(SiteType **lattice, int nx, int ny, double beta, int n)
     const double E = (1. - exp(-0.5*beta*k*M_PI*M_PI)) * RndUniform() + exp(-0.5*beta*k*M_PI*M_PI);
     const double phi0New = sqrt(-2./beta/k*log(E))*cos(2.*M_PI*RndUniform());
 
-    double phi0 = lattice[nx][ny].rightLink + argS;
-    phi0 = atan2(sin(phi0),cos(phi0)); //For fitting inside (-pi,pi]
+    const double phi0 = FitInterval( lattice[nx][ny].rightLink + argS );
 
     const double rate = exp(beta*k*( cos(phi0New) + 0.5*pow(phi0New,2) \
                                     -cos(phi0   ) - 0.5*pow(phi0   ,2) ));
 
     if (RndUniform() < rate)
     {
-        const double phiNew = phi0New - argS;
-        lattice[nx][ny].rightLink = atan2(sin(phiNew),cos(phiNew));
+        lattice[nx][ny].rightLink = FitInterval( phi0New - argS );
         succ++;
     }
     total++;
@@ -84,15 +82,14 @@ void SampleTopLink(SiteType **lattice, int nx, int ny, double beta, int n)
     const double E = (1. - exp(-0.5*beta*k*M_PI*M_PI)) * RndUniform() + exp(-0.5*beta*k*M_PI*M_PI);
     const double phi0New = sqrt(-2./beta/k*log(E))*cos(2.*M_PI*RndUniform());
 
-    double phi0 = lattice[nx][ny].topLink + argS;
-    phi0 = atan2(sin(phi0),cos(phi0));
+    const double phi0 = FitInterval( lattice[nx][ny].topLink + argS );
+
     const double rate = exp(beta*k*( cos(phi0New) + 0.5*pow(phi0New,2) \
                                     -cos(phi0   ) - 0.5*pow(phi0   ,2) ));
 
     if (RndUniform() < rate)
     {
-        const double phiNew = phi0New - argS;
-        lattice[nx][ny].topLink = atan2(sin(phiNew),cos(phiNew));
+        lattice[nx][ny].topLink = FitInterval( phi0New - argS );
         succ++;
     }
     total++;

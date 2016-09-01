@@ -72,7 +72,6 @@ double GetCharge(SiteType **lattice, int n)
     return charge/2./M_PI;
 }
 
-
 void SweepLattice(SiteType **lattice, double beta, int n)
 {
     int nx,ny;

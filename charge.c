@@ -27,9 +27,8 @@ int main(int argc, char *argv[])
         SweepLattice(lattice, BETA, N);
         if (i>=ITHERM) 
         {
-            const double charge;
-            charge = GetCharge(lattice, N);
-            fprintf(chargeFile, "%.16e\n", charge);
+            const double charge = GetCharge(lattice, N);
+            fprintf(chargeFile, "%+.1f\n", charge);
         }
     }
 

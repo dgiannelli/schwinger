@@ -27,8 +27,7 @@ int main(int argc, char *argv[])
         SweepLattice(lattice, BETA, N);
         if (i>=ITHERM) 
         {
-            const double plaquette;
-            plaquette = GetPlaquetteMean(lattice, N);
+            const double plaquette = GetPlaquetteMean(lattice, N);
             fprintf(plaquetteFile, "%.16e\n", plaquette);
         }
     }

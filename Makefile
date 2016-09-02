@@ -1,7 +1,7 @@
 CC = gcc
 CFLAGS = -std=gnu11 -O3 -Wall -lm -lgsl -lgslcblas
 
-.PHONY: plaquette plaquetteMetropolis plaquettteStdlib blockingAll clean
+.PHONY: plaquette plaquetteMetropolis plaquetteStdlib blockingAll clean
 
 ####
 
@@ -9,11 +9,11 @@ plaquette: plaquette.exe blockingAll.exe
 	./$<
 	make blockingAll
 
-plaquetteMetropolis: plaquetteMetropolis blockingAll.exe
+plaquetteMetropolis: plaquetteMetropolis.exe blockingAll.exe
 	./$<
 	make blockingAll
 
-plaquetteStdlib: plaquetteStdlib blockingAll.exe
+plaquetteStdlib: plaquetteStdlib.exe blockingAll.exe
 	./$<
 	make blockingAll
 

@@ -6,10 +6,21 @@ CFLAGS = -std=gnu11 -O3 -Wall -lm -lgsl -lgslcblas
 ####
 
 plaquette: plaquette.exe blockingAll.exe
+	./$<
+	make blockingAll
 
 plaquetteMetropolis: plaquetteMetropolis blockingAll.exe
+	./$<
+	make blockingAll
 
 plaquetteStdlib: plaquetteStdlib blockingAll.exe
+	./$<
+	make blockingAll
+
+####
+
+blockingAll: blockingAll.exe plaquette.dat
+	./$< plaquette.dat
 
 ####
 

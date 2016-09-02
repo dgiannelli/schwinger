@@ -1,5 +1,5 @@
 /*
- * Main program for generating field configurations and measuring the plaquette mean value
+ * Main program for generating field configurations and measuring the topological charge
  */
 
 #include <stdio.h>
@@ -20,24 +20,24 @@ int main(int argc, char *argv[])
     RndInit();
     SiteType **lattice = NewLattice(N);
 
-    FILE *plaquetteFile = fopen("plaquette.dat", "w");
+    FILE *chargeFile = fopen("charge.dat", "w");
 
     for (int i=0; i<ITHERM+IMAX; i++)
     {
         SweepLattice(lattice, BETA, N);
         if (i>=ITHERM) 
         {
-            const double plaquette;
-            plaquette = GetPlaquetteMean(lattice, N);
-            fprintf(plaquetteFile, "%.16e\n", plaquette);
+            const double charge;
+            charge = GetCharge(lattice, N);
+            fprintf(chargeFile, "%.16e\n", charge);
         }
     }
 
-    fclose(plaquetteFile);
+    fclose(chargeFile);
     DeleteLattice(lattice, N);
     RndFinalize();
 
-    printf("\n**** Saved in plaquette.dat %i plaquette measures at beta = %.2f ****\n\n", IMAX, BETA);
+    printf("\n**** Saved in charge.dat %i charge measures at beta = %.2f ****\n\n", IMAX, BETA);
     printf("Acceptance ratio: %f\n", (float)succ/total);
 
     return 0;

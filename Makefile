@@ -1,9 +1,12 @@
 CC = gcc
 CFLAGS = -std=gnu11 -O3 -Wall -lm -lgsl -lgslcblas
 
-.PHONY: plaquette plaquetteMetropolis plaquetteStdlib blockingAll clean
+.PHONY: charge plaquette plaquetteMetropolis plaquetteStdlib blockingAll clean
 
 ####
+
+charge: charge.exe
+	./$<
 
 plaquette: plaquette.exe blockingAll.exe
 	./$<
@@ -23,6 +26,9 @@ blockingAll: blockingAll.exe plaquette.dat
 	./$< plaquette.dat
 
 ####
+
+charge.exe: charge.o lattice.o metropolisHastings.o randomGsl.o
+	$(CC) $(CFLAGS) -o $@ $^
 
 plaquette.exe: plaquette.o lattice.o metropolisHastings.o randomGsl.o
 	$(CC) $(CFLAGS) -o $@ $^

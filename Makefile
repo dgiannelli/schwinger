@@ -4,8 +4,10 @@ CFLAGS = -std=gnu11 -O3 -Wall -lm -lgsl -lgslcblas
 .PHONY: charge plaquette plaquetteMetropolis plaquetteStdlib blockingAll clean
 
 ####
+charge: charge.py charge.dat
+	python $<
 
-charge: charge.exe
+charge.dat: charge.exe
 	./$<
 
 plaquette: plaquette.exe blockingAll.exe
@@ -73,4 +75,5 @@ randomStdlib.o: ./randomImplements/randomStdlib.c sampling.h lattice.h random.h
 clean:
 	@rm -f *.exe *.o *.dat 
 	@rm -f sampling.c random.c
+	@rm -rf plots/
 

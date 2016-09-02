@@ -28,9 +28,10 @@ int main(int argc, char *argv[])
         if (i>=ITHERM) 
         {
             const double charge = GetCharge(lattice, N);
-            fprintf(chargeFile, "%+.1f\n", charge);
+            fprintf(chargeFile, "%+.0f ", charge);
         }
     }
+    fputc('\n', chargeFile);
 
     fclose(chargeFile);
     DeleteLattice(lattice, N);

@@ -1,8 +1,11 @@
-Program that simulates a Schwinger model on a lattice with a pure gauge action, and measures the plaquette value using an heat bath algorithm.
+Program that simulates a Schwinger model on a lattice with a pure gauge action.
 
-make default, to run the program with a Metropolis-Hastings step and the gsl default random generator.
-make metropolis, to use instead a simpler Metropolis algorithm
-make stdlib, to use instead rand() from stdlib
+Computing the plaquette mean value:
+make plaquette, to run the program with a Metropolis-Hastings step and the gsl default random generator.
+make plaquetteMetropolis, to use instead a simpler Metropolis algorithm
+make plaquetteStdlib, to use instead rand() from stdlib
+
+Computing the topological charge and plotting the results:
+make charge
 
 See factSheet.pdf for more informations about the heat bath algorithm I used.
-

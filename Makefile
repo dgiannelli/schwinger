@@ -62,6 +62,9 @@ charge.exe: charge.o lattice.o sampling.o random.o
 plaquette.exe: plaquette.o lattice.o sampling.o random.o
 	$(CC) $(CFLAGS) -o $@ $^
 
+blockingAll.exe: blockingAll.c
+	$(CC) $(CFLAGS) -o $@ $<
+
 ####
 
 charge.o: charge.c lattice.h random.h

@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <math.h>
 
-#define MAX_BLOCK 50
+#define MAX_BLOCK 30
 
 typedef struct DataListElementStruct
 {

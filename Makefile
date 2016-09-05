@@ -12,7 +12,7 @@ NS = 5 10 20 40
 
 ####
 
-charge: runCharge plotCharge
+charge: metropolisHastings gsl runCharge 
 
 ####
 
@@ -26,8 +26,8 @@ plaquetteStdlib: metropolisHastings stdlib runPlaquette runBlockingAll
 
 runCharge: charge.exe
 	@if [ ! -d 'data' ]; then mkdir data; fi
-	@for beta in $(BETAS); do ./$< $(beta) 20; done
-	@for n in $(NS); do ./$< 4 $(n); done
+	for beta in $(BETAS); do ./$< $$beta 20; done
+	for n in $(NS); do ./$< 4 $$n; done
 
 plotCharge: charge.py
 	python plotChargeBetasEvo.py
@@ -64,10 +64,10 @@ plaquette.exe: plaquette.o lattice.o sampling.o random.o
 
 ####
 
-charge.o: charge.c lattice.h
+charge.o: charge.c lattice.h random.h
 	$(CC) $(CFLAGS) -c -o $@ $<
 
-plaquette.o: plaquette.c lattice.h
+plaquette.o: plaquette.c lattice.h random.h
 	$(CC) $(CFLAGS) -c -o $@ $<
 
 lattice.o: lattice.c lattice.h sampling.h

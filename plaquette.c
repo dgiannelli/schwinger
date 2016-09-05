@@ -5,6 +5,7 @@
 #include <stdio.h>
 
 #include "lattice.h"
+#include "random.h"
 
 #define N 20 //Lattice size
 #define IMAX 30000 //Number of measurement

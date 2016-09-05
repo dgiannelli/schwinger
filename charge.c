@@ -7,6 +7,7 @@
 #include <stdlib.h>
 
 #include "lattice.h"
+#include "random.h"
 
 
 #define IMAX 1000 //Number of measurement at fixed volume
@@ -17,7 +18,7 @@ int main(int argc, char *argv[])
 {
     if (argc != 3) {printf("**** ERROR: Wrong number args: is %i, should be 2\n", argc-1); return 1;}
     const double beta = atof(argv[1]);
-    const double n = atoi(argv[2]);
+    const int n = atoi(argv[2]);
 
     RndInit();
     SiteType **lattice = NewLattice(n);
@@ -37,7 +38,7 @@ int main(int argc, char *argv[])
     }
 
     fclose(chargeFile);
-    DeleteLattice(lattice, N);
+    DeleteLattice(lattice, n);
     RndFinalize();
 
     printf("\n**** Saved in charge.dat %i charge measures at beta = %.2f with lattice size %i ****\n\n", \

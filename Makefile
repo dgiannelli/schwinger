@@ -1,8 +1,8 @@
 CC = gcc
 CFLAGS = -std=gnu11 -O3 -Wall -lm -lgsl -lgslcblas
 
-BETAS = 1 2 4 8
-NS = 5 10 20 40
+BETAS = 1 2 4 
+NS = 10 20 40
 
 .PHONY: charge 
 .PHONY: plaquette plaquetteMetropolis plaquetteStldib
@@ -12,7 +12,7 @@ NS = 5 10 20 40
 
 ####
 
-charge: metropolisHastings gsl runCharge 
+charge: metropolisHastings gsl runCharge plotCharge
 
 ####
 
@@ -29,9 +29,8 @@ runCharge: charge.exe
 	@for beta in $(BETAS); do ./$< $$beta 20 ./data/betas/; done
 	@for n in $(NS); do ./$< 4 $$n ./data/ns/; done
 
-plotCharge: charge.py
-	python plotChargeBetasEvo.py
-	python plotChargeBetasHisto.py
+plotCharge: plotCharge.py
+	python plotCharge.py
 
 runPlaquette: plaquette.exe
 	@if [ ! -d 'data' ]; then mkdir data; fi

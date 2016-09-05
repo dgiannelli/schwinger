@@ -10,7 +10,7 @@
 #include "random.h"
 
 
-#define IMAX 1000 //Number of measurement at fixed volume
+#define IMAX 10000 //Number of measurement at fixed volume
 
 extern int succ, total;
 

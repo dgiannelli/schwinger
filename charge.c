@@ -1,44 +1,48 @@
 /*
  * Main program for generating field configurations and measuring the topological charge
+ * Requires the values for beta and lattice size
  */
 
 #include <stdio.h>
+#include <stdlib.h>
 
 #include "lattice.h"
-#include "random.h"
 
-#define N 20 //Lattice size
-#define IMAX 30000 //Number of measurement
-#define ITHERM 10 //Number of thermalization iteration
 
-#define BETA 4. //Action beta parameter
+#define IMAX 1000 //Number of measurement at fixed volume
 
 extern int succ, total;
 
 int main(int argc, char *argv[])
 {
+    if (argc != 3) {printf("**** ERROR: Wrong number args: is %i, should be 2\n", argc-1); return 1;}
+    const double beta = atof(argv[1]);
+    const double n = atoi(argv[2]);
+
     RndInit();
-    SiteType **lattice = NewLattice(N);
+    SiteType **lattice = NewLattice(n);
 
-    FILE *chargeFile = fopen("charge.dat", "w");
+    char filename[30]; 
+    sprintf(filename, "./data/chargeBeta%3.1fN%2i.dat", beta, n);
+    FILE *chargeFile = fopen(filename, "w");
 
-    for (int i=0; i<ITHERM+IMAX; i++)
+    for (int i=0; i<n+IMAX; i++) //n is used also as number of thermaization iterations
     {
-        SweepLattice(lattice, BETA, N);
-        if (i>=ITHERM) 
+        SweepLattice(lattice, beta, n);
+        if (i>=n) 
         {
-            const double charge = GetCharge(lattice, N);
-            fprintf(chargeFile, "%+.0f ", charge);
+            const double charge = GetCharge(lattice, n);
+            fprintf(chargeFile, "%+.0f\n", charge);
         }
     }
-    fputc('\n', chargeFile);
 
     fclose(chargeFile);
     DeleteLattice(lattice, N);
     RndFinalize();
 
-    printf("\n**** Saved in charge.dat %i charge measures at beta = %.2f ****\n\n", IMAX, BETA);
-    printf("Acceptance ratio: %f\n", (float)succ/total);
+    printf("\n**** Saved in charge.dat %i charge measures at beta = %.2f with lattice size %i ****\n\n", \
+            IMAX, beta, n);
+        printf("Acceptance ratio: %f\n", (float)succ/total);
 
     return 0;
 }

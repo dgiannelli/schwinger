@@ -1,50 +1,71 @@
 CC = gcc
 CFLAGS = -std=gnu11 -O3 -Wall -lm -lgsl -lgslcblas
 
-.PHONY: charge plaquette plaquetteMetropolis plaquetteStdlib blockingAll clean
+BETAS = 1 2 4 8
+NS = 5 10 20 40
 
-####
-charge: charge.py charge.dat
-	python $<
-
-charge.dat: charge.exe
-	./$<
-
-plaquette: plaquette.exe blockingAll.exe
-	./$<
-	make blockingAll
-
-plaquetteMetropolis: plaquetteMetropolis.exe blockingAll.exe
-	./$<
-	make blockingAll
-
-plaquetteStdlib: plaquetteStdlib.exe blockingAll.exe
-	./$<
-	make blockingAll
+.PHONY: charge 
+.PHONY: plaquette plaquetteMetropolis plaquetteStldib
+.PHONY: runCharge plotCharge runPlaquette runBlockingAll
+.PHONY: metropolisHastings metropolis gsl stdlib
+.PHONY: clean
 
 ####
 
-blockingAll: blockingAll.exe plaquette.dat
-	./$< plaquette.dat
+charge: runCharge plotCharge
 
 ####
 
-charge.exe: charge.o lattice.o metropolisHastings.o randomGsl.o
+plaquette: metropolisHastings gsl runPlaquette runBlockingAll
+
+plaquetteMetropolis: metropolis gsl runPlaquette runBlockingAll
+
+plaquetteStdlib: metropolisHastings stdlib runPlaquette runBlockingAll
+
+####
+
+runCharge: charge.exe
+	@if [ ! -d 'data' ]; then mkdir data; fi
+	@for beta in $(BETAS); do ./$< $(beta) 20; done
+	@for n in $(NS); do ./$< 4 $(n); done
+
+plotCharge: charge.py
+	python plotChargeBetasEvo.py
+	python plotChargeBetasHisto.py
+
+runPlaquette: plaquette.exe
+	@if [ ! -d 'data' ]; then mkdir data; fi
+	./$<
+
+runBlockingAll: blockingAll.exe ./data/plaquette.dat
+	./$^
+
+####
+
+metropolisHastings: ./samplingImplements/metropolisHastings.c
+	@if ! cmp $< sampling.c >/dev/null 2>&1; then cp $< sampling.c; fi
+
+metropolis: ./samplingImplements/metropolis.c
+	@if ! cmp $< sampling.c >/dev/null 2>&1; then cp $< sampling.c; fi
+
+gsl: ./randomImplements/randomGsl.c
+	@if ! cmp $< random.c >/dev/null 2>&1; then cp $< random.c; fi
+
+stdlib: ./randomImplements/randomStdlib.c
+	@if ! cmp $< random.c >/dev/null 2>&1; then cp $< random.c; fi
+
+####
+
+charge.exe: charge.o lattice.o sampling.o random.o
 	$(CC) $(CFLAGS) -o $@ $^
 
-plaquette.exe: plaquette.o lattice.o metropolisHastings.o randomGsl.o
-	$(CC) $(CFLAGS) -o $@ $^
-
-plaquetteMetropolis.exe: plaquette.o lattice.o metropolis.o randomGsl.o
-	$(CC) $(CFLAGS) -o $@ $^
-
-plaquetteStdlib.exe: plaquette.o lattice.o metropolisHastings.o randomStdlib.o
-	$(CC) $(CFLAGS) -o $@ $^
-
-blockingAll.exe: blockingAll.c
+plaquette.exe: plaquette.o lattice.o sampling.o random.o
 	$(CC) $(CFLAGS) -o $@ $^
 
 ####
+
+charge.o: charge.c lattice.h
+	$(CC) $(CFLAGS) -c -o $@ $<
 
 plaquette.o: plaquette.c lattice.h
 	$(CC) $(CFLAGS) -c -o $@ $<
@@ -52,28 +73,14 @@ plaquette.o: plaquette.c lattice.h
 lattice.o: lattice.c lattice.h sampling.h
 	$(CC) $(CFLAGS) -c -o $@ $<
 
-metropolisHastings.o: ./samplingImplements/metropolisHastings.c sampling.h lattice.h random.h
-	@cp $< sampling.c
-	$(CC) $(CFLAGS) -c -o $@ sampling.c
-	@rm sampling.c
+sampling.o: sampling.c sampling.h lattice.h random.h
+	$(CC) $(CFLAGS) -c -o $@ $<
 
-metropolis.o: ./samplingImplements/metropolis.c sampling.h lattice.h random.h
-	@cp $< sampling.c
-	$(CC) $(CFLAGS) -c -o $@ sampling.c
-	@rm sampling.c
-
-randomGsl.o: ./randomImplements/randomGsl.c sampling.h lattice.h random.h
-	@cp $< random.c
-	$(CC) $(CFLAGS) -c -o $@ random.c
-	@rm random.c
-
-randomStdlib.o: ./randomImplements/randomStdlib.c sampling.h lattice.h random.h
-	@cp $< random.c
-	$(CC) $(CFLAGS) -c -o $@ random.c
-	@rm random.c
+random.o: random.c random.h
+	$(CC) $(CFLAGS) -c -o $@ $<
 
 clean:
 	@rm -f *.exe *.o *.dat 
 	@rm -f sampling.c random.c
-	@rm -rf plots/
+	@rm -rf plots/ data/
 

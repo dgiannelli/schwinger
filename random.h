@@ -7,6 +7,4 @@ void RndFinalize();
 
 double RndUniform();
 
-double RndNormal(double sigma);
-
 #endif

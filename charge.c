@@ -43,8 +43,8 @@ int main(int argc, char *argv[])
     DeleteLattice(lattice, n);
     RndFinalize();
 
-    printf("\n**** Saved in charge.dat %i charge measures at beta = %.2f with lattice size %i ****\n\n", \
-            IMAX, beta, n);
+    printf("\n**** Saved in %s %i charge measures at beta = %.1f with lattice size %i ****\n\n", \
+            filename, IMAX, beta, n);
         printf("Acceptance ratio: %f\n", (float)succ/total);
 
     return 0;

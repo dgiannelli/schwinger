@@ -36,7 +36,7 @@ int main(int argc, char *argv[])
     DeleteLattice(lattice, N);
     RndFinalize();
 
-    printf("\n**** Saved in plaquette.dat %i plaquette measures at beta = %.2f ****\n\n", IMAX, BETA);
+    printf("\n**** Saved in ./data/plaquette.dat %i plaquette measures at beta = %.1f ****\n\n", IMAX, BETA);
     printf("Acceptance ratio: %f\n", (float)succ/total);
 
     return 0;

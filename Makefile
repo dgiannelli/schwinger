@@ -27,7 +27,7 @@ plaquetteStdlib: metropolisHastings stdlib runPlaquette runBlockingAll
 runCharge: charge.exe
 	@if [ ! -d 'data' ]; then mkdir -p data/betas data/ns; fi
 	@for beta in $(BETAS); do ./$< $$beta 20 ./data/betas/; done
-	@for n in $(NS); do ./$< 4 $$n ./data/ns/; done
+	@for n in $(NS); do ./$< 2 $$n ./data/ns/; done
 
 plotCharge: plotCharge.py
 	python plotCharge.py

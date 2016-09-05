@@ -1,6 +1,6 @@
 /*
  * Main program for generating field configurations and measuring the topological charge
- * Requires the values for beta and lattice size
+ * Requires as argvs the values for beta, lattice size and the directory in which save data
  */
 
 #include <stdio.h>
@@ -16,15 +16,17 @@ extern int succ, total;
 
 int main(int argc, char *argv[])
 {
-    if (argc != 3) {printf("**** ERROR: Wrong number args: is %i, should be 2\n", argc-1); return 1;}
+    if (argc != 4) {printf("**** ERROR: Wrong number args: is %i, should be 3\n", argc-1); return 1;}
     const double beta = atof(argv[1]);
     const int n = atoi(argv[2]);
+
+    printf("%s\n",argv[3]);
 
     RndInit();
     SiteType **lattice = NewLattice(n);
 
     char filename[30]; 
-    sprintf(filename, "./data/chargeBeta%3.1fN%2i.dat", beta, n);
+    sprintf(filename, "%schargeBeta%3.1fN%2i.dat", argv[3], beta, n);
     FILE *chargeFile = fopen(filename, "w");
 
     for (int i=0; i<n+IMAX; i++) //n is used also as number of thermaization iterations

@@ -1,20 +1,15 @@
 CC = gcc
 CFLAGS = -std=gnu11 -O3 -Wall -lm -lgsl -lgslcblas
 
-BETAS = 1 2 4 
-NS = 10 20 40
-
-.PHONY: charge 
-.PHONY: plaquette plaquetteMetropolis plaquetteStldib
-.PHONY: runCharge plotCharge runPlaquette runBlockingAll
-.PHONY: metropolisHastings metropolis gsl stdlib
-.PHONY: clean
-
 ####
+
+.PHONY: charge
 
 charge: metropolisHastings gsl runCharge plotCharge
 
 ####
+
+.PHONY: plaquette plaquetteMetropolis plaquetteStdlib
 
 plaquette: metropolisHastings gsl runPlaquette runBlockingAll
 
@@ -24,13 +19,31 @@ plaquetteStdlib: metropolisHastings stdlib runPlaquette runBlockingAll
 
 ####
 
+DTC = data/torus/charge
+.PHONY: runCharge plotCharge 
+
 runCharge: charge.exe
-	@if [ ! -d 'data' ]; then mkdir -p data/betas data/ns; fi
-	@for beta in $(BETAS); do ./$< $$beta 20 ./data/betas/; done
-	@for n in $(NS); do ./$< 2 $$n ./data/ns/; done
+	@if [ ! -d '$(DTC)' ]; then mkdir -p $(DTC)/fixed $(DTC)/phys; fi
+	#Scaling of <Q^2> at fixed beta=1.0
+	./$< 1.0  5 $(DTC)/fixed/b1.0n05.dat
+	./$< 1.0 10 $(DTC)/fixed/b1.0n10.dat
+	./$< 1.0 20 $(DTC)/fixed/b1.0n20.dat
+	./$< 1.0 40 $(DTC)/fixed/b1.0n40.dat
+	#Scaling at constant physics
+	./$< 0.8  8 $(DTC)/phys/b0.8n08.dat
+	./$< 1.8 12 $(DTC)/phys/b1.8n12.dat
+	./$< 3.2 16 $(DTC)/phys/b3.2n16.dat
+	./$< 5.0 20 $(DTC)/phys/b5.0n20.dat
+	./$< 7.2 24 $(DTC)/phys/b7.2n24.dat
+	./$< 9.8 28 $(DTC)/phis/b9.8n28.dat
 
 plotCharge: plotCharge.py
-	python plotCharge.py
+	./plotFixedCharge.py
+	./plotPhysCharge.py
+
+####
+
+.PHONY: runPlaquette runBlockingAll
 
 runPlaquette: plaquette.exe
 	@if [ ! -d 'data' ]; then mkdir data; fi
@@ -40,6 +53,8 @@ runBlockingAll: blockingAll.exe ./data/plaquette.dat
 	./$^
 
 ####
+
+.PHONY: metropolisHastings metropolis gsl stdlib
 
 metropolisHastings: ./samplingImplements/metropolisHastings.c
 	@if ! cmp $< sampling.c >/dev/null 2>&1; then cp $< sampling.c; fi
@@ -80,6 +95,10 @@ sampling.o: sampling.c sampling.h lattice.h random.h
 
 random.o: random.c random.h
 	$(CC) $(CFLAGS) -c -o $@ $<
+
+####
+
+.PHONY: clean
 
 clean:
 	@rm -f *.exe *.o *.dat 

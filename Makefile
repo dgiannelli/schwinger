@@ -39,7 +39,7 @@ runCharge: charge.exe
 
 plotCharge:
 	./plotFixedCharge.py
-	@#./plotPhysCharge.py
+	./plotPhysCharge.py
 
 ####
 

@@ -35,11 +35,11 @@ runCharge: charge.exe
 	./$< 3.2 16 $(DTC)/phys/b3.2n16.dat
 	./$< 5.0 20 $(DTC)/phys/b5.0n20.dat
 	./$< 7.2 24 $(DTC)/phys/b7.2n24.dat
-	./$< 9.8 28 $(DTC)/phis/b9.8n28.dat
+	./$< 9.8 28 $(DTC)/phys/b9.8n28.dat
 
-plotCharge: plotCharge.py
+plotCharge:
 	./plotFixedCharge.py
-	./plotPhysCharge.py
+	@#./plotPhysCharge.py
 
 ####
 
@@ -101,7 +101,7 @@ random.o: random.c random.h
 .PHONY: clean
 
 clean:
-	@rm -f *.exe *.o *.dat 
+	@rm -f *.exe *.o *.pyc *.dat 
 	@rm -f sampling.c random.c
 	@rm -rf plots/ data/
 

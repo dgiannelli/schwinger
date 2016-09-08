@@ -20,14 +20,11 @@ int main(int argc, char *argv[])
     const double beta = atof(argv[1]);
     const int n = atoi(argv[2]);
 
-    printf("%s\n",argv[3]);
-
     RndInit();
     SiteType **lattice = NewLattice(n);
 
-    char filename[30]; 
-    sprintf(filename, "%schargeBeta%3.1fN%2i.dat", argv[3], beta, n);
-    FILE *chargeFile = fopen(filename, "w");
+    FILE *chargeFile = fopen(argv[3], "w");
+    fprintf(chargeFile, "#beta = %f\n#N = %i\n", beta, n);
 
     for (int i=0; i<n+IMAX; i++) //n is used also as number of thermaization iterations
     {
@@ -44,7 +41,7 @@ int main(int argc, char *argv[])
     RndFinalize();
 
     printf("\n**** Saved in %s %i charge measures at beta = %.1f with lattice size %i ****\n\n", \
-            filename, IMAX, beta, n);
+            argv[3], IMAX, beta, n);
         printf("Acceptance ratio: %f\n", (float)succ/total);
 
     return 0;

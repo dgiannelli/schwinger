@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 from matplotlib import rc
 from scipy.optimize import curve_fit
 
-from jackknife import Jackknife
+from jackknife import jackknife
 
 rc('text', usetex=True)
 rc('font', **{'family': 'serif', 'serif':['Computer Modern']}) 
@@ -23,7 +23,7 @@ for file in os.listdir(dataDir):
         exec(f.readline()[1:]) #Read from file the value of beta and N
     f.close()
     data = np.loadtxt(dataDir+file, dtype=int)
-    QsqMean, dQsqMean = Jackknife(data)
+    QsqMean, dQsqMean = jackknife(data)
     Ns.append(N)
     QsqMeans.append(QsqMean)
     dQsqMeans.append(dQsqMean)
@@ -57,26 +57,26 @@ plt.close()
 
 #Fit and plot of: <Q^2> = x*log(N) + A:
 
-def f(logN, x, A): return x*logN + A
+def f(N, A, x): return A*N**x
 
-Ns = np.array(Ns)
-QsqMeans = np.array(QsqMeans)
-logNs = np.log(Ns)
-logQsqMeans = np.log(QsqMeans)
+#Ns = np.array(Ns)
+#QsqMeans = np.array(QsqMeans)
+#logNs = np.log(Ns)
+#logQsqMeans = np.log(QsqMeans)
 
-popt, pcov = curve_fit(f, logNs, logQsqMeans, sigma=dQsqMeans, absolute_sigma=True)
+popt, pcov = curve_fit(f, Ns, QsqMeans, sigma=dQsqMeans, absolute_sigma=True)
 
-#plt.xscale('log')
-#plt.yscale('log')
+plt.xscale('log')
+plt.yscale('log')
 plt.errorbar(Ns, QsqMeans, yerr=dQsqMeans, fmt='o', ms=3)
-NPoints = np.linspace(0,45)
-plt.plot(NPoints, np.exp(popt[1])*NPoints**popt[0], label=r'$\left<Q^2\right>=A \cdot N^x$')
+NPoints = np.linspace(1,50)
+plt.plot(NPoints, popt[0]*NPoints**popt[1], label=r'$\left<Q^2\right>=A \cdot N^x$')
 plt.title('Topological susceptibility vs $N$ at fixed $\\beta=%.1f$'%(beta))
-plt.text(1,70, 'Fit result: $x=%.3f\\pm%.3f$'%(popt[0],np.sqrt(pcov[0][0])), horizontalalignment='left', fontsize='large')
+plt.text(1.1,20, 'Fit result: $x=%.3f\\pm%.3f$'%(popt[1],np.sqrt(pcov[1][1])), horizontalalignment='left', fontsize='large')
 plt.xlabel(r'$N$')
 plt.ylabel(r'$\left<Q^2\right>$')
 plt.legend(loc=2)
-plt.tight_layout()
+#plt.tight_layout()
 plt.savefig('./plots/plotFixedSucep.pdf')
 plt.close()
 

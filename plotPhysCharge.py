@@ -4,7 +4,7 @@ import os
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib import rc
-from scipy.optimize import curve_fit
+#from scipy.optimize import curve_fit
 
 from jackknife import jackknife
 
@@ -14,7 +14,9 @@ rc('font', **{'family': 'serif', 'serif':['Computer Modern']})
 if not os.path.exists('plots'): os.makedirs('plots')
 
 dataDir = 'data/torus/charge/phys/'
-#count = 0
+betas = []
+ratios = []
+dratios = []
 for file in os.listdir(dataDir):
     f = open(dataDir+file, 'r')
     for i in range(2):
@@ -24,6 +26,8 @@ for file in os.listdir(dataDir):
     QsqMean, dQsqMean = jackknife(data)
     ratio = QsqMean/N**2
     dratio = dQsqMean/N**2
+    ratios.append(ratio)
+    dratios.append(dratio)
 
     label='$\\beta=%.1f, N=%i$'%(beta,N)
     if N > 16: 
@@ -36,8 +40,8 @@ for file in os.listdir(dataDir):
         plt.hist(data, bins=bins, normed=True, histtype='step', zorder=-N, label=label)
     #<Q^2>/N^2:
     plt.figure(3)
-    #count += 1
-    plt.errorbar(1, ratio, yerr=dratio, fmt='o', ms=3, label=label)
+    betas.append(beta)
+    plt.errorbar(beta, ratio, yerr=dratio, fmt='o', ms=3, label=label)
 
 
 #Evolution plot:
@@ -58,12 +62,21 @@ plt.ylabel('$P(Q)$')
 plt.legend()
 plt.savefig('./plots/plotPhysHisto.pdf')
 plt.close()
-#<Q^2>/N^2:
+#Fit <Q^2>/N^2 and plot:
+
+#def f(beta, A, k): return A*np.exp(-beta*k)
+#popt, pcov = curve_fit(f, betas, ratios, absolute_sigma=False)
+
 plt.figure(3)
-plt.ylim(ymin=-0.003)
+#plt.yscale('log')
+
+#betapoints = np.linspace(0,8,50)
+#plt.plot(betapoints, f(betapoints, popt[0], popt[1]), label=r'$A \cdot e^{-\beta k}$')
 plt.title('Topological susceptibility divided by $N^2$ at constant physics')
+#plt.text(0.2, 0.03, 'Fit result: $k=%.3f\\pm%.3f$'%(popt[1],np.sqrt(pcov[1][1])), horizontalalignment='left', fontsize='large')
+plt.xlabel(r'$\beta$')
+plt.ylim(ymin=-0.003)
 plt.ylabel(r'$\frac{\left<Q^2\right>}{N^2}$')
-plt.xticks([])
 plt.legend(numpoints=1)
 plt.savefig('./plots/plotPhysRatio.pdf')
 plt.close()

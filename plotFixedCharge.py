@@ -39,7 +39,7 @@ for file in os.listdir(dataDir):
 
 #Evolution plot:
 plt.figure(1)
-plt.title('Topological charge evolution at $\\beta=%.1f$'%(beta))
+plt.title('Topological charge evolution at $\\beta=%.0f$'%(beta))
 plt.xlabel('Iterations')
 plt.ylabel('$Q$')
 plt.legend()
@@ -48,7 +48,7 @@ plt.close()
 #Histogram:
 plt.figure(2)
 plt.xlim([-20,20])
-plt.title('PDF of topological charge at $\\beta=%.1f$'%(beta))
+plt.title('PDF of topological charge at $\\beta=%.0f$'%(beta))
 plt.xlabel('$Q$')
 plt.ylabel('$P(Q)$')
 plt.legend()
@@ -58,20 +58,14 @@ plt.close()
 #Fit and plot of: <Q^2> = x*log(N) + A:
 
 def f(N, A, x): return A*N**x
-
-#Ns = np.array(Ns)
-#QsqMeans = np.array(QsqMeans)
-#logNs = np.log(Ns)
-#logQsqMeans = np.log(QsqMeans)
-
 popt, pcov = curve_fit(f, Ns, QsqMeans, sigma=dQsqMeans, absolute_sigma=True)
 
 plt.xscale('log')
 plt.yscale('log')
 plt.errorbar(Ns, QsqMeans, yerr=dQsqMeans, fmt='o', ms=3)
 NPoints = np.linspace(1,50)
-plt.plot(NPoints, popt[0]*NPoints**popt[1], label=r'$\left<Q^2\right>=A \cdot N^x$')
-plt.title('Topological susceptibility vs $N$ at fixed $\\beta=%.1f$'%(beta))
+plt.plot(NPoints, popt[0]*NPoints**popt[1], label=r'$\left<Q^2\right> = A \cdot N^x$')
+plt.title('Topological susceptibility vs $N$ at fixed $\\beta=%.0f$'%(beta))
 plt.text(1.1,20, 'Fit result: $x=%.3f\\pm%.3f$'%(popt[1],np.sqrt(pcov[1][1])), horizontalalignment='left', fontsize='large')
 plt.xlabel(r'$N$')
 plt.ylabel(r'$\left<Q^2\right>$')

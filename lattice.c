@@ -8,150 +8,226 @@
 
 #include "lattice.h"
 
-double FitInterval(double x)
+// **** Implementation only visible functions and declarations:
+
+double beta;
+int n;
+
+static struct LatticeSite
 {
-    return x - floor( (x+M_PI) / (2.*M_PI) ) * 2.*M_PI;
+    double rightLink;
+    double topLink;
+} **lattice;
+
+// ** Functions and function pointers to implement one of the boundary conditions (default: torus):
+
+static double GetRightTLTorus(int nx, int ny);
+//static double GetRightTLMoeb(int nx, int ny);
+static double (*GetRightTL)(int nx, int ny) = GetRightTLTorus;
+
+static double GetTopRLTorus(int nx, int ny);
+//static double GetTopRLMoeb(int nx, int ny);
+static double (*GetTopRL)(int nx, int ny) = GetTopRLTorus;
+
+static double GetTopLeftRLTorus(int nx, int ny);
+//static double GetTopLeftRLMoeb(int nx, int ny);
+static double (*GetTopLeftRL)(int nx, int ny) = GetTopLeftRLTorus;
+
+static double GetLeftRLTorus(int nx, int ny);
+//static double GetLeftRLMoeb(int nx, int ny);
+static double (*GetLeftRL)(int nx, int ny) = GetLeftRLTorus;
+
+static double GetLeftTLTorus(int nx, int ny);
+//static double GetLeftTLMoeb(int nx, int ny);
+static double (*GetLeftTL)(int nx, int ny) = GetLeftTLTorus;
+
+static double GetBottomRLTorus(int nx, int ny);
+//static double GetBottomRLMoeb(int nx, int ny);
+static double (*GetBottomRL)(int nx, int ny) = GetBottomRLTorus;
+
+static double GetBottomTLTorus(int nx, int ny);
+//static double GetBottomTLMoeb(int nx, int ny);
+static double (*GetBottomTL)(int nx, int ny) = GetBottomTLTorus;
+
+static double GetBottomRightTLTorus(int nx, int ny);
+//static double GetBottomRightTLMoeb(int nx, int ny);
+static double (*GetBottomRightTL)(int nx, int ny) = GetBottomRightTLTorus;
+
+static char[] boundsName = "torus";
+
+// **
+
+// ** Functions and functions pointers to evaluate one of observables (default: plaquette):
+
+static double GetPlaquetteMean();
+
+static double GetChargeTorus();
+
+static double GetChargeMoeb();
+
+static double (*GetObservable)() = GetPlaquetteMean;
+
+static double (*GetCharge)() = GetChargeTorus;
+
+static char[] obsName = "plaquette";
+
+// **
+
+static void SweepLattice();
+
+// ** Possible procedures to perform an updating step:
+
+static void SampleRightLinkMetropolisHastings(int nx, int ny);
+
+static void SampleTopLinkMetropolisHastings(int nx, int ny);
+
+static void SampleRightLinkMetropolis(int nx, int ny);
+
+static void SampleTopLinkMetropolis(int nx, int ny);
+
+// Function pointers to two different implementations of updating steps:
+static void (*SampleRightLink)(int nx, int ny) = SampleRightLinkMetropolisHastings;
+
+static void (*SampleTopLink)(int nx, int ny) = SampleTopLinkMetropolisHastings;
+
+// Global variables to compute the acceptance ratio of the updating steps:
+static int total, succ;
+
+// **
+
+
+// Function that move an angle to an equivalent value in (-pi,pi]:
+static void double FitInterval(double x)
+{
+    return x - ceil( (x-M_PI) / (2.*M_PI) ) * 2.*M_PI;
 }
 
-void GetMeasurement(Lattice lattice, const char *observable, int measures);
+// **** Implementation of included functions:
 
-void SweepLattice(Lattice lattice);
-
-double GetPlaquetteMean(Lattice lattice);
-
-double GetCharge(Lattice lattice);
-
-double (*GetObservable)(Lattice lattice);
-
-void SampleRightLinkMetropolisHastings(Lattice lattice, int nx, int ny);
-
-void SampleTopLinkMetropolisHastings(Lattice lattice, int nx, int ny);
-
-void SampleRightLinkMetropolis(Lattice lattice, int nx, int ny);
-
-void SampleTopLinkMetropolis(Lattice lattice, int nx, int ny);
-
-void (*SampleRightLink)(Lattice lattice, int nx, int ny) = SampleRightLinkMetropolisHastings;
-
-void (*SampleTopLink)(Lattice lattice, int nx, int ny) = SampleTopLinkMetropolisHastings;
-
-
-Lattice NewLattice(double beta, int n)
+void NewLattice(double _beta, int _n)
 {
-    SiteType **lattice;
-    int i, j;
-    lattice = (SiteType**) malloc(n*sizeof(SiteType*));
-    for (i=0; i<n; i++)
+    beta = _beta;
+    n = _n;
+
+    lattice = malloc(n*sizeof(struct LatticeSite *));
+    for (int i=0; i<n; i++)
     {
-        lattice[i] = (SiteType*) malloc(n*sizeof(SiteType));
+        lattice[i] = calloc(n,sizeof(struct LatticeSite));
     }
-    for (i=0; i<n; i++)
-    {
-        for (j=0; j<n; j++)
-        {
-            lattice[i][j].rightLink = 0.;
-            lattice[i][j].topLink = 0.;
-        }
-    }
-    return lattice;
 }
 
-void DeleteLattice(Lattice lattice)
+void DeleteLattice()
 {
-    int i;
-    for (i=0; i<n; i++)
+    beta = 0.;
+    n = 0;
+
+    for (int i=0; i<n; i++)
     {
         free(lattice[i]);
     }
     free(lattice);
 }
 
-void GetMeasurement(Lattice lattice, const char *observable, int measures)
+/*void SetBoundaryMoeb()
 {
-    if (argc != 4) {printf("**** ERROR: Wrong number args: is %i, should be 3\n", argc-1); return 1;}
-    const double beta = atof(argv[1]);
-    const int n = atoi(argv[2]);
+    GetCharge = GetChargeMoeb;
+    GetRightTL = GetRightTLMoeb;
+    GetTopRL = GetTopRLMoeb;
+    GetTopLeftRL = GetTopLeftRLMoeb;
+    GetLeftRL = GetLeftRLMoeb;
+    GetLeftTL = GetLeftTLMoeb;
+    GetBottomRL = GetBottomRLMoeb;
+    GetBottomTL = GetBottomTLMoeb;
+    GetBottomRightTL = GetBottomRightTLMoeb;
+}*/
 
-    RndInit();
-    SiteType **lattice = NewLattice(n);
+void SetObservableCharge()
+{
+    GetObservable = GetCharge;
+    obsName = "charge";
+}
 
-    FILE *chargeFile = fopen(argv[3], "w");
-    fprintf(chargeFile, "#beta = %f\n#N = %i\n", beta, n);
+void SetMetropolisHastings()
+{
+    SampleRightLink = SampleRightLinkMetropolisHastings;
+    SampleTopLink = SampleTopLinkMetropolisHastings;
+}
 
-    for (int i=0; i<n+IMAX; i++) //n is used also as number of thermaization iterations
+void SetMetropolis()
+{
+    SampleRightLink = SampleRightLinkMetropolis;
+    SampleTopLink = SampleTopLinkMetropolis;
+}
+
+void GetMeasurement(int iters, FILE *file)
+{
+    fprintf(file, "#beta = %f\n#N = %i\n", beta, n);
+
+    for (int i=0; i<n+iters; i++) //lattice size is used also as number of thermaization iterations
     {
-        SweepLattice(lattice, beta, n);
+        SweepLattice();
         if (i>=n) 
         {
-            const double charge = GetCharge(lattice, n);
-            fprintf(chargeFile, "%+.0f\n", charge);
+            double observable = GetMeasure();
+            fprintf(file, "%+.0f\n", observable);
         }
     }
 
-    fclose(chargeFile);
-    DeleteLattice(lattice, n);
-    RndFinalize();
-
-    printf("\n**** Saved in %s %i charge measures at beta = %.1f with lattice size %i ****\n\n", \
-            argv[3], IMAX, beta, n);
-        printf("Acceptance ratio: %f\n", (float)succ/total);
-
-    return 0;
+    printf("\n**** Saved %i %s measures at beta = %.1f with lattice size %i and %s boundary conditions ****\n\n", iters, obsName, beta, n, boundsName);
+    printf("Acceptance ratio: %f\n", (float)succ/total);
 }
 
-void SweepLattice(SiteType **lattice, double beta, int n)
-{
-    int nx,ny;
-    for (nx=0; nx<n; nx++)
-    {
-        for (ny=0; ny<n; ny++)
-        {
-            SampleRightLink(lattice, nx, ny, beta, n);
-        }
-    }
-    for (nx=0; nx<n; nx++)
-    {
-        for (ny=0; ny<n; ny++)
-        {
-            SampleTopLink(lattice, nx, ny, beta, n);
-        }
-    }
-}
+// **** Implementation of not included functions:
 
-double GetPlaquetteMean(SiteType **lattice, int n)
+double GetPlaquetteMean()
 {
-    int nx, ny;
     double plaquetteSum = 0.;
     
-    for (nx=0; nx<n; nx++)
+    for (int nx=0; nx<n; nx++)
     {
-        for (ny=0; ny<n; ny++)
+        for (int ny=0; ny<n; ny++)
         {
             plaquetteSum += cos( lattice[nx][ny].rightLink - lattice[nx][ny].topLink \
-
-                               + lattice[(nx+1)%n][ny].topLink - lattice[nx][(ny+1)%n].rightLink);
+                               + GetRightTL(nx,ny)         - GetTopRL(nx,ny) );
         }
     }
     return plaquetteSum/(n*n);
 }
 
-double GetCharge(SiteType **lattice, int n)
+double GetCharge()
 {
-    int nx, ny;
     double charge = 0.;
 
-    for (nx=0; nx<n; nx++)
+    for (int nx=0; nx<n; nx++)
     {
-        for (ny=0; ny<n; ny++)
+        for (int ny=0; ny<n; ny++)
         {
             charge += FitInterval( lattice[nx][ny].rightLink - lattice[nx][ny].topLink \
-                                 + lattice[(nx+1)%n][ny].topLink - lattice[nx][(ny+1)%n].rightLink);
+                                 + GetRightTL(nx,ny)         - GetTopRL(nx,ny) );
         }
     }
     return charge/2./M_PI;
 }
 
-void SampleRightLinkMetropolisHastings(SiteType **lattice, int nx, int ny, double beta, int n)
+void SweepLattice()
+{
+    for (int nx=0; nx<n; nx++)
+    {
+        for (int ny=0; ny<n; ny++)
+        {
+            SampleRightLink(nx, ny);
+        }
+    }
+    for (nx=0; nx<n; nx++)
+    {
+        for (ny=0; ny<n; ny++)
+        {
+            SampleTopLink(nx, ny);
+        }
+    }
+}
+
+void SampleRightLinkMetropolisHastings(int nx, int ny)
 {
     /*
      *       phi2
@@ -166,12 +242,12 @@ void SampleRightLinkMetropolisHastings(SiteType **lattice, int nx, int ny, doubl
      * Metropolis-Hastings step to change phi proposing phiNew.
      * For more information, see factSheet.pdf
      */
-    const double phi1 = lattice[(nx+1)%n][ny].topLink;
-    const double phi2 = lattice[nx][(ny+1)%n].rightLink;
+    const double phi1 = GetRightTL(nx,ny);
+    const double phi2 = GetTopRL(nx,ny);
     const double phi3 = lattice[nx][ny].topLink;
-    const double phi4 = lattice[nx][(ny+n-1)%n].topLink;
-    const double phi5 = lattice[nx][(ny+n-1)%n].rightLink;
-    const double phi6 = lattice[(nx+1)%n][(ny+n-1)%n].topLink;
+    const double phi4 = GetBottomTL(nx,ny);
+    const double phi5 = GetBottomRL(nx,ny);
+    const double phi6 = GetBottomRightTL(nx,ny);
 
     const double phiA = phi1 - phi2 - phi3;
     const double phiB = phi4 - phi5 - phi6;
@@ -210,11 +286,11 @@ void SampleTopLinkMetropolisHastings(SiteType **lattice, int nx, int ny, double 
      * For more information, see factSheet.pdf
      */
     const double phi1 = lattice[nx][ny].rightLink;
-    const double phi2 = lattice[(nx+1)%n][ny].topLink;
-    const double phi3 = lattice[nx][(ny+1)%n].rightLink;
-    const double phi4 = lattice[(nx+n-1)%n][(ny+1)%n].rightLink;
-    const double phi5 = lattice[(nx+n-1)%n][ny].topLink;
-    const double phi6 = lattice[(nx+n-1)%n][ny].rightLink;
+    const double phi2 = GetRightTL(nx,ny);
+    const double phi3 = GetTopRL(nx,ny);
+    const double phi4 = GetTopLeftRL(nx,ny);
+    const double phi5 = GetLeftTL(nx,ny);
+    const double phi6 = GetLeftRL(nx,ny);
 
     const double phiA = phi1 + phi2 - phi3;
     const double phiB = phi4 + phi5 - phi6;
@@ -255,12 +331,12 @@ void SampleRightLinkMetropolis(SiteType **lattice, int nx, int ny, double beta, 
      * Metropolis step to change phi proposing phiNew.
      * For more information, see factSheet.pdf
      */
-    const double phi1 = lattice[(nx+1)%n][ny].topLink;
-    const double phi2 = lattice[nx][(ny+1)%n].rightLink;
+    const double phi1 = GetRightTL(nx,ny);
+    const double phi2 = GetTopRL(nx,ny);
     const double phi3 = lattice[nx][ny].topLink;
-    const double phi4 = lattice[nx][(ny+n-1)%n].topLink;
-    const double phi5 = lattice[nx][(ny+n-1)%n].rightLink;
-    const double phi6 = lattice[(nx+1)%n][(ny+n-1)%n].topLink;
+    const double phi4 = GetBottomTL(nx,ny);
+    const double phi5 = GetBottomRL(nx,ny);
+    const double phi6 = GetBottomRightTL(nx,ny);
 
     const double phiA = phi1 - phi2 - phi3;
     const double phiB = phi4 - phi5 - phi6;
@@ -291,11 +367,11 @@ void SampleTopLinkMetropolis(SiteType **lattice, int nx, int ny, double beta, in
      * For more information, see factSheet.pdf
      */
     const double phi1 = lattice[nx][ny].rightLink;
-    const double phi2 = lattice[(nx+1)%n][ny].topLink;
-    const double phi3 = lattice[nx][(ny+1)%n].rightLink;
-    const double phi4 = lattice[(nx+n-1)%n][(ny+1)%n].rightLink;
-    const double phi5 = lattice[(nx+n-1)%n][ny].topLink;
-    const double phi6 = lattice[(nx+n-1)%n][ny].rightLink;
+    const double phi2 = GetRightTL(nx,ny);
+    const double phi3 = GetTopRL(nx,ny);
+    const double phi4 = GetTopLeftRL(nx,ny);
+    const double phi5 = GetLeftTL(nx,ny);
+    const double phi6 = GetLeftRL(nx,ny);
 
     const double phiA = phi1 + phi2 - phi3;
     const double phiB = phi4 + phi5 - phi6;
@@ -313,8 +389,43 @@ void SampleTopLinkMetropolis(SiteType **lattice, int nx, int ny, double beta, in
     total++;
 }
 
-double GetAcceptance(Lattice lattice)
+double GetRightTLTorus(int nx, int ny)
 {
+    return lattice[(nx+1)%n][ny].topLink;
+}
 
+double GetTopRLTorus(int nx, int ny)
+{
+    return lattice[nx][(ny+1)%n].rightLink;
+}
 
+double GetTopLeftRLTorus(int nx, int ny)
+{
+    return lattice[(nx+n-1)%n][(ny+1)%n].rightLink;
+}
+
+double GetLeftRLTorus(int nx, int ny)
+{
+    return lattice[(nx+n-1)%n][ny].rightLink;
+}
+
+double GetLeftTLTorus(int nx, int ny)
+{
+    return lattice[(nx+n-1)%n][ny].topLink;
+}
+
+double GetBottomRLTorus(int nx, int ny)
+{
+    return lattice[nx][(ny+n-1)%n].rightLink;
+}
+
+double GetBottomTLTorus(int nx, int ny)
+{
+    return lattice[nx][(ny+n-1)%n].topLink;
+}
+
+double GetBottomRightTLTorus(int nx, int ny)
+{
+    return lattice[nx][(ny+n-1)%n].topLink;
+}
 

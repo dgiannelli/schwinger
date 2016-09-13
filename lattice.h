@@ -5,6 +5,7 @@
 #ifndef LATTICE_H
 #define LATTICE_H
 
+#include <stdio.h>
 
 // Allocate memory for the lattice and initialize beta, n, and every link angle to 0:
 void NewLattice(double beta, int n);
@@ -23,6 +24,6 @@ void SetObservableCharge();
 void SetMetropolis();
 
 // Sample different field configuration and save measurements in a file:
-void GetMeasurement(int iters, FILE *file)
+void GetMeasurement(int iters, FILE *file);
 
 #endif

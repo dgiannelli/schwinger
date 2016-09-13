@@ -7,6 +7,7 @@
 #include <math.h>
 
 #include "lattice.h"
+#include "random.h"
 
 // **** Implementation only visible functions and declarations:
 
@@ -53,7 +54,7 @@ static double GetBottomRightTLTorus(int nx, int ny);
 //static double GetBottomRightTLMoeb(int nx, int ny);
 static double (*GetBottomRightTL)(int nx, int ny) = GetBottomRightTLTorus;
 
-static char[] boundsName = "torus";
+static char *boundsName = "torus";
 
 // **
 
@@ -69,7 +70,7 @@ static double (*GetObservable)() = GetPlaquetteMean;
 
 static double (*GetCharge)() = GetChargeTorus;
 
-static char[] obsName = "plaquette";
+static char *obsName = "plaquette";
 
 // **
 
@@ -97,7 +98,7 @@ static int total, succ;
 
 
 // Function that move an angle to an equivalent value in (-pi,pi]:
-static void double FitInterval(double x)
+static double FitInterval(double x)
 {
     return x - ceil( (x-M_PI) / (2.*M_PI) ) * 2.*M_PI;
 }
@@ -168,7 +169,7 @@ void GetMeasurement(int iters, FILE *file)
         SweepLattice();
         if (i>=n) 
         {
-            double observable = GetMeasure();
+            double observable = GetObservable();
             fprintf(file, "%+.0f\n", observable);
         }
     }
@@ -194,7 +195,7 @@ double GetPlaquetteMean()
     return plaquetteSum/(n*n);
 }
 
-double GetCharge()
+double GetChargeTorus()
 {
     double charge = 0.;
 
@@ -211,9 +212,10 @@ double GetCharge()
 
 void SweepLattice()
 {
-    for (int nx=0; nx<n; nx++)
+    int nx, ny;
+    for (nx=0; nx<n; nx++)
     {
-        for (int ny=0; ny<n; ny++)
+        for (ny=0; ny<n; ny++)
         {
             SampleRightLink(nx, ny);
         }
@@ -273,7 +275,7 @@ void SampleRightLinkMetropolisHastings(int nx, int ny)
     total++;
 }
 
-void SampleTopLinkMetropolisHastings(SiteType **lattice, int nx, int ny, double beta, int n)
+void SampleTopLinkMetropolisHastings(int nx, int ny)
 {
     /*
      *      phi4  phi3
@@ -316,7 +318,7 @@ void SampleTopLinkMetropolisHastings(SiteType **lattice, int nx, int ny, double 
     total++;
 }
 
-void SampleRightLinkMetropolis(SiteType **lattice, int nx, int ny, double beta, int n)
+void SampleRightLinkMetropolis(int nx, int ny)
 {
     /*
      *       phi2
@@ -354,7 +356,7 @@ void SampleRightLinkMetropolis(SiteType **lattice, int nx, int ny, double beta, 
     total++;
 }
 
-void SampleTopLinkMetropolis(SiteType **lattice, int nx, int ny, double beta, int n)
+void SampleTopLinkMetropolis(int nx, int ny)
 {
     /*
      *      phi4  phi3

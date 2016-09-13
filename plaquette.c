@@ -1,5 +1,6 @@
 /*
- * Main program for generating field configurations and measuring the plaquette mean value
+ * Main program for generating field configurations with torus boundaries
+ * and measuring the plaquette mean value.
  */
 
 #include <stdio.h>
@@ -8,36 +9,21 @@
 #include "random.h"
 
 #define N 20 //Lattice size
-#define IMAX 30000 //Number of measurement
-#define ITHERM 10 //Number of thermalization iteration
+#define ITERS 30000 //Number of measurement
 
 #define BETA 4. //Action beta parameter
-
-extern int succ, total;
 
 int main(int argc, char *argv[])
 {
     RndInit();
-    SiteType **lattice = NewLattice(N);
+    FILE *file = fopen("./data/torus/plaquette.dat", "w");
+    NewLattice(BETA,N); 
 
-    FILE *plaquetteFile = fopen("./data/plaquette.dat", "w");
+    GetMeasurement(ITERS,file);
 
-    for (int i=0; i<ITHERM+IMAX; i++)
-    {
-        SweepLattice(lattice, BETA, N);
-        if (i>=ITHERM) 
-        {
-            const double plaquette = GetPlaquetteMean(lattice, N);
-            fprintf(plaquetteFile, "%.16e\n", plaquette);
-        }
-    }
-
-    fclose(plaquetteFile);
-    DeleteLattice(lattice, N);
+    DeleteLattice();
+    fclose(file);
     RndFinalize();
-
-    printf("\n**** Saved in ./data/plaquette.dat %i plaquette measures at beta = %.1f ****\n\n", IMAX, BETA);
-    printf("Acceptance ratio: %f\n", (float)succ/total);
 
     return 0;
 }

@@ -1,48 +1,58 @@
 /*
  * Main program for generating field configurations and measuring the topological charge
- * Requires as argvs the values for beta, lattice size and the directory in which save data
+ * with torus boundary conditions.
+ * The program will run a simulation with different initial values in order to study the finite volume
+ * behaviour and the scaling study at constant physics.
+ * This program will save data in the folders data/torus/charge/fixed and (...)/phys. They must exist
+ * before running the program.
  */
 
 #include <stdio.h>
-#include <stdlib.h>
+#include <string.h>
+#include <assert.h>
 
 #include "lattice.h"
 #include "random.h"
 
+#define ITERS 10000
 
-#define IMAX 10000 //Number of measurement at fixed volume
 
-extern int succ, total;
-
-int main(int argc, char *argv[])
+int main()
 {
-    if (argc != 4) {printf("**** ERROR: Wrong number args: is %i, should be 3\n", argc-1); return 1;}
-    const double beta = atof(argv[1]);
-    const int n = atoi(argv[2]);
-
+    SetObservableCharge();
     RndInit();
-    SiteType **lattice = NewLattice(n);
 
-    FILE *chargeFile = fopen(argv[3], "w");
-    fprintf(chargeFile, "#beta = %f\n#N = %i\n", beta, n);
+    puts("Fixed beta = 1 and different values of N:");
 
-    for (int i=0; i<n+IMAX; i++) //n is used also as number of thermaization iterations
+    double betas[4] = {1., 1., 1., 1.};
+    int ns = {5, 10, 20, 40};
+    char dir[30] = "data/torus/charge/fixed/";
+    char filename[40];
+
+    for (int i=0; i<4; i++)
     {
-        SweepLattice(lattice, beta, n);
-        if (i>=n) 
-        {
-            const double charge = GetCharge(lattice, n);
-            fprintf(chargeFile, "%+.0f\n", charge);
-        }
+        sprintf(filename, "b%.1fn%02i.dat", betas[i], ns[i]);
+        FILE *file = fopen(strcat(dir,filename), "w");
+        assert(file);
+
+        NewLattice(betas[i], ns[i]);
+        GetMeasurement(ITERS, file);
+        DeleteLattice();
+
+        fclose(file);
     }
 
-    fclose(chargeFile);
-    DeleteLattice(lattice, n);
-    RndFinalize();
+    /*puts("Different values of beta,N such at constant physics:");
 
-    printf("\n**** Saved in %s %i charge measures at beta = %.1f with lattice size %i ****\n\n", \
-            argv[3], IMAX, beta, n);
-        printf("Acceptance ratio: %f\n", (float)succ/total);
+    char dir[30] = "data/torus/charge/phys/";
+    char filename[40] = "";
+    NewLattice(1.,5);
+    FILE *file = fopen("data/torus/charge/fixed/b1.0n05.dat", "w");
+    assert(file);
+    GetMeasurement(ITERS, file);
+    fclose(file);
+    DeleteLattice();
+    RndFinalize();*/
 
     return 0;
 }

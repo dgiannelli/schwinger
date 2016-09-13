@@ -63,6 +63,5 @@ random.o: random.c random.h
 
 clean:
 	@rm -f *.exe *.o *.pyc *.dat 
-	@rm -f sampling.c random.c
 	@rm -rf plots/ data/
 

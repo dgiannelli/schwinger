@@ -27,10 +27,10 @@ plotCharge:
 ####
 
 runPlaquette: plaquette.exe
-	@if [ ! -d 'data/torus/plaquette' ]; then mkdir data/torus/plaquette; fi
+	@if [ ! -d 'data/torus/plaquette' ]; then mkdir -p data/torus/plaquette; fi
 	./$<
 
-runBlockingAll: blockingAll.exe ./data/torus/plaquette.dat
+runBlockingAll: blockingAll.exe ./data/torus/plaquette/plaquette.dat
 	./$^
 
 ####

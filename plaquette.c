@@ -16,7 +16,7 @@
 int main(int argc, char *argv[])
 {
     RndInit();
-    FILE *file = fopen("./data/torus/plaquette.dat", "w");
+    FILE *file = fopen("./data/torus/plaquette/plaquette.dat", "w");
     NewLattice(BETA,N); 
 
     GetMeasurement(ITERS,file);

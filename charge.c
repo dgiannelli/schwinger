@@ -24,19 +24,18 @@ int main()
 
     puts("Fixed beta = 1 and different values of N:");
 
-    double betas[4] = {1., 1., 1., 1.};
-    int ns = {5, 10, 20, 40};
-    char dir[30] = "data/torus/charge/fixed/";
+    double betas[] = {1., 1., 1., 1.};
+    int ns[] = {5, 10, 20, 40};
     char filename[40];
 
     for (int i=0; i<4; i++)
     {
-        sprintf(filename, "b%.1fn%02i.dat", betas[i], ns[i]);
-        FILE *file = fopen(strcat(dir,filename), "w");
+        sprintf(filename, "data/torus/charge/fixed/b%.1fn%02i.dat", betas[i], ns[i]);
+        FILE *file = fopen(filename, "w");
         assert(file);
 
         NewLattice(betas[i], ns[i]);
-        GetMeasurement(ITERS, file);
+        GetMeasurement(ITERS, tau, file);
         DeleteLattice();
 
         fclose(file);

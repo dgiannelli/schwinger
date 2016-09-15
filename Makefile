@@ -3,6 +3,8 @@ CFLAGS = -std=gnu11 -O3 -Wall -lm -lgsl -lgslcblas
 
 ####
 
+DTC = data/torus/charge/
+
 .PHONY: charge plaquette
 .PHONY: runCharge plotCharge 
 .PHONY: runPlaquette runBlockingAll

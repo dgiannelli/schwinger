@@ -19,7 +19,8 @@ int main(int argc, char *argv[])
     FILE *file = fopen("./data/torus/plaquette/plaquette.dat", "w");
     NewLattice(BETA,N); 
 
-    GetMeasurement(ITERS,file);
+    //SetMetropolis();
+    GetMeasurement(ITERS,1,file);
 
     DeleteLattice();
     fclose(file);

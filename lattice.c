@@ -5,11 +5,13 @@
 
 #include <stdlib.h>
 #include <math.h>
+#include <string.h>
 
 #include "lattice.h"
 #include "random.h"
 
-// **** Implementation only visible functions and declarations:
+
+// **** Lattice variables:
 
 double beta;
 int n;
@@ -20,38 +22,40 @@ static struct LatticeSite
     double topLink;
 } **lattice;
 
+// **** Implementation only visible functions declarations:
+
 // ** Functions and function pointers to implement one of the boundary conditions (default: torus):
 
 static double GetRightTLTorus(int nx, int ny);
-//static double GetRightTLMoeb(int nx, int ny);
+static double GetRightTLMoeb(int nx, int ny);
 static double (*GetRightTL)(int nx, int ny) = GetRightTLTorus;
 
 static double GetTopRLTorus(int nx, int ny);
-//static double GetTopRLMoeb(int nx, int ny);
+static double GetTopRLMoeb(int nx, int ny);
 static double (*GetTopRL)(int nx, int ny) = GetTopRLTorus;
 
 static double GetTopLeftRLTorus(int nx, int ny);
-//static double GetTopLeftRLMoeb(int nx, int ny);
+static double GetTopLeftRLMoeb(int nx, int ny);
 static double (*GetTopLeftRL)(int nx, int ny) = GetTopLeftRLTorus;
 
 static double GetLeftRLTorus(int nx, int ny);
-//static double GetLeftRLMoeb(int nx, int ny);
+static double GetLeftRLMoeb(int nx, int ny);
 static double (*GetLeftRL)(int nx, int ny) = GetLeftRLTorus;
 
 static double GetLeftTLTorus(int nx, int ny);
-//static double GetLeftTLMoeb(int nx, int ny);
+static double GetLeftTLMoeb(int nx, int ny);
 static double (*GetLeftTL)(int nx, int ny) = GetLeftTLTorus;
 
 static double GetBottomRLTorus(int nx, int ny);
-//static double GetBottomRLMoeb(int nx, int ny);
+static double GetBottomRLMoeb(int nx, int ny);
 static double (*GetBottomRL)(int nx, int ny) = GetBottomRLTorus;
 
 static double GetBottomTLTorus(int nx, int ny);
-//static double GetBottomTLMoeb(int nx, int ny);
+static double GetBottomTLMoeb(int nx, int ny);
 static double (*GetBottomTL)(int nx, int ny) = GetBottomTLTorus;
 
 static double GetBottomRightTLTorus(int nx, int ny);
-//static double GetBottomRightTLMoeb(int nx, int ny);
+static double GetBottomRightTLMoeb(int nx, int ny);
 static double (*GetBottomRightTL)(int nx, int ny) = GetBottomRightTLTorus;
 
 static char *boundsName = "torus";
@@ -113,7 +117,15 @@ void NewLattice(double _beta, int _n)
     lattice = malloc(n*sizeof(struct LatticeSite *));
     for (int i=0; i<n; i++)
     {
-        lattice[i] = calloc(n,sizeof(struct LatticeSite));
+        lattice[i] = malloc(n*sizeof(struct LatticeSite));
+    }
+    for (int nx=0; nx<n; nx++)
+    {
+        for (int ny=0; ny<n; ny++)
+        {
+            lattice[nx][ny].rightLink = 2.*M_PI*(RndUniform()-0.5);
+            lattice[nx][ny].topLink = 2.*M_PI*(RndUniform()-0.5);
+        }
     }
 }
 
@@ -129,7 +141,7 @@ void DeleteLattice()
     free(lattice);
 }
 
-/*void SetBoundaryMoeb()
+void SetBoundaryMoeb()
 {
     GetCharge = GetChargeMoeb;
     GetRightTL = GetRightTLMoeb;
@@ -140,7 +152,7 @@ void DeleteLattice()
     GetBottomRL = GetBottomRLMoeb;
     GetBottomTL = GetBottomTLMoeb;
     GetBottomRightTL = GetBottomRightTLMoeb;
-}*/
+}
 
 void SetObservableCharge()
 {
@@ -160,18 +172,18 @@ void SetMetropolis()
     SampleTopLink = SampleTopLinkMetropolis;
 }
 
-void GetMeasurement(int iters, FILE *file)
+void GetMeasurement(int iters, int tau, FILE *file)
 {
-    fprintf(file, "#beta = %f\n#N = %i\n", beta, n);
+    if (!strcmp(obsName,"charge")) fprintf(file, "#beta = %f\n#N = %i\n", beta, n);
 
-    for (int i=0; i<n+iters; i++) //lattice size is used also as number of thermaization iterations
+    for (int i=0; i<iters; i++)
     {
-        SweepLattice();
-        if (i>=n) 
+        for (int j=0; j<tau; j++)
         {
-            double observable = GetObservable();
-            fprintf(file, "%+.0f\n", observable);
+            SweepLattice();
         }
+        double observable = GetObservable();
+        fprintf(file, "%+.16e\n", observable);
     }
 
     printf("\n**** Saved %i %s measures at beta = %.1f with lattice size %i and %s boundary conditions ****\n\n", iters, obsName, beta, n, boundsName);
@@ -217,14 +229,14 @@ void SweepLattice()
     {
         for (ny=0; ny<n; ny++)
         {
-            SampleRightLink(nx, ny);
+            SampleRightLink(nx,ny);
         }
     }
     for (nx=0; nx<n; nx++)
     {
         for (ny=0; ny<n; ny++)
         {
-            SampleTopLink(nx, ny);
+            SampleTopLink(nx,ny);
         }
     }
 }
@@ -396,7 +408,17 @@ double GetRightTLTorus(int nx, int ny)
     return lattice[(nx+1)%n][ny].topLink;
 }
 
+double GetRightTLMoeb(int nx, int ny)
+{
+    return -lattice[(nx+1)%n][ nx==n-1 ? (2*n-2-ny)%n : ny ].topLink;
+}
+
 double GetTopRLTorus(int nx, int ny)
+{
+    return lattice[nx][(ny+1)%n].rightLink;
+}
+
+double GetTopRLMoeb(int nx, int ny)
 {
     return lattice[nx][(ny+1)%n].rightLink;
 }
@@ -406,9 +428,19 @@ double GetTopLeftRLTorus(int nx, int ny)
     return lattice[(nx+n-1)%n][(ny+1)%n].rightLink;
 }
 
+double GetTopLeftRLMoeb(int nx, int ny)
+{
+    return lattice[(nx+n-1)%n][ nx==0 ? (2*n-2-ny)%n : (ny+1)%n ].rightLink;
+}
+
 double GetLeftRLTorus(int nx, int ny)
 {
     return lattice[(nx+n-1)%n][ny].rightLink;
+}
+
+double GetLeftRLMoeb(int nx, int ny)
+{
+    return lattice[(nx+n-1)%n][ nx==0 ? (n-1-ny) : ny ].rightLink;
 }
 
 double GetLeftTLTorus(int nx, int ny)
@@ -416,7 +448,17 @@ double GetLeftTLTorus(int nx, int ny)
     return lattice[(nx+n-1)%n][ny].topLink;
 }
 
+double GetLeftTLMoeb(int nx, int ny)
+{
+    return -lattice[(nx+n-1)%n][ nx==0 ? (2*n-2-ny)%n : ny ].topLink;
+}
+
 double GetBottomRLTorus(int nx, int ny)
+{
+    return lattice[nx][(ny+n-1)%n].rightLink;
+}
+
+double GetBottomRLMoeb(int nx, int ny)
 {
     return lattice[nx][(ny+n-1)%n].rightLink;
 }
@@ -426,8 +468,18 @@ double GetBottomTLTorus(int nx, int ny)
     return lattice[nx][(ny+n-1)%n].topLink;
 }
 
-double GetBottomRightTLTorus(int nx, int ny)
+double GetBottomTLMoeb(int nx, int ny)
 {
     return lattice[nx][(ny+n-1)%n].topLink;
+}
+
+double GetBottomRightTLTorus(int nx, int ny)
+{
+    return lattice[(nx+1)%n][(ny+n-1)%n].topLink;
+}
+
+double GetBottomRightTLMoeb(int nx, int ny)
+{
+    return -lattice[(nx+1)%n][ ny==n-1 ? (n-1-ny)%n : (ny+n-1)%n].topLink;
 }
 

@@ -24,6 +24,6 @@ void SetObservableCharge();
 void SetMetropolis();
 
 // Sample different field configuration and save measurements in a file:
-void GetMeasurement(int iters, FILE *file);
+void GetMeasurement(int iters, int tau, FILE *file);
 
 #endif

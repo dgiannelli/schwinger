@@ -9,7 +9,7 @@
 #include "random.h"
 
 #define N 20 //Lattice size
-#define ITERS 30000 //Number of measurement
+#define ITERS 10000 //Number of measurements
 
 #define BETA 4. //Action beta parameter
 
@@ -17,10 +17,10 @@ int main(int argc, char *argv[])
 {
     RndInit();
     FILE *file = fopen("./data/torus/plaquette/plaquette.dat", "w");
-    NewLattice(BETA,N); 
+    NewLattice(BETA,N,1); 
 
     //SetMetropolis();
-    GetMeasurement(ITERS,1,file);
+    GetMeasurement(ITERS,file);
 
     DeleteLattice();
     fclose(file);

@@ -10,11 +10,16 @@
 #include "lattice.h"
 #include "random.h"
 
+// Function that move an angle to an equivalent value in (-pi,pi]:
+
+#define ShiftAngle(x) (-ceil((x-M_PI)/2./M_PI) * 2.*M_PI)
+#define FitInterval(x) (x + ShiftAngle(x))
 
 // **** Lattice variables:
 
 double beta;
 int n;
+int tau;
 
 static struct LatticeSite
 {
@@ -100,19 +105,13 @@ static int total, succ;
 
 // **
 
-
-// Function that move an angle to an equivalent value in (-pi,pi]:
-static double FitInterval(double x)
-{
-    return x - ceil( (x-M_PI) / (2.*M_PI) ) * 2.*M_PI;
-}
-
 // **** Implementation of included functions:
 
-void NewLattice(double _beta, int _n)
+void NewLattice(double _beta, int _n, int _tau)
 {
     beta = _beta;
     n = _n;
+    tau = _tau;
 
     lattice = malloc(n*sizeof(struct LatticeSite *));
     for (int i=0; i<n; i++)
@@ -127,12 +126,17 @@ void NewLattice(double _beta, int _n)
             lattice[nx][ny].topLink = 2.*M_PI*(RndUniform()-0.5);
         }
     }
+    for (int t=0; t<10*tau; t++)
+    {
+        SweepLattice();
+    }
 }
 
 void DeleteLattice()
 {
     beta = 0.;
     n = 0;
+    tau = 0;
 
     for (int i=0; i<n; i++)
     {
@@ -172,18 +176,19 @@ void SetMetropolis()
     SampleTopLink = SampleTopLinkMetropolis;
 }
 
-void GetMeasurement(int iters, int tau, FILE *file)
+void GetMeasurement(int iters, FILE *file)
 {
     if (!strcmp(obsName,"charge")) fprintf(file, "#beta = %f\n#N = %i\n", beta, n);
 
     for (int i=0; i<iters; i++)
     {
-        for (int j=0; j<tau; j++)
+        for (int j=0; j<10*tau; j++)
         {
             SweepLattice();
         }
         double observable = GetObservable();
-        fprintf(file, "%+.16e\n", observable);
+        if (!strcmp(obsName,"plaquette")) fprintf(file, "%+.16e\n", observable);
+        else fprintf(file, "%+.0f\n", observable);
     }
 
     printf("\n**** Saved %i %s measures at beta = %.1f with lattice size %i and %s boundary conditions ****\n\n", iters, obsName, beta, n, boundsName);
@@ -215,11 +220,16 @@ double GetChargeTorus()
     {
         for (int ny=0; ny<n; ny++)
         {
-            charge += FitInterval( lattice[nx][ny].rightLink - lattice[nx][ny].topLink \
+            charge += ShiftAngle( lattice[nx][ny].rightLink - lattice[nx][ny].topLink \
                                  + GetRightTL(nx,ny)         - GetTopRL(nx,ny) );
         }
     }
     return charge/2./M_PI;
+}
+
+double GetChargeMoeb()
+{
+    return fmod(GetChargeTorus(),2);
 }
 
 void SweepLattice()

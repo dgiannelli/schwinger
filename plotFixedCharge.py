@@ -74,3 +74,5 @@ plt.legend(loc=2)
 plt.savefig('./plots/plotFixedSucep.pdf')
 plt.close()
 
+print 'Fit result: $x=%.6f\\pm%.6f$'%(popt[1],np.sqrt(pcov[1][1]))
+

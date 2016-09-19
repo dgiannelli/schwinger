@@ -23,35 +23,45 @@ int main()
     RndInit();
 
     puts("Fixed beta = 1 and different values of N:");
-
-    double betas[] = {1., 1., 1., 1.};
-    int ns[] = {5, 10, 20, 40};
     char filename[40];
 
-    for (int i=0; i<4; i++)
     {
-        sprintf(filename, "data/torus/charge/fixed/b%.1fn%02i.dat", betas[i], ns[i]);
-        FILE *file = fopen(filename, "w");
-        assert(file);
+        const double betas[] = {1., 1., 1., 1.};
+        const int ns[] = {5, 10, 20, 40};
 
-        NewLattice(betas[i], ns[i]);
-        GetMeasurement(ITERS, tau, file);
-        DeleteLattice();
+        for (int i=0; i<4; i++)
+        {
+            sprintf(filename, "data/torus/charge/fixed/b%.1fn%02i.dat", betas[i], ns[i]);
+            FILE *file = fopen(filename, "w"); assert(file);
+            NewLattice(betas[i], ns[i], 1);
 
-        fclose(file);
+            GetMeasurement(ITERS,file);
+
+            DeleteLattice();
+            fclose(file);
+        }
     }
 
-    /*puts("Different values of beta,N such at constant physics:");
+    puts("Different values of beta,N such at constant physics:");
 
-    char dir[30] = "data/torus/charge/phys/";
-    char filename[40] = "";
-    NewLattice(1.,5);
-    FILE *file = fopen("data/torus/charge/fixed/b1.0n05.dat", "w");
-    assert(file);
-    GetMeasurement(ITERS, file);
-    fclose(file);
-    DeleteLattice();
-    RndFinalize();*/
+    {
+        const double betas[] = {0.8, 1.8, 3.2, 5.0, 7.2, 9.8};
+        const int ns[] = {8, 12, 16, 20, 24, 28};
+
+        for (int i=0; i<6; i++)
+        {
+            sprintf(filename, "data/torus/charge/phys/b%.1fn%02i.dat", betas[i], ns[i]);
+            FILE *file = fopen(filename, "w"); assert(file);
+            NewLattice(betas[i], ns[i], 1);
+
+            GetMeasurement(ITERS,file);
+
+            DeleteLattice();
+            fclose(file);
+        }
+    }
+
+    RndFinalize();
 
     return 0;
 }

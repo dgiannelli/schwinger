@@ -41,12 +41,12 @@ for file in os.listdir(dataDir):
     #<Q^2>/N^2:
     plt.figure(3)
     betas.append(beta)
-    plt.errorbar(beta, ratio, yerr=dratio, fmt='o', ms=3, label=label)
+    plt.errorbar(1./(N*N), ratio, yerr=dratio, fmt='o', ms=3, label=label)
 
 
 #Evolution plot:
 plt.figure(1)
-plt.ylim(ymax=5)
+#plt.ylim(ymax=5)
 plt.title('Topological charge evolution at constant physics')
 plt.xlabel('Iterations')
 plt.ylabel('$Q$')
@@ -68,7 +68,7 @@ plt.close()
 #popt, pcov = curve_fit(f, betas, ratios, absolute_sigma=False)
 
 plt.figure(3)
-#plt.yscale('log')
+plt.yscale('log')
 
 #betapoints = np.linspace(0,8,50)
 #plt.plot(betapoints, f(betapoints, popt[0], popt[1]), label=r'$A \cdot e^{-\beta k}$')

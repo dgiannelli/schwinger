@@ -19,6 +19,7 @@
 
 int main()
 {
+    SetBoundaryMoeb();
     SetObservableCharge();
     RndInit();
 
@@ -31,7 +32,7 @@ int main()
 
         for (int i=0; i<4; i++)
         {
-            sprintf(filename, "data/torus/charge/fixed/b%.1fn%02i.dat", betas[i], ns[i]);
+            sprintf(filename, "data/moebius/charge/fixed/b%.1fn%02i.dat", betas[i], ns[i]);
             FILE *file = fopen(filename, "w"); assert(file);
             NewLattice(betas[i], ns[i], 1);
 
@@ -50,7 +51,7 @@ int main()
 
         for (int i=0; i<6; i++)
         {
-            sprintf(filename, "data/torus/charge/phys/b%.1fn%02i.dat", betas[i], ns[i]);
+            sprintf(filename, "data/moebius/charge/phys/b%.1fn%02i.dat", betas[i], ns[i]);
             FILE *file = fopen(filename, "w"); assert(file);
             NewLattice(betas[i], ns[i], 1);
 

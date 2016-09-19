@@ -4,6 +4,7 @@ CFLAGS = -std=gnu11 -O3 -Wall -lm -lgsl -lgslcblas
 ####
 
 DTC = data/torus/charge/
+DMC = data/moebius/charge/
 
 .PHONY: charge plaquette
 .PHONY: runCharge plotCharge 
@@ -22,6 +23,10 @@ runCharge: charge.exe
 	@if [ ! -d '$(DTC)' ]; then mkdir -p $(DTC)/fixed $(DTC)/phys; fi
 	./charge.exe
 
+runChargeMoeb: chargeMoeb.exe
+	@if [ ! -d '$(DMC)' ]; then mkdir -p $(DMC)/fixed $(DMC)/phys; fi
+	./chargeMoeb.exe
+
 plotCharge:
 	./plotFixedCharge.py
 	./plotPhysCharge.py
@@ -38,6 +43,9 @@ runBlockingAll: blockingAll.exe ./data/torus/plaquette/plaquette.dat
 ####
 
 charge.exe: charge.o lattice.o random.o
+	$(CC) $(CFLAGS) -o $@ $^
+
+chargeMoeb.exe: chargeMoeb.o lattice.o random.o
 	$(CC) $(CFLAGS) -o $@ $^
 
 plaquette.exe: plaquette.o lattice.o random.o

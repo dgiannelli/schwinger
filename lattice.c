@@ -148,6 +148,7 @@ void DeleteLattice()
 void SetBoundaryMoeb()
 {
     GetCharge = GetChargeMoeb;
+    boundsName = "moebius";
     GetRightTL = GetRightTLMoeb;
     GetTopRL = GetTopRLMoeb;
     GetTopLeftRL = GetTopLeftRLMoeb;
@@ -229,7 +230,7 @@ double GetChargeTorus()
 
 double GetChargeMoeb()
 {
-    return fmod(GetChargeTorus(),2);
+    return fmod(round(GetChargeTorus()),2);
 }
 
 void SweepLattice()

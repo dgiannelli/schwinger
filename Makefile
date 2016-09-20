@@ -20,11 +20,9 @@ plaquette: runPlaquette runBlockingAll
 ####
 
 runCharge: charge.exe
-	@if [ ! -d '$(DTC)' ]; then mkdir -p $(DTC)/fixed $(DTC)/phys; fi
 	./charge.exe
 
 runChargeMoeb: chargeMoeb.exe
-	@if [ ! -d '$(DMC)' ]; then mkdir -p $(DMC)/fixed $(DMC)/phys; fi
 	./chargeMoeb.exe
 
 plotCharge:

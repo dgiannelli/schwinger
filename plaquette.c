@@ -16,12 +16,14 @@
 int main(int argc, char *argv[])
 {
     RndInit();
+
+	system("if [ ! -d 'data/torus/plaquette' ]; then mkdir -p data/torus/plaquette; fi");
     FILE *file = fopen("./data/torus/plaquette/plaquette.dat", "w");
-    NewLattice(BETA,N,1); 
 
+    NewLattice(BETA,N,"torus","plaquette"); 
     GetMeasurement(ITERS,file);
-
     DeleteLattice();
+
     fclose(file);
     RndFinalize();
 

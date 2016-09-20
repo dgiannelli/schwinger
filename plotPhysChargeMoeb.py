@@ -68,8 +68,8 @@ plt.close()
 #popt, pcov = curve_fit(f, betas, ratios, absolute_sigma=False)
 
 plt.figure(3)
-plt.xscale('log')
-plt.yscale('log')
+#plt.xscale('log')
+#plt.yscale('log')
 
 #betapoints = np.linspace(0,8,50)
 #plt.plot(betapoints, f(betapoints, popt[0], popt[1]), label=r'$A \cdot e^{-\beta k}$')

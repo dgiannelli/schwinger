@@ -11,9 +11,9 @@ from jackknife import jackknife
 rc('text', usetex=True)
 rc('font', **{'family': 'serif', 'serif':['Computer Modern']}) 
 
-if not os.path.exists('plots/torus/'): os.makedirs('plots/torus/')
+if not os.path.exists('plots/moebius/'): os.makedirs('plots/moebius/')
 
-dataDir = 'data/torus/charge/phys/'
+dataDir = 'data/moebius/charge/phys/'
 betas = []
 ratios = []
 dratios = []
@@ -51,7 +51,7 @@ plt.title('Topological charge evolution at constant physics')
 plt.xlabel('Iterations')
 plt.ylabel('$Q$')
 plt.legend()
-plt.savefig('./plots/torus/plotPhysEvo.pdf')
+plt.savefig('./plots/moebius/plotPhysEvo.pdf')
 plt.close()
 #Histogram:
 plt.figure(2)
@@ -60,7 +60,7 @@ plt.title('PDF of topological charge at constant physics')
 plt.xlabel('$Q$')
 plt.ylabel('$P(Q)$')
 plt.legend()
-plt.savefig('./plots/torus/plotPhysHisto.pdf')
+plt.savefig('./plots/moebius/plotPhysHisto.pdf')
 plt.close()
 #Fit <Q^2>/N^2 and plot:
 
@@ -79,6 +79,6 @@ plt.xlabel(r'$\frac{1}{N^2}$')
 plt.ylim(ymin=-0.003)
 plt.ylabel(r'$\frac{\left<Q^2\right>}{N^2}$')
 plt.legend(numpoints=1)
-plt.savefig('./plots/torus/plotPhysRatio.pdf')
+plt.savefig('./plots/moebius/plotPhysRatio.pdf')
 plt.close()
 

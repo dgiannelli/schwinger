@@ -31,6 +31,10 @@ plotCharge:
 	./plotFixedCharge.py
 	./plotPhysCharge.py
 
+plotChargeMoeb:
+	./plotFixedChargeMoeb.py
+	./plotPhysChargeMoeb.py
+
 ####
 
 runPlaquette: plaquette.exe

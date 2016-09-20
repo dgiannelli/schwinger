@@ -17,9 +17,12 @@
 
 // **** Lattice variables:
 
-double beta;
-int n;
-int tau;
+static double beta;
+static int n;
+static int tau;
+// Global variables to compute the acceptance ratio of the updating steps:
+static int total, succ;
+
 
 static struct LatticeSite
 {
@@ -100,9 +103,6 @@ static void (*SampleRightLink)(int nx, int ny) = SampleRightLinkMetropolisHastin
 
 static void (*SampleTopLink)(int nx, int ny) = SampleTopLinkMetropolisHastings;
 
-// Global variables to compute the acceptance ratio of the updating steps:
-static int total, succ;
-
 // **
 
 // **** Implementation of included functions:
@@ -112,6 +112,8 @@ void NewLattice(double _beta, int _n, int _tau)
     beta = _beta;
     n = _n;
     tau = _tau;
+    total = 0;
+    succ = 0;
 
     lattice = malloc(n*sizeof(struct LatticeSite *));
     for (int i=0; i<n; i++)
@@ -137,6 +139,8 @@ void DeleteLattice()
     beta = 0.;
     n = 0;
     tau = 0;
+    succ = 0;
+    total = 0;
 
     for (int i=0; i<n; i++)
     {
@@ -230,7 +234,8 @@ double GetChargeTorus()
 
 double GetChargeMoeb()
 {
-    return fmod(round(GetChargeTorus()),2);
+    //return fmod(round(GetChargeTorus()),2);
+    return GetChargeTorus();
 }
 
 void SweepLattice()

@@ -11,9 +11,9 @@ from jackknife import jackknife
 rc('text', usetex=True)
 rc('font', **{'family': 'serif', 'serif':['Computer Modern']}) 
 
-if not os.path.exists('plots/torus/'): os.makedirs('plots/torus')
+if not os.path.exists('plots/moebius/'): os.makedirs('plots/moebius/')
 
-dataDir = 'data/torus/charge/fixed/'
+dataDir = 'data/moebius/charge/fixed/'
 Ns = []
 QsqMeans = []
 dQsqMeans = []
@@ -43,16 +43,16 @@ plt.title('Topological charge evolution at $\\beta=%.0f$'%(beta))
 plt.xlabel('Iterations')
 plt.ylabel('$Q$')
 plt.legend()
-plt.savefig('./plots/torus/plotFixedEvo.pdf')
+plt.savefig('./plots/moebius/plotFixedEvo.pdf')
 plt.close()
 #Histogram:
 plt.figure(2)
-plt.xlim([-20,20])
+#plt.xlim([-20,20])
 plt.title('PDF of topological charge at $\\beta=%.0f$'%(beta))
 plt.xlabel('$Q$')
 plt.ylabel('$P(Q)$')
 plt.legend()
-plt.savefig('./plots/torus/plotFixedHisto.pdf')
+plt.savefig('./plots/moebius/plotFixedHisto.pdf')
 plt.close()
 
 #Fit and plot of: <Q^2> = x*log(N) + A:
@@ -71,7 +71,7 @@ plt.xlabel(r'$N$')
 plt.ylabel(r'$\left<Q^2\right>$')
 plt.legend(loc=2)
 #plt.tight_layout()
-plt.savefig('./plots/torus/plotFixedSucep.pdf')
+plt.savefig('./plots/moebius/plotFixedSucep.pdf')
 plt.close()
 
 print 'Fit result: $x=%.6f\\pm%.6f$'%(popt[1],np.sqrt(pcov[1][1]))

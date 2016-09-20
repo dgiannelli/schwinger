@@ -35,13 +35,13 @@ int main()
             NewLattice(betas[i], ns[i], "torus", "charge");
             GetMeasures(data, ITERS);
             DeleteLattice();
-            Jackknife(f, ITERS, JSETS, &jMean, &jVar);
+            Jackknife(f, data, ITERS, JSETS, &jMean, &jVar);
             fprintf(fileTorus, "%.1f\t%02i\t%.16e\t%.16e\n", betas[i], ns[i], jMean, sqrt(jVar));
 
             NewLattice(betas[i], ns[i], "moebius", "charge");
             GetMeasures(data, ITERS);
             DeleteLattice();
-            Jackknife(f, ITERS, JSETS, &jMean, &jVar);
+            Jackknife(f, data, ITERS, JSETS, &jMean, &jVar);
             fprintf(fileMoeb, "%.1f\t%02i\t%.16e\t%.16e\n", betas[i], ns[i], jMean, sqrt(jVar));
         }
     }
@@ -63,13 +63,13 @@ int main()
             NewLattice(betas[i], ns[i], "torus", "charge");
             GetMeasures(data, ITERS);
             DeleteLattice();
-            Jackknife(f, ITERS, JSETS, &jMean, &jVar);
+            Jackknife(f, data, ITERS, JSETS, &jMean, &jVar);
             fprintf(fileTorus, "%.1f\t%02i\t%.16e\t%.16e\n", betas[i], ns[i], jMean, sqrt(jVar));
 
             NewLattice(betas[i], ns[i], "moebius", "charge");
             GetMeasures(data, ITERS);
             DeleteLattice();
-            Jackknife(f, ITERS, JSETS, &jMean, &jVar);
+            Jackknife(f, data, ITERS, JSETS, &jMean, &jVar);
             fprintf(fileMoeb, "%.1f\t%02i\t%.16e\t%.16e\n", betas[i], ns[i], jMean, sqrt(jVar));
         }
     }

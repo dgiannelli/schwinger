@@ -16,6 +16,16 @@
 #define ITERS 10000 //Number of measures
 #define JSETS 20 //Number of Jackknife sets
 
+double fJack(jStart, jEnd, data, size)
+{
+    double mean = 0.;
+    for (int i=0; i<size; i++)
+    {
+        if (i<jStart || i>jEnd) mean += data[i];
+    }
+    return mean/(size+jStart-jEnd-1);
+
+
 int main(int argc, char *argv[])
 {
 
@@ -25,7 +35,7 @@ int main(int argc, char *argv[])
 
     double jMean, jVar, *data = calloc(ITERS, sizeof(double));
     GetMeasures(data, ITERS);
-    Jackknife(data, ITERS, JSETS, &jMean, &jVar);
+    Jackknife(f, data, ITERS, JSETS, &jMean, &jVar);
     free(data);
 
     DeleteLattice();

@@ -5,6 +5,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <math.h>
 #include <assert.h>
 
 #include "lattice.h"
@@ -12,13 +13,12 @@
 #include "jackknife.h"
 
 #define ITERS 10000
-#define JSIZE 20
+#define JSETS 20
 
 int main()
 {
     RndInit();
-    double *data, jMean, jError;
-    data = calloc(ITERS, sizeof(double));
+    double jMean, jVar, *data = calloc(ITERS, sizeof(double));
 	system("if [ ! -d 'data' ]; then mkdir -p data; fi");
 
     puts("\n**** Fixed beta = 1 and different values of N: ****\n");
@@ -35,14 +35,14 @@ int main()
             NewLattice(betas[i], ns[i], "torus", "charge");
             GetMeasures(data, ITERS);
             DeleteLattice();
-            Jackknife(f, ITERS, JSIZE, &jMean, &jError);
-            fprintf(fileTorus, "%.1f\t%02i\t%.16e\t%.16e\n", betas[i], ns[i], jMean, jError);
+            Jackknife(f, ITERS, JSETS, &jMean, &jVar);
+            fprintf(fileTorus, "%.1f\t%02i\t%.16e\t%.16e\n", betas[i], ns[i], jMean, sqrt(jVar));
 
             NewLattice(betas[i], ns[i], "moebius", "charge");
             GetMeasures(data, ITERS);
             DeleteLattice();
-            Jackknife(f, ITERS, JSIZE, &jMean, &jError);
-            fprintf(fileMoeb, "%.1f\t%02i\t%.16e\t%.16e\n", betas[i], ns[i], jMean, jError);
+            Jackknife(f, ITERS, JSETS, &jMean, &jVar);
+            fprintf(fileMoeb, "%.1f\t%02i\t%.16e\t%.16e\n", betas[i], ns[i], jMean, sqrt(jVar));
         }
     }
 
@@ -63,20 +63,21 @@ int main()
             NewLattice(betas[i], ns[i], "torus", "charge");
             GetMeasures(data, ITERS);
             DeleteLattice();
-            Jackknife(f, ITERS, JSIZE, &jMean, &jError);
-            fprintf(fileTorus, "%.1f\t%02i\t%.16e\t%.16e\n", betas[i], ns[i], jMean, jError);
+            Jackknife(f, ITERS, JSETS, &jMean, &jVar);
+            fprintf(fileTorus, "%.1f\t%02i\t%.16e\t%.16e\n", betas[i], ns[i], jMean, sqrt(jVar));
 
             NewLattice(betas[i], ns[i], "moebius", "charge");
             GetMeasures(data, ITERS);
             DeleteLattice();
-            Jackknife(f, ITERS, JSIZE, &jMean, &jError);
-            fprintf(fileMoeb, "%.1f\t%02i\t%.16e\t%.16e\n", betas[i], ns[i], jMean, jError);
+            Jackknife(f, ITERS, JSETS, &jMean, &jVar);
+            fprintf(fileMoeb, "%.1f\t%02i\t%.16e\t%.16e\n", betas[i], ns[i], jMean, sqrt(jVar));
         }
     }
 
     fclose(fileTorus);
     fclose(fileMoeb);
 
+    free(data);
     RndFinalize();
 
     return 0;

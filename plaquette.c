@@ -4,28 +4,35 @@
  */
 
 #include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
 
 #include "lattice.h"
 #include "random.h"
 
-#define N 20 //Lattice size
-#define ITERS 10000 //Number of measurements
-
 #define BETA 4. //Action beta parameter
+#define N 20 //Lattice size
+
+#define ITERS 10000 //Number of measures
+#define JSETS 20 //Number of Jackknife sets
 
 int main(int argc, char *argv[])
 {
+
     RndInit();
 
-	system("if [ ! -d 'data/torus/plaquette' ]; then mkdir -p data/torus/plaquette; fi");
-    FILE *file = fopen("./data/torus/plaquette/plaquette.dat", "w");
-
     NewLattice(BETA,N,"torus","plaquette"); 
-    GetMeasurement(ITERS,file);
+
+    double jMean, jVar, *data = calloc(ITERS, sizeof(double));
+    GetMeasures(data, ITERS);
+    Jackknife(data, ITERS, JSETS, &jMean, &jVar);
+    free(data);
+
     DeleteLattice();
 
-    fclose(file);
     RndFinalize();
+
+    printf("Plaquette at beta = %.1f and lattice size = %i:\n%.16e +/- %.16e\n", BETA, N, jMean, sqrt(jVar));
 
     return 0;
 }

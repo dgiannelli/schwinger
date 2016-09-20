@@ -144,19 +144,15 @@ void DeleteLattice()
     free(lattice);
 }
 
-void GetMeasurement(int iters, FILE *file)
+void GetMeasures(double *data, int iters)
 {
-    if (!strcmp(obsName,"charge")) fprintf(file, "#beta = %f\n#N = %i\n", beta, n);
-
     for (int i=0; i<iters; i++)
     {
         SweepLattice();
-        double observable = GetObservable();
-        if (!strcmp(obsName,"plaquette")) fprintf(file, "%+.16e\n", observable);
-        else fprintf(file, "%+.0f\n", observable);
+        data[i] = GetObservable();
     }
 
-    printf("\n**** Saved %i %s measures at beta = %.1f with lattice size %i and %s boundary conditions ****\n\n", iters, obsName, beta, n, boundsName);
+    printf("\n**** Collected %i %s measures at beta = %.1f with lattice size %i and %s boundary conditions ****\n\n", iters, obsName, beta, n, boundsName);
     printf("Acceptance ratio: %f\n", (float)succ/total);
 }
 
@@ -190,14 +186,14 @@ void SetBoundaryMoeb()
 
 void SetObservablePlaquette()
 {
-    obsName = "plaquette";
     GetObservable = GetPlaquetteMean;
+    obsName = "plaquette";
 }
 
 void SetObservableCharge()
 {
-    obsName = "charge";
     GetObservable = GetCharge;
+    obsName = "charge";
 }
 
 double GetPlaquetteMean()

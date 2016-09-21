@@ -33,7 +33,7 @@ static struct LatticeSite
 
 // Set the boundary conditions to torus/moebius:
 static void SetBoundsTorus();
-static void SetBoundaryMoeb();
+static void SetBoundsMoeb();
 
 // Set the program to evaluate plaquette/charge:
 static void SetObsPlaquette();
@@ -158,7 +158,7 @@ void GetMeasures(double *data, int iters)
 
 // **** Implementation of not included functions:
 
-void SetBoundaryTorus()
+void SetBoundsTorus()
 {
     GetRightTL = GetRightTLTorus;
     GetTopRL = GetTopRLTorus;
@@ -171,7 +171,7 @@ void SetBoundaryTorus()
     boundsName = "torus";
 }
 
-void SetBoundaryMoeb()
+void SetBoundsMoeb()
 {
     GetRightTL = GetRightTLMoeb;
     GetTopRL = GetTopRLMoeb;
@@ -184,13 +184,13 @@ void SetBoundaryMoeb()
     boundsName = "moebius";
 }
 
-void SetObservablePlaquette()
+void SetObsPlaquette()
 {
     GetObservable = GetPlaquetteMean;
     obsName = "plaquette";
 }
 
-void SetObservableCharge()
+void SetObsCharge()
 {
     GetObservable = GetCharge;
     obsName = "charge";

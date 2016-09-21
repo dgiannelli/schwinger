@@ -17,7 +17,7 @@
 #define ITERS 10000 //Number of measures
 #define JSETS 20 //Number of Jackknife sets
 
-double fJack(jStart, jEnd, data, size)
+double fJack(int jStart, int jEnd, double *data, int size)
 {
     double mean = 0.;
     for (int i=0; i<size; i++)

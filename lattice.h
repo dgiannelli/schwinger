@@ -17,6 +17,6 @@ void NewLattice(double beta, int n, const char *boundsName, const char *obsName)
 void DeleteLattice();
 
 // Sample different field configuration and save measurements in a file:
-void GetMeasurement(int iters, FILE *file);
+void GetMeasures(double *data, int iters);
 
 #endif

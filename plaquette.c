@@ -20,9 +20,13 @@
 double fJack(int jStart, int jEnd, double *data, int size)
 {
     double mean = 0.;
-    for (int i=0; i<size; i++)
+    for (int i=0; i<jStart; i++)
     {
-        if (i<jStart || i>=jEnd) mean += data[i];
+        mean += data[i];
+    }
+    for (int i=jEnd; i<size; i++)
+    {
+        mean += data[i];
     }
     return mean/(size+jStart-jEnd);
 }
@@ -38,7 +42,7 @@ int main(int argc, char *argv[])
     GetMeasures(data, ITERS);
     DeleteLattice();
 
-    Jackknife(&fJack, data, ITERS, JSETS, &jMean, &jVar);
+    Jackknife(fJack, data, ITERS, JSETS, &jMean, &jVar);
     free(data);
 
     RndFinalize();

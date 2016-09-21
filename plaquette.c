@@ -9,6 +9,7 @@
 
 #include "lattice.h"
 #include "random.h"
+#include "jackknife.h"
 
 #define BETA 4. //Action beta parameter
 #define N 20 //Lattice size
@@ -21,24 +22,24 @@ double fJack(jStart, jEnd, data, size)
     double mean = 0.;
     for (int i=0; i<size; i++)
     {
-        if (i<jStart || i>jEnd) mean += data[i];
+        if (i<jStart || i>=jEnd) mean += data[i];
     }
-    return mean/(size+jStart-jEnd-1);
-
+    return mean/(size+jStart-jEnd);
+}
 
 int main(int argc, char *argv[])
 {
 
     RndInit();
 
-    NewLattice(BETA,N,"torus","plaquette"); 
-
     double jMean, jVar, *data = calloc(ITERS, sizeof(double));
-    GetMeasures(data, ITERS);
-    Jackknife(f, data, ITERS, JSETS, &jMean, &jVar);
-    free(data);
 
+    NewLattice(BETA,N,"torus","plaquette"); 
+    GetMeasures(data, ITERS);
     DeleteLattice();
+
+    Jackknife(&fJack, data, ITERS, JSETS, &jMean, &jVar);
+    free(data);
 
     RndFinalize();
 

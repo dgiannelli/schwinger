@@ -1,0 +1,24 @@
+\documentclass[tikz]{standalone}
+\usepackage{pgfplots}
+
+\begin{document}
+\begin{tikzpicture}
+
+\begin{axis}[
+    title = {Continuum limit},
+    xlabel = $\frac{1}{N^2}$,
+    ylabel = $\left<Q^2\right>$,
+]
+\addplot+[
+    only marks, mark size = 0.6pt,
+    error bars/.cd, y dir = both, y explicit,
+] table[
+    x expr = 1/\thisrowno{1}^2,
+    y index = 2,
+    y error index = 3,
+] {../data/cntnmTorus.dat};
+\end{axis}
+
+\end{tikzpicture}
+\end{document}
+

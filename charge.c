@@ -52,13 +52,13 @@ int main()
             GetMeasures(data, ITERS);
             DeleteLattice();
             Jackknife(fJack, data, ITERS, JSETS, &jMean, &jVar);
-            fprintf(fileTorus, "%.1f\t%02i\t%.16e\t%.16e\n", betas[i], ns[i], jMean, sqrt(jVar));
+            fprintf(fileTorus, "%.1f\t%i\t%.16e\t%.16e\n", betas[i], ns[i], jMean, sqrt(jVar));
 
             NewLattice(betas[i], ns[i], "moebius", "charge");
             GetMeasures(data, ITERS);
             DeleteLattice();
             Jackknife(fJack, data, ITERS, JSETS, &jMean, &jVar);
-            fprintf(fileMoeb, "%.1f\t%02i\t%.16e\t%.16e\n", betas[i], ns[i], jMean, sqrt(jVar));
+            fprintf(fileMoeb, "%.1f\t%i\t%.16e\t%.16e\n", betas[i], ns[i], jMean, sqrt(jVar));
         }
 
         fclose(fileTorus);
@@ -80,13 +80,33 @@ int main()
             GetMeasures(data, ITERS);
             DeleteLattice();
             Jackknife(fJack, data, ITERS, JSETS, &jMean, &jVar);
-            fprintf(fileTorus, "%.1f\t%02i\t%.16e\t%.16e\n", betas[i], ns[i], jMean, sqrt(jVar));
+            fprintf(fileTorus, "%.1f\t%i\t%.16e\t%.16e\n", betas[i], ns[i], jMean, sqrt(jVar));
+
+            if (i==0)
+            {
+                FILE *fileSmallBeta = fopen("data/smallBeta.dat", "w"); assert(fileSmallBeta);
+                for (int j=0; j<ITERS; j++) fprintf(fileSmallBeta, "%.0f\n", data[j]);
+                fclose(fileSmallBeta);
+            }
+            if (i==4)
+            {
+                FILE *fileHighBeta = fopen("data/highBeta.dat", "w"); assert(fileHighBeta);
+                for (int j=0; j<ITERS; j++) fprintf(fileHighBeta, "%.0f\n", data[j]);
+                fclose(fileHighBeta);
+            }
 
             NewLattice(betas[i], ns[i], "moebius", "charge");
             GetMeasures(data, ITERS);
             DeleteLattice();
             Jackknife(fJack, data, ITERS, JSETS, &jMean, &jVar);
-            fprintf(fileMoeb, "%.1f\t%02i\t%.16e\t%.16e\n", betas[i], ns[i], jMean, sqrt(jVar));
+            fprintf(fileMoeb, "%.1f\t%i\t%.16e\t%.16e\n", betas[i], ns[i], jMean, sqrt(jVar));
+
+            if (i==4)
+            {
+                FILE *fileMoebEvo = fopen("data/moebEvo.dat", "w"); assert(fileMoebEvo);
+                for (int j=0; j<ITERS; j++) fprintf(fileMoebEvo, "%.0f\n", data[j]);
+                fclose(fileMoebEvo);
+            }
         }
 
         fclose(fileTorus);

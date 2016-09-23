@@ -6,19 +6,18 @@
 \begin{tikzpicture}
 
 \begin{axis}[
-    ymin = 0.03, ymax = 0.05,
-    title = {Infinite volume limit},
-    xlabel = $N$,
+    title = {Continuum limit},
+    xlabel = $\frac{1}{N^2}$,
     ylabel = $\frac{\left<Q^2\right>}{N^2}$,
 ]
 \addplot+[
     only marks, mark size = 0.6pt,
     error bars/.cd, y dir = both, y explicit,
 ] table[
-    x index = 1,
-    y expr = \thisrowno{2} / \thisrowno{1}^2, 
-    y error expr = \thisrowno{3} / \thisrowno{1}^2, 
-] {./data/inftyTorus.dat};
+    x expr = 1/\thisrowno{1}^2,
+    y expr = \thisrowno{2}/\thisrowno{1}^2,
+    y error expr = \thisrowno{3}/\thisrowno{1}^2,
+] {./data/cntnmMoeb.dat};
 \end{axis}
 
 \end{tikzpicture}

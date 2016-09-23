@@ -12,7 +12,7 @@
 #include "random.h"
 #include "jackknife.h"
 
-#define ITERS 10000
+#define ITERS 50000
 #define JSETS 20
 
 double fJack(int jStart, int jEnd, double *data, int size)
@@ -31,13 +31,11 @@ double fJack(int jStart, int jEnd, double *data, int size)
 
 int main()
 {
-    RndInit();
-
-    double jMean, jVar, *data = calloc(ITERS, sizeof(double));
+    double jMean, jVar, *data = calloc(10*ITERS, sizeof(double));
 
 	system("if [ ! -d 'data' ]; then mkdir -p data; fi");
 
-    puts("\n**** Fixed beta = 1 and different values of N: ****\n");
+    RndInit();
 
     {
         const double betas[] = {1., 1., 1., 1., 1., 1.};
@@ -45,6 +43,8 @@ int main()
 
         FILE *fileTorus = fopen("data/inftyTorus.dat", "w"); assert(fileTorus);
         FILE *fileMoeb = fopen("data/inftyMoeb.dat", "w"); assert(fileMoeb);
+
+        puts("\n**** Fixed beta = 1 and different values of N: ****\n");
 
         for (int i=0; i<6; i++)
         {
@@ -63,9 +63,9 @@ int main()
 
         fclose(fileTorus);
         fclose(fileMoeb);
+
     }
 
-    puts("\n**** Different values of beta,N at constant physics: ****\n");
 
     {
         const double betas[] = {0.8, 1.8, 3.2, 5.0, 7.2, 9.8};
@@ -74,12 +74,14 @@ int main()
         FILE *fileTorus = fopen("data/cntnmTorus.dat", "w"); assert(fileTorus);
         FILE *fileMoeb = fopen("data/cntnmMoeb.dat", "w"); assert(fileTorus);
 
+        puts("\n**** Different values of beta,N at constant physics: ****\n");
+
         for (int i=0; i<6; i++)
         {
             NewLattice(betas[i], ns[i], "torus", "charge");
-            GetMeasures(data, i==4 ? ITERS : ITERS*10);
+            GetMeasures(data, i!=4 ? ITERS : ITERS*10);
             DeleteLattice();
-            Jackknife(fJack, data, i==4 ? ITERS : ITERS*10, JSETS, &jMean, &jVar);
+            Jackknife(fJack, data, ITERS, JSETS, &jMean, &jVar);
             fprintf(fileTorus, "%.1f\t%i\t%.16e\t%.16e\n", betas[i], ns[i], jMean, sqrt(jVar));
 
             if (i==0)
@@ -88,7 +90,7 @@ int main()
                 for (int j=0; j<1000; j++) fprintf(fileSmallBeta, "%.0f\n", data[j]);
                 fclose(fileSmallBeta);
             }
-            if (i==4)
+            if (i==3)
             {
                 FILE *fileHighBeta = fopen("data/highBeta.dat", "w"); assert(fileHighBeta);
                 for (int j=0; j<1000; j++) fprintf(fileHighBeta, "%.0f\n", data[j]);
@@ -101,10 +103,10 @@ int main()
             Jackknife(fJack, data, ITERS, JSETS, &jMean, &jVar);
             fprintf(fileMoeb, "%.1f\t%i\t%.16e\t%.16e\n", betas[i], ns[i], jMean, sqrt(jVar));
 
-            if (i==4)
+            if (i==3)
             {
                 FILE *fileMoebEvo = fopen("data/moebEvo.dat", "w"); assert(fileMoebEvo);
-                for (int j=0; j<ITERS; j++) fprintf(fileMoebEvo, "%.0f\n", data[j]);
+                for (int j=0; j<1000; j++) fprintf(fileMoebEvo, "%.0f\n", data[j]);
                 fclose(fileMoebEvo);
             }
         }

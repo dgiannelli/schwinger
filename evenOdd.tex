@@ -1,0 +1,18 @@
+\documentclass[tikz]{standalone}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.13}
+
+\begin{document}
+\begin{tikzpicture}
+\begin{axis}
+\addplot+[
+    raw gnuplot,
+] gnuplot {
+    set boxwidth 1;
+    bin(x) = x - floor(x/2.)*2; 
+    plot 'data/moebEvo.dat' u (bin($1)):(1.) smooth frequency w boxes;%$
+};
+\end{axis}
+\end{tikzpicture}
+\end{document}
+

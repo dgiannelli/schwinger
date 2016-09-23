@@ -6,7 +6,7 @@
 \begin{tikzpicture}
 
 \begin{axis}[
-    ymin = 0.03, ymax = 0.05,
+    ymin = 0.3, ymax = 0.5,
     title = {Infinite volume limit},
     xlabel = $N$,
     ylabel = $\frac{\left<Q^2\right>}{N^2}$,
@@ -18,7 +18,7 @@
     x index = 1,
     y expr = \thisrowno{2} / \thisrowno{1}^2, 
     y error expr = \thisrowno{3} / \thisrowno{1}^2, 
-] {./data/inftyTorus.dat};
+] {./data/inftyMoeb.dat};
 \end{axis}
 
 \end{tikzpicture}

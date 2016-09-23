@@ -18,10 +18,14 @@ runCharge: charge.exe
 
 plotCharge:
 	if [ ! -d 'plots' ]; then mkdir -p plots; fi
-	pdflatex -output-directory=plots inftyTorus.tex 
-	pdflatex -output-directory=plots cntnmTorus.tex
-	pdflatex -output-directory=plots freezing.tex
-	pdflatex -output-directory=plots badGuy.tex
+	pdflatex -output-directory=plots -shell-escape inftyTorus.tex 
+	pdflatex -output-directory=plots -shell-escape cntnmTorus.tex
+	pdflatex -output-directory=plots -shell-escape freezing.tex
+	pdflatex -output-directory=plots -shell-escape badGuy.tex
+	pdflatex -output-directory=plots -shell-escape inftyMoeb.tex
+	pdflatex -output-directory=plots -shell-escape moebEvo.tex
+	pdflatex -output-directory=plots -shell-escape cntnmMoeb.tex
+	#pdflatex -output-directory=plots -shell-escape evenOdd.tex
 
 ####
 

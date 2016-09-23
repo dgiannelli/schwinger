@@ -1,5 +1,5 @@
 CC = gcc
-CFLAGS = -std=gnu11 -O3 -Wall -lm -lgsl -lgslcblas
+CFLAGS = -fopenmp -std=gnu11 -O3 -Wall -lm -lgsl -lgslcblas 
 
 ####
 
@@ -14,10 +14,14 @@ runPlaquette: plaquette.exe
 	./$<
 
 runCharge: charge.exe
-	./charge.exe
+	OMP_NUM_THREADS=2 ./charge.exe
 
 plotCharge:
-	./plot*.py
+	if [ ! -d 'plots' ]; then mkdir -p plots; fi
+	pdflatex -output-directory=plots inftyTorus.tex 
+	pdflatex -output-directory=plots cntnmTorus.tex
+	pdflatex -output-directory=plots freezing.tex
+	pdflatex -output-directory=plots badGuy.tex
 
 ####
 
@@ -45,6 +49,11 @@ random.o: random.c random.h
 
 
 clean:
-	@rm -f *.exe *.o *.pyc *.dat 
-	@rm -rf data/ plots/
+	@rm -f *.exe *.o *.pyc *.dat *.aux *.log
+
+cleanData:
+	@rm -rf data/
+	
+cleanPlots:
+	@rm -rf plots/
 

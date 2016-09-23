@@ -41,7 +41,7 @@ int main()
 
     {
         const double betas[] = {1., 1., 1., 1., 1., 1.};
-        const int ns[] = {5, 10, 15, 20, 25, 30};
+        const int ns[] = {4, 8, 12, 16, 20, 24};
 
         FILE *fileTorus = fopen("data/inftyTorus.dat", "w"); assert(fileTorus);
         FILE *fileMoeb = fopen("data/inftyMoeb.dat", "w"); assert(fileMoeb);
@@ -77,21 +77,21 @@ int main()
         for (int i=0; i<6; i++)
         {
             NewLattice(betas[i], ns[i], "torus", "charge");
-            GetMeasures(data, ITERS);
+            GetMeasures(data, i==4 ? ITERS : ITERS*10);
             DeleteLattice();
-            Jackknife(fJack, data, ITERS, JSETS, &jMean, &jVar);
+            Jackknife(fJack, data, i==4 ? ITERS : ITERS*10, JSETS, &jMean, &jVar);
             fprintf(fileTorus, "%.1f\t%i\t%.16e\t%.16e\n", betas[i], ns[i], jMean, sqrt(jVar));
 
             if (i==0)
             {
                 FILE *fileSmallBeta = fopen("data/smallBeta.dat", "w"); assert(fileSmallBeta);
-                for (int j=0; j<ITERS; j++) fprintf(fileSmallBeta, "%.0f\n", data[j]);
+                for (int j=0; j<1000; j++) fprintf(fileSmallBeta, "%.0f\n", data[j]);
                 fclose(fileSmallBeta);
             }
             if (i==4)
             {
                 FILE *fileHighBeta = fopen("data/highBeta.dat", "w"); assert(fileHighBeta);
-                for (int j=0; j<ITERS; j++) fprintf(fileHighBeta, "%.0f\n", data[j]);
+                for (int j=0; j<1000; j++) fprintf(fileHighBeta, "%.0f\n", data[j]);
                 fclose(fileHighBeta);
             }
 

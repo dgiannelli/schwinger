@@ -1,5 +1,6 @@
 \documentclass[tikz]{standalone}
 \usepackage{pgfplots}
+\pgfplotsset{compat=1.13}
 
 \begin{document}
 \begin{tikzpicture}
@@ -16,7 +17,7 @@
     x index = 1,
     y expr = \thisrowno{2} / \thisrowno{1}^2, 
     y error expr = \thisrowno{3} / \thisrowno{1}^2, 
-] {../data/inftyTorus.dat};
+] {./data/inftyTorus.dat};
 \end{axis}
 
 \end{tikzpicture}

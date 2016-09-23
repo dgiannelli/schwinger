@@ -1,0 +1,43 @@
+\documentclass{standalone}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.13}
+
+\begin{document}
+\begin{tikzpicture}[baseline]
+
+\begin{axis}[
+    small,
+    enlargelimits = false,
+    ymin = -5, ymax = 5,
+    title = {$\beta = 0.8$},
+    xlabel = Iterations,
+    ylabel = $Q$,
+]
+\addplot+[
+    mark = none,
+] table[
+    x expr = \coordindex + 1,
+    y index = 0,
+] {./data/smallBeta.dat};
+\end{axis}
+\end{tikzpicture}%
+\begin{tikzpicture}[baseline]
+\begin{axis}[
+    small,
+    enlargelimits = false,
+    ymin = -5, ymax = 5,
+    title = {$\beta = 7.2$},
+    xlabel = Iterations,
+    ylabel = $Q$,
+]
+\addplot+[
+    mark = none,
+] table[
+    x expr = \coordindex + 1,
+    y index = 0,
+] {./data/highBeta.dat};
+\end{axis}
+
+\end{tikzpicture}
+\end{document}
+

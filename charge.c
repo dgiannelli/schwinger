@@ -71,8 +71,8 @@ int main()
         const double betas[] = {0.8, 1.8, 3.2, 5.0, 7.2, 9.8};
         const int ns[] = {8, 12, 16, 20, 24, 28};
 
-        FILE *fileTorus = fopen("data/cntnmTorus.dat", "w"); assert(fileTorus);
-        FILE *fileMoeb = fopen("data/cntnmMoeb.dat", "w"); assert(fileTorus);
+        FILE *fileTorus = fopen("data/contTorus.dat", "w"); assert(fileTorus);
+        FILE *fileMoeb = fopen("data/contMoeb.dat", "w"); assert(fileTorus);
 
         puts("\n**** Different values of beta,N at constant physics: ****\n");
 

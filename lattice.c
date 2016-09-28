@@ -129,7 +129,7 @@ void NewLattice(double _beta, int _n, const char *_boundsName, const char *_obsN
             lattice[nx][ny].topLink = 2.*M_PI*(RndUniform()-0.5);
         }
     }
-    for (int t=0; t<1000; t++)
+    for (int t=0; t<10000; t++)
     {
         SweepLattice();
     }
@@ -219,7 +219,7 @@ double GetCharge()
     {
         for (int ny=0; ny<n; ny++)
         {
-            charge += ShiftAngle( lattice[nx][ny].rightLink - lattice[nx][ny].topLink \
+            charge += FitInterval( lattice[nx][ny].rightLink - lattice[nx][ny].topLink \
                                  + GetRightTL(nx,ny)         - GetTopRL(nx,ny) );
         }
     }
@@ -341,7 +341,15 @@ double GetRightTLTorus(int nx, int ny)
 
 double GetRightTLMoeb(int nx, int ny)
 {
-    return -lattice[(nx+1)%n][ nx==n-1 ? (2*n-2-ny)%n : ny ].topLink;
+    if(nx==n-1)
+    {
+        return -lattice[0][(2*n-2-ny)%n].topLink;
+    }
+    else
+    {
+        return lattice[nx+1][ny].topLink;
+    }
+    //return -lattice[(nx+1)%n][ nx==n-1 ? (2*n-2-ny)%n : ny ].topLink;
 }
 
 double GetTopRLTorus(int nx, int ny)
@@ -381,7 +389,15 @@ double GetLeftTLTorus(int nx, int ny)
 
 double GetLeftTLMoeb(int nx, int ny)
 {
-    return -lattice[(nx+n-1)%n][ nx==0 ? (2*n-2-ny)%n : ny ].topLink;
+    if(nx==0)
+    {
+        return -lattice[n-1][(2*n-2-ny)%n].topLink;
+    }
+    else
+    {
+        return lattice[nx-1][ny].topLink;
+    }
+    //return -lattice[(nx+n-1)%n][ nx==0 ? (2*n-2-ny)%n : ny ].topLink;
 }
 
 double GetBottomRLTorus(int nx, int ny)
@@ -411,6 +427,14 @@ double GetBottomRightTLTorus(int nx, int ny)
 
 double GetBottomRightTLMoeb(int nx, int ny)
 {
-    return -lattice[(nx+1)%n][ ny==n-1 ? (n-1-ny)%n : (ny+n-1)%n].topLink;
+    if(nx==n-1)
+    {
+        return -lattice[0][(2*n-1-ny)%n].topLink;
+    }
+    else
+    {
+        return lattice[nx+1][(ny+n-1)%n].topLink;
+    }
+    //return -lattice[(nx+1)%n][ ny==n-1 ? (n-1-ny)%n : (ny+n-1)%n].topLink;
 }
 

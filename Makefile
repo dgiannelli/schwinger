@@ -1,5 +1,5 @@
 CC = gcc
-CFLAGS = -fopenmp -std=gnu11 -O3 -Wall -lm -lgsl -lgslcblas 
+CFLAGS = -std=gnu11 -O3 -Wall -lm -lgsl -lgslcblas 
 
 ####
 
@@ -14,17 +14,17 @@ runPlaquette: plaquette.exe
 	./$<
 
 runCharge: charge.exe
-	OMP_NUM_THREADS=2 ./charge.exe
+	./charge.exe
 
 plotCharge:
 	if [ ! -d 'plots' ]; then mkdir -p plots; fi
 	pdflatex -output-directory=plots -shell-escape inftyTorus.tex 
-	pdflatex -output-directory=plots -shell-escape cntnmTorus.tex
+	pdflatex -output-directory=plots -shell-escape contTorus.tex
 	pdflatex -output-directory=plots -shell-escape freezing.tex
 	pdflatex -output-directory=plots -shell-escape badGuy.tex
 	pdflatex -output-directory=plots -shell-escape inftyMoeb.tex
 	pdflatex -output-directory=plots -shell-escape moebEvo.tex
-	pdflatex -output-directory=plots -shell-escape cntnmMoeb.tex
+	pdflatex -output-directory=plots -shell-escape contMoeb.tex
 	#pdflatex -output-directory=plots -shell-escape evenOdd.tex
 
 ####

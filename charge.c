@@ -12,7 +12,7 @@
 #include "random.h"
 #include "jackknife.h"
 
-#define ITERS 50000
+#define ITERS 100000
 #define JSETS 20
 
 double fJack(int jStart, int jEnd, double *data, int size)
@@ -79,7 +79,7 @@ int main()
         for (int i=0; i<6; i++)
         {
             NewLattice(betas[i], ns[i], "torus", "charge");
-            GetMeasures(data, i!=4 ? ITERS : ITERS*10);
+            GetMeasures(data, i<3 && i>4 ? ITERS : ITERS*10);
             DeleteLattice();
             Jackknife(fJack, data, ITERS, JSETS, &jMean, &jVar);
             fprintf(fileTorus, "%.1f\t%i\t%.16e\t%.16e\n", betas[i], ns[i], jMean, sqrt(jVar));

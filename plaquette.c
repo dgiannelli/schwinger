@@ -14,7 +14,7 @@
 #define BETA 4. //Action beta parameter
 #define N 20 //Lattice size
 
-#define ITERS 10000 //Number of measures
+#define ITERS 30000 //Number of measures
 #define JSETS 20 //Number of Jackknife sets
 
 double fJack(int jStart, int jEnd, double *data, int size)
@@ -45,9 +45,19 @@ int main(int argc, char *argv[])
     Jackknife(fJack, data, ITERS, JSETS, &jMean, &jVar);
     free(data);
 
+    printf("Torus: Plaquette at beta = %.1f and lattice size = %i:\n%.16e +/- %.16e\n", BETA, N, jMean, sqrt(jVar));
+
+    NewLattice(BETA,N,"moebius","plaquette"); 
+    GetMeasures(data, ITERS);
+    DeleteLattice();
+
+    Jackknife(fJack, data, ITERS, JSETS, &jMean, &jVar);
+    free(data);
+
+    printf("Moebius: Plaquette at beta = %.1f and lattice size = %i:\n%.16e +/- %.16e\n", BETA, N, jMean, sqrt(jVar));
+
     RndFinalize();
 
-    printf("Plaquette at beta = %.1f and lattice size = %i:\n%.16e +/- %.16e\n", BETA, N, jMean, sqrt(jVar));
 
     return 0;
 }

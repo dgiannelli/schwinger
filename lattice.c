@@ -129,7 +129,7 @@ void NewLattice(double _beta, int _n, const char *_boundsName, const char *_obsN
             lattice[nx][ny].topLink = 2.*M_PI*(RndUniform()-0.5);
         }
     }
-    for (int t=0; t<10000; t++)
+    for (int t=0; t<50000; t++)
     {
         SweepLattice();
     }

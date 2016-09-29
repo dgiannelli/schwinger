@@ -18,13 +18,14 @@ runCharge: charge.exe
 
 plotCharge:
 	if [ ! -d 'plots' ]; then mkdir -p plots; fi
-	pdflatex -output-directory=plots -shell-escape inftyTorus.tex 
-	pdflatex -output-directory=plots -shell-escape contTorus.tex
 	pdflatex -output-directory=plots -shell-escape freezing.tex
 	pdflatex -output-directory=plots -shell-escape badGuy.tex
-	pdflatex -output-directory=plots -shell-escape inftyMoeb.tex
 	pdflatex -output-directory=plots -shell-escape moebEvo.tex
+	pdflatex -output-directory=plots -shell-escape inftyTorus.tex 
+	pdflatex -output-directory=plots -shell-escape inftyMoeb.tex
+	pdflatex -output-directory=plots -shell-escape contTorus.tex
 	pdflatex -output-directory=plots -shell-escape contMoeb.tex
+	pdflatex -output-directory=plots -shell-escape contBoth.tex
 	#pdflatex -output-directory=plots -shell-escape evenOdd.tex
 
 ####
@@ -53,7 +54,7 @@ random.o: random.c random.h
 
 
 clean:
-	@rm -f *.exe *.o *.pyc *.dat *.aux *.log
+	@rm -f *.exe *.o *.dat *.aux *.log
 
 cleanData:
 	@rm -rf data/

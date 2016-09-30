@@ -64,6 +64,9 @@ int main(int argc, char *argv[])
 
     printf("Torus: %.16e +/- %.16e\n\n", jMean, sqrt(jVar));
 
+    //FILE *historyFile = fopen("his
+
+
 
     NewLattice(beta, n, therm, "moebius", obs); 
     GetMeasures(data, sweeps);

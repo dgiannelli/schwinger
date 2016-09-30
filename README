@@ -1,11 +1,11 @@
-Program that simulates a Schwinger model on a lattice with a pure gauge action.
+Program that simulates a Schwinger model on a lattice with a pure gauge action with torus and moebius boundaries.
 
 Computing the plaquette mean value:
-make plaquette, to run the program with a Metropolis-Hastings step and the gsl default random generator.
-make plaquetteMetropolis, to use instead a simpler Metropolis algorithm
-make plaquetteStdlib, to use instead rand() from stdlib
+make runPlaquette, to compute plaquette mean value in both boundaries.
 
-Computing the topological charge and plotting the results:
-make charge
+Computing the topological charge infinite volume and continuum limit:
+make runCharge
+For plotting theese results:
+make plotCharge
 
 See factSheet.pdf for more informations about the heat bath algorithm I used.

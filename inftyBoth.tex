@@ -16,7 +16,7 @@
         hide y axis,
         mark size = 1pt,
         xmin = 0, xmax = 0.01,
-        ymin = 0, ymax = 6,
+        ymin = 0.03, ymax = 0.05,
     ]
     \addplot+
     [
@@ -26,25 +26,25 @@
     ] table
     [
         x expr = 1/\thisrowno{1}^2,
-        y index = 2,
-        y error index = 3,
-  ] {./data/contTorus.dat};
+        y expr = \thisrowno{2}/\thisrowno{1}^2,
+        y error expr = \thisrowno{3}/\thisrowno{1}^2,
+  ] {./data/inftyTorus.dat};
 \end{axis}
 \begin{axis}
     [ 
         name = ax2,
         axis x line = bottom,
         axis y line = left,
-        ytick = {2, 4, 6},
+        ytick = {0.035, 0.04, 0.045, 0.05},
         every axis y label/.style={
-            at={(ticklabel* cs:1.05)},
+            at={(ticklabel* cs:1.08)},
         anchor=south,},
-        ylabel = $\left<Q^2\right>$,
+        ylabel = $\displaystyle \frac{\left<Q^2\right>}{N^2}$,
         at={(ax1.south east)},
         anchor=south west,
         mark size = 1pt,
         xmin = 0, xmax = 0.01,
-        ymin = 0, ymax = 6,
+        ymin = 0.03, ymax = 0.05,
     ]
         \addplot+
         [
@@ -54,12 +54,12 @@
         ] table
         [
             x expr = 1/\thisrowno{1}^2,
-            y index = 2,
-            y error index = 3,
-        ] {./data/contMoeb.dat};
+            y expr = \thisrowno{2}/\thisrowno{1}^2,
+            y error expr = \thisrowno{3}/\thisrowno{1}^2,
+        ] {./data/inftyMoeb.dat};
 \end{axis}
 
-\node [above=40pt] at (ax1.north east) {\large Continuum limit};
+\node [above=45pt] at (ax1.north east) {\large Infinite volume limit};
 \node at (ax1.north) {Torus};
 \node at (ax2.north) {M\"obius};
 \node [below=20pt] at (ax1.south east) {$\displaystyle \frac{1}{N^2}$};

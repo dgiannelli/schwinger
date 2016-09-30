@@ -19,3 +19,31 @@ void Jackknife(double (*fJack)(int jStart, int jEnd, double *data, int size), \
     *jMean = mean;
 }
 
+double JackMean(int jStart, int jEnd, double *data, int size)
+{
+    double mean = 0.;
+    for (int i=0; i<jStart; i++)
+    {
+        mean += data[i];
+    }
+    for (int i=jEnd; i<size; i++)
+    {
+        mean += data[i];
+    }
+    return mean/(size+jStart-jEnd);
+}
+
+double JackSquareMean(int jStart, int jEnd, double *data, int size)
+{
+    double var = 0;
+    for (int i=0; i<jStart; i++)
+    {
+        var += data[i]*data[i];
+    }
+    for (int i=jEnd; i<size; i++)
+    {
+       var += data[i]*data[i];
+    }
+    return var/(size+jStart-jEnd);
+}
+

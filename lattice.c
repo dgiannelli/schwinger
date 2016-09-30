@@ -101,7 +101,7 @@ static void SampleTopLink(int nx, int ny);
 
 // **** Implementation of included functions:
 
-void NewLattice(double _beta, int _n, const char *_boundsName, const char *_obsName)
+void NewLattice(double _beta, int _n, int therm, const char *_boundsName, const char *_obsName)
 {
     beta = _beta;
     n = _n;
@@ -129,7 +129,7 @@ void NewLattice(double _beta, int _n, const char *_boundsName, const char *_obsN
             lattice[nx][ny].topLink = 2.*M_PI*(RndUniform()-0.5);
         }
     }
-    for (int t=0; t<50000; t++)
+    for (int t=0; t<therm; t++)
     {
         SweepLattice();
     }
@@ -152,7 +152,7 @@ void GetMeasures(double *data, int iters)
         data[i] = GetObservable();
     }
 
-    printf("\n**** Collected %i %s measures at beta = %.1f with lattice size %i and %s boundary conditions ****\n\n", iters, obsName, beta, n, boundsName);
+    //printf("\n**** Collected %i %s measures at beta = %.1f with lattice size %i and %s boundary conditions ****\n\n", iters, obsName, beta, n, boundsName);
     printf("Acceptance ratio: %f\n", (float)succ/total);
 }
 

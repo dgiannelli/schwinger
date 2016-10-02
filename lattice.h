@@ -7,16 +7,14 @@
 
 #include <stdio.h>
 
-// Allocate memory for the lattice and initialize beta and n.
-// After initialising, 1000 sweeps are performed to thermalize.
-// boundsName = "torus" or "moebius"
-// obsName = "plaquette" of "charge"
-void NewLattice(double beta, int n, int therm, const char *boundsName, const char *obsName);
+// Allocate memory for the lattice and initialize all parameters
+// reading from params/paramName
+void NewLattice(const char *paramName);
 
 // Free the memory allocated:
 void DeleteLattice();
 
 // Sample different field configuration and save measurements in a file:
-void GetMeasures(double *data, int sweeps);
+void GetMeasures();
 
 #endif

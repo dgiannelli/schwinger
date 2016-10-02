@@ -18,9 +18,17 @@
 
 // **** Lattice variables:
 
+static char paramName[20] = "";
 static double beta;
 static int n;
-// Global variables to compute the acceptance ratio of the updating steps:
+static char boundsName[10] = ""
+static int sweeps;
+
+static int getPlaquette;
+static int getCharge;
+static int getChargeEvenOdd;
+
+// Variables needed to compute the acceptance ratio of the updating steps:
 static int total, succ;
 
 static struct LatticeSite
@@ -29,15 +37,15 @@ static struct LatticeSite
     double topLink;
 } **lattice;
 
-// **** Implementation only visible functions declarations:
+
+// **** Implementation-only visible functions declarations:
+
+// Print parameters needed for jackknife in a filestream:
+static void PrintParams(FILE *stream);
 
 // Set the boundary conditions to torus/moebius:
 static void SetBoundsTorus();
 static void SetBoundsMoeb();
-
-// Set the program to evaluate plaquette/charge:
-static void SetObsPlaquette();
-static void SetObsCharge();
 
 // ** Functions and function pointers to implement one of the boundary conditions:
 
@@ -73,19 +81,15 @@ static double GetBottomRightTLTorus(int nx, int ny);
 static double GetBottomRightTLMoeb(int nx, int ny);
 static double (*GetBottomRightTL)(int nx, int ny);
 
-static char *boundsName;
-
 // **
 
-// ** Functions and functions pointers to evaluate one of observables:
+// ** Functions to evaluate one of observables:
 
 static double GetPlaquetteMean();
 
 static double GetCharge();
 
-static double (*GetObservable)();
-
-static char *obsName;
+static double GetChargeEvenOdd()
 
 // **
 
@@ -101,19 +105,44 @@ static void SampleTopLink(int nx, int ny);
 
 // **** Implementation of included functions:
 
-void NewLattice(double _beta, int _n, int therm, const char *_boundsName, const char *_obsName)
+void NewLattice(const char *_paramName)
 {
-    beta = _beta;
-    n = _n;
+    strcpy(paramName, _paramName);
+
+    char paramPath[30];
+    sprintf(paramPath, "params/%s", _paramName);
+    
+    FILE *paramFile = fopen(paramPath, "r"); assert(paramFile);
+    char varName[20], varValue[20];
+    while ( fscanf(paramFile, "%s %s", varName, varValue) == 2)
+    {
+        if      (!strcmp(varName, "beta")) beta = atof(varValue);
+        else if (!strcmp(varName, "n")) n = atoi(varValue);
+        else if (!strcmp(varName, "boundsName")) strcpy(boundsName, varValue);
+        else if (!strcmp(varName, "sweeps")) sweeps = atoi(varValue);
+        else if (!strcmp(varName, "getPlaquette")) getPlaquette = atoi(varValue);
+        else if (!strcmp(varName, "getCharge")) getCharge = atoi(varValue);
+        else if (!strcmp(varName, "getChargeEvenOdd")) getChargeEvenOdd = atoi(varValue);
+        else assert(0);
+    }
+    fclose(paramFile);
+
+    puts("**********\n");
+    printf("parameters name = %s\n", paramName);
+    printf("beta = %f\n", beta);
+    printf("lattice side = %d\n", n);
+    printf("boundary conditions = %s\n", boundsName);
+    printf("number of sweeps = %d\n", sweeps);
+    printf("measuring plaquette = %s\n", getPlaquette ? "true" : "false");
+    printf("measuring charge = %s\n", getCharge ? "true" : "false");
+    printf("measuring chargeEvenOdd = %s\n", getCharge ? "true" : "false");
+    puts("");
+
     total = 0;
     succ = 0;
 
     if (!strcmp(_boundsName,"torus")) SetBoundsTorus();
     else if (!strcmp(_boundsName,"moebius")) SetBoundsMoeb();
-    else assert(0);
-
-    if (!strcmp(_obsName,"plaquette")) SetObsPlaquette();
-    else if (!strcmp(_obsName,"charge")) SetObsCharge();
     else assert(0);
 
     lattice = malloc(n*sizeof(struct LatticeSite *));
@@ -129,14 +158,19 @@ void NewLattice(double _beta, int _n, int therm, const char *_boundsName, const 
             lattice[nx][ny].topLink = 2.*M_PI*(RndUniform()-0.5);
         }
     }
-    for (int t=0; t<therm; t++)
-    {
-        SweepLattice();
-    }
 }
 
 void DeleteLattice()
 {
+    strcpy(paramName,"");
+    beta = 0.;
+    n = 0;
+    strcpy(boundsName,"");
+    sweeps = 0;
+    getPlaquette = 0;
+    getCharge = 0;
+    getChargeEvenOdd = 0;
+
     for (int i=0; i<n; i++)
     {
         free(lattice[i]);
@@ -144,19 +178,54 @@ void DeleteLattice()
     free(lattice);
 }
 
-void GetMeasures(double *data, int iters)
+void GetMeasures()
 {
-    for (int i=0; i<iters; i++)
+    FILE *plaquetteFile, *chargeFile, *chargeEvenOddFile;
+
+	system("if [ ! -d 'data' ]; then mkdir data; fi");
+
+    char filename[30];
+    if (getPlaquette) 
     {
-        SweepLattice();
-        data[i] = GetObservable();
+        sprintf(filename, "data/%sPlaquette.dat", paramName);
+        plaquetteFile = fopen(filename, "w");
+        PrintParams(plaquetteFile);
+    }
+    if (getCharge) 
+    {
+        sprintf(filename, "data/%sCharge.dat", paramName);
+        chargeFile = fopen(filename, "w");
+        PrintParams(chargeFile);
+    }
+    if (getChargeEvenOdd) 
+    {
+        sprintf(filename, "data/%sChargeEvenOdd.dat", paramName);
+        chargeEvenOddFile = fopen(filename, "w");
+        PrintParams(chargeEvenOddFile);
     }
 
-    //printf("\n**** Collected %i %s measures at beta = %.1f with lattice size %i and %s boundary conditions ****\n\n", iters, obsName, beta, n, boundsName);
+    for (int i=0; i<sweeps; i++)
+    {
+        SweepLattice();
+        if (getPlaquette) fprintf(plaquetteFile, "%.16e\n", GetPlaquetteMean());
+        if (getCharge) fprintf(chargeFile, "%.16e\n", GetCharge());
+        if (getChargeEvenOdd) fprintf(chargeEvenOddFile, "%.16e\n", GetChargeEvenOdd());
+    }
     printf("Acceptance ratio: %f\n", (float)succ/total);
+
+    if (getPlaquette) fclose(plaquetteFile);
+    if (getCharge) fclose(chargeFile);
+    if (getChargeEvenOdd) fclose(chargeEvenOddFile);
 }
 
 // **** Implementation of not included functions:
+
+void PrintParams(FILE *stream)
+{
+    fprintf(stream, "#beta %.1f\n", beta);
+    fprintf(stream, "#n %d\n", n);
+    fprintf(stream, "#sweeps %d\n", sweeps);
+}
 
 void SetBoundsTorus()
 {
@@ -168,7 +237,6 @@ void SetBoundsTorus()
     GetBottomRL = GetBottomRLTorus;
     GetBottomTL = GetBottomTLTorus;
     GetBottomRightTL = GetBottomRightTLTorus;
-    boundsName = "torus";
 }
 
 void SetBoundsMoeb()
@@ -181,19 +249,6 @@ void SetBoundsMoeb()
     GetBottomRL = GetBottomRLMoeb;
     GetBottomTL = GetBottomTLMoeb;
     GetBottomRightTL = GetBottomRightTLMoeb;
-    boundsName = "moebius";
-}
-
-void SetObsPlaquette()
-{
-    GetObservable = GetPlaquetteMean;
-    obsName = "plaquette";
-}
-
-void SetObsCharge()
-{
-    GetObservable = GetCharge;
-    obsName = "charge";
 }
 
 double GetPlaquetteMean()
@@ -220,6 +275,21 @@ double GetCharge()
         for (int ny=0; ny<n; ny++)
         {
             charge += FitInterval( lattice[nx][ny].rightLink - lattice[nx][ny].topLink \
+                                 + GetRightTL(nx,ny)         - GetTopRL(nx,ny) );
+        }
+    }
+    return charge/2./M_PI;
+}
+
+double GetChargeEvenOdd()
+{
+    double charge = 0.;
+
+    for (int nx=0; nx<n; nx++)
+    {
+        for (int ny=0; ny<n; ny++)
+        {
+            charge += ShiftAngle( lattice[nx][ny].rightLink - lattice[nx][ny].topLink \
                                  + GetRightTL(nx,ny)         - GetTopRL(nx,ny) );
         }
     }
@@ -349,7 +419,6 @@ double GetRightTLMoeb(int nx, int ny)
     {
         return lattice[nx+1][ny].topLink;
     }
-    //return -lattice[(nx+1)%n][ nx==n-1 ? (2*n-2-ny)%n : ny ].topLink;
 }
 
 double GetTopRLTorus(int nx, int ny)
@@ -389,7 +458,7 @@ double GetLeftTLTorus(int nx, int ny)
 
 double GetLeftTLMoeb(int nx, int ny)
 {
-    if(nx==0)
+    if (nx==0)
     {
         return -lattice[n-1][(2*n-2-ny)%n].topLink;
     }
@@ -397,7 +466,6 @@ double GetLeftTLMoeb(int nx, int ny)
     {
         return lattice[nx-1][ny].topLink;
     }
-    //return -lattice[(nx+n-1)%n][ nx==0 ? (2*n-2-ny)%n : ny ].topLink;
 }
 
 double GetBottomRLTorus(int nx, int ny)
@@ -427,7 +495,7 @@ double GetBottomRightTLTorus(int nx, int ny)
 
 double GetBottomRightTLMoeb(int nx, int ny)
 {
-    if(nx==n-1)
+    if (nx==n-1)
     {
         return -lattice[0][(2*n-1-ny)%n].topLink;
     }
@@ -435,6 +503,5 @@ double GetBottomRightTLMoeb(int nx, int ny)
     {
         return lattice[nx+1][(ny+n-1)%n].topLink;
     }
-    //return -lattice[(nx+1)%n][ ny==n-1 ? (n-1-ny)%n : (ny+n-1)%n].topLink;
 }
 

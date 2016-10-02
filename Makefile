@@ -10,8 +10,8 @@ CFLAGS = -std=gnu11 -O3 -Wall -lm -lgsl -lgslcblas
 
 ####
 
-runPlaquette: main.exe
-	./$< params/plaquette.par
+testPlaquette: main.exe
+	./$< params/plaquette
 
 runCharge: ./infty.sh ./cont.sh
 	./infty.sh
@@ -32,7 +32,7 @@ plotCharge:
 
 ####
 
-main.exe: main.o lattice.o random.o jackknife.o
+main.exe: main.o lattice.o random.o
 	$(CC) $(CFLAGS) -o $@ $^
 
 ####

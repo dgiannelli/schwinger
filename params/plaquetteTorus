@@ -1,0 +1,8 @@
+beta 7.2
+n 24
+boundsName torus
+sweeps 50000
+getPlaquette 1
+getCharge 0
+getChargeEvenOdd 0
+

@@ -141,8 +141,8 @@ void NewLattice(const char *_paramName)
     total = 0;
     succ = 0;
 
-    if (!strcmp(_boundsName,"torus")) SetBoundsTorus();
-    else if (!strcmp(_boundsName,"moebius")) SetBoundsMoeb();
+    if (!strcmp(boundsName,"torus")) SetBoundsTorus();
+    else if (!strcmp(boundsName,"moebius")) SetBoundsMoeb();
     else assert(0);
 
     lattice = malloc(n*sizeof(struct LatticeSite *));

@@ -1,0 +1,8 @@
+beta 1.0
+n 24
+boundsName moebius
+sweeps 50000
+getPlaquette 0
+getCharge 1
+getChargeEvenOdd 1
+

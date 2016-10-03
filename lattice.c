@@ -18,15 +18,16 @@
 
 // **** Lattice variables:
 
-static char paramName[20] = "";
 static double beta;
 static int n;
-static char boundsName[10] = ""
+static char boundsName[10] = "";
 static int sweeps;
-
 static int getPlaquette;
+static char dataPlaquette[40] = "";
 static int getCharge;
+static char dataCharge[40] = "";
 static int getChargeEvenOdd;
+static char dataChargeEvenOdd[40] = "";
 
 // Variables needed to compute the acceptance ratio of the updating steps:
 static int total, succ;
@@ -39,9 +40,6 @@ static struct LatticeSite
 
 
 // **** Implementation-only visible functions declarations:
-
-// Print parameters needed for jackknife in a filestream:
-static void PrintParams(FILE *stream);
 
 // Set the boundary conditions to torus/moebius:
 static void SetBoundsTorus();
@@ -89,7 +87,7 @@ static double GetPlaquetteMean();
 
 static double GetCharge();
 
-static double GetChargeEvenOdd()
+static double GetChargeEvenOdd();
 
 // **
 
@@ -105,15 +103,10 @@ static void SampleTopLink(int nx, int ny);
 
 // **** Implementation of included functions:
 
-void NewLattice(const char *_paramName)
+void NewLattice(const char *paramFname)
 {
-    strcpy(paramName, _paramName);
-
-    char paramPath[30];
-    sprintf(paramPath, "params/%s", _paramName);
-    
-    FILE *paramFile = fopen(paramPath, "r"); assert(paramFile);
-    char varName[20], varValue[20];
+    FILE *paramFile = fopen(paramFname, "r"); assert(paramFile);
+    char varName[40], varValue[40];
     while ( fscanf(paramFile, "%s %s", varName, varValue) == 2)
     {
         if      (!strcmp(varName, "beta")) beta = atof(varValue);
@@ -121,21 +114,26 @@ void NewLattice(const char *_paramName)
         else if (!strcmp(varName, "boundsName")) strcpy(boundsName, varValue);
         else if (!strcmp(varName, "sweeps")) sweeps = atoi(varValue);
         else if (!strcmp(varName, "getPlaquette")) getPlaquette = atoi(varValue);
+        else if (!strcmp(varName, "dataPlaquette")) strcpy(dataPlaquette, varValue);
         else if (!strcmp(varName, "getCharge")) getCharge = atoi(varValue);
+        else if (!strcmp(varName, "dataCharge")) strcpy(dataCharge, varValue);
         else if (!strcmp(varName, "getChargeEvenOdd")) getChargeEvenOdd = atoi(varValue);
-        else assert(0);
+        else if (!strcmp(varName, "dataChargeEvenOdd")) strcpy(dataChargeEvenOdd, varValue);
     }
     fclose(paramFile);
 
     puts("**********\n");
-    printf("parameters name = %s\n", paramName);
+    printf("parameters filename = %s\n", paramFname);
     printf("beta = %f\n", beta);
     printf("lattice side = %d\n", n);
     printf("boundary conditions = %s\n", boundsName);
     printf("number of sweeps = %d\n", sweeps);
     printf("measuring plaquette = %s\n", getPlaquette ? "true" : "false");
+    if (getPlaquette) printf("data plaquette out = %s\n", dataPlaquette);
     printf("measuring charge = %s\n", getCharge ? "true" : "false");
+    if (getCharge) printf("data charge out = %s\n", dataCharge);
     printf("measuring chargeEvenOdd = %s\n", getCharge ? "true" : "false");
+    if (getChargeEvenOdd) printf("data chargeEvenOdd out = %s\n", dataChargeEvenOdd);
     puts("");
 
     total = 0;
@@ -162,14 +160,16 @@ void NewLattice(const char *_paramName)
 
 void DeleteLattice()
 {
-    strcpy(paramName,"");
     beta = 0.;
     n = 0;
     strcpy(boundsName,"");
     sweeps = 0;
     getPlaquette = 0;
+    strcpy(dataPlaquette,"");
     getCharge = 0;
+    strcpy(dataCharge,"");
     getChargeEvenOdd = 0;
+    strcpy(dataChargeEvenOdd,"");
 
     for (int i=0; i<n; i++)
     {
@@ -182,27 +182,10 @@ void GetMeasures()
 {
     FILE *plaquetteFile, *chargeFile, *chargeEvenOddFile;
 
-	system("if [ ! -d 'data' ]; then mkdir data; fi");
-
     char filename[30];
-    if (getPlaquette) 
-    {
-        sprintf(filename, "data/%sPlaquette.dat", paramName);
-        plaquetteFile = fopen(filename, "w");
-        PrintParams(plaquetteFile);
-    }
-    if (getCharge) 
-    {
-        sprintf(filename, "data/%sCharge.dat", paramName);
-        chargeFile = fopen(filename, "w");
-        PrintParams(chargeFile);
-    }
-    if (getChargeEvenOdd) 
-    {
-        sprintf(filename, "data/%sChargeEvenOdd.dat", paramName);
-        chargeEvenOddFile = fopen(filename, "w");
-        PrintParams(chargeEvenOddFile);
-    }
+    if (getPlaquette) plaquetteFile = fopen(dataPlaquette, "w");
+    if (getCharge) chargeFile = fopen(dataCharge, "w");
+    if (getChargeEvenOdd) chargeEvenOddFile = fopen(dataChargeEvenOdd, "w");
 
     for (int i=0; i<sweeps; i++)
     {
@@ -219,13 +202,6 @@ void GetMeasures()
 }
 
 // **** Implementation of not included functions:
-
-void PrintParams(FILE *stream)
-{
-    fprintf(stream, "#beta %.1f\n", beta);
-    fprintf(stream, "#n %d\n", n);
-    fprintf(stream, "#sweeps %d\n", sweeps);
-}
 
 void SetBoundsTorus()
 {
@@ -293,7 +269,7 @@ double GetChargeEvenOdd()
                                  + GetRightTL(nx,ny)         - GetTopRL(nx,ny) );
         }
     }
-    return charge/2./M_PI;
+    return fmod(round(charge/2./M_PI),2.);
 }
 
 void SweepLattice()

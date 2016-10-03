@@ -10,10 +10,16 @@ CFLAGS = -std=gnu11 -O3 -Wall -lm -lgsl -lgslcblas
 
 ####
 
-testPlaquette: main.exe
-	./$< params/plaquette
+testPlaquette: main.exe mainJack.exe 
+	if [ ! -d 'data' ]; then mkdir data; fi
+	if [ ! -d 'jackData' ]; then mkdir jackData; fi
+	./main.exe params/testTorus
+	./mainJack.exe params/testTorus
+	./main.exe params/testMoeb
+	./mainJack.exe params/testMoeb
 
-runCharge: ./infty.sh ./cont.sh
+runCharge: ./infty.sh ./cont.sh cleanData
+	mkdir data jackData
 	./infty.sh
 	./cont.sh
 
@@ -35,9 +41,15 @@ plotCharge:
 main.exe: main.o lattice.o random.o
 	$(CC) $(CFLAGS) -o $@ $^
 
+mainJack.exe: mainJack.o jackknife.o
+	$(CC) $(CFLAGS) -o $@ $^
+
 ####
 
 main.o: main.c lattice.h random.h jackknife.h
+	$(CC) $(CFLAGS) -c -o $@ $<
+
+mainJack.o: mainJack.c jackknife.h
 	$(CC) $(CFLAGS) -c -o $@ $<
 
 lattice.o: lattice.c lattice.h random.h
@@ -53,7 +65,7 @@ clean:
 	@rm -f *.exe *.o *.dat *.aux *.log
 
 cleanData:
-	@rm -rf data/
+	@rm -rf data/ jackData/
 	
 cleanPlots:
 	@rm -rf plots/

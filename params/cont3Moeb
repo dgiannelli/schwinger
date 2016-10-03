@@ -2,7 +2,10 @@ beta 5.0
 n 20
 boundsName moebius
 sweeps 50000
-getPlaquette 0
+therm 10000
 getCharge 1
+dataCharge data/cont3MoebCharge.dat
+jackCharge jackData/contMoebCharge.dat
 getChargeEvenOdd 1
-
+dataChargeEvenOdd data/cont3MoebChargeEvenOdd.dat
+jackChargeEvenOdd jackData/contMoebChargeEvenOdd.dat

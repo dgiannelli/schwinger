@@ -1,0 +1,8 @@
+beta 7.2
+n 24
+boundsName moebius
+sweeps 50000
+therm 10000
+getPlaquette 1
+dataPlaquette data/testPlaquetteMoeb.dat
+jackPlaquette jackData/testPlaquetteMoeb.dat

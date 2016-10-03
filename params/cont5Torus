@@ -2,7 +2,7 @@ beta 9.8
 n 28
 boundsName torus
 sweeps 50000
-getPlaquette 0
+therm 10000
 getCharge 1
-getChargeEvenOdd 0
-
+dataCharge data/cont5TorusCharge.dat
+jackCharge jackData/contTorusCharge.dat

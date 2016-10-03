@@ -1,4 +1,14 @@
+#include <assert.h>
+
 #include "jackknife.h"
+
+void ReadFile(FILE *file, double *data, int size, int therm)
+{
+    double buff;
+    int i;
+    for (i=0; i<therm; i++) assert(fscanf(file, "%le", &buff)==1);
+    for (i=0; i<size-therm; i++) assert(fscanf(file, "%le", data+i)==1);
+}
 
 void Jackknife(double (*fJack)(int jStart, int jEnd, double *data, int size), \
                double *data, int size, int jSets, double *jMean, double *jVar)
@@ -45,5 +55,23 @@ double JackSquareMean(int jStart, int jEnd, double *data, int size)
        var += data[i]*data[i];
     }
     return var/(size+jStart-jEnd);
+}
+
+double JackEvenOdd(int jStart, int jEnd, double *data, int size)
+{
+    int even = 0;
+    int odd = 0;
+
+    for (int i=0; i<jStart; i++)
+    {
+        if (data[i]-0.5<0.) even++;
+        else odd++;
+    }
+    for (int i=jEnd; i<size; i++)
+    {
+        if (data[i]-0.5<0.) even++;
+        else odd++;
+    }
+    return (double)odd/even;
 }
 

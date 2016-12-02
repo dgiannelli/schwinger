@@ -1,46 +1,21 @@
 /*
- * Main program for generating field configurations and measuring the topological charge with both
- * torus and moebius boundary conditions in order to get the infinite volume and the continuum limit.
+ * Main program for generating field configurations and measuring observables
+ * Reads the parameters in the file specified as argv
  */
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <math.h>
 #include <assert.h>
 
-#include "lattice.h"
 #include "random.h"
-#include "jackknife.h"
+#include "lattice.h"
 
-#define ITERS 100000
-#define JSETS 20
-
-double fJack(int jStart, int jEnd, double *data, int size)
+int main(int argc, char *argv[])
 {
-    double var = 0;
-    for (int i=0; i<jStart; i++)
-    {
-        var += data[i]*data[i];
-    }
-    for (int i=jEnd; i<size; i++)
-    {
-       var += data[i]*data[i];
-    }
-    return var/(size+jStart-jEnd);
-}
-
-int main()
-{
-    double jMean, jVar, *data = calloc(10*ITERS, sizeof(double));
-
-	system("if [ ! -d 'data' ]; then mkdir -p data; fi");
-
+    assert(argc == 2);
     RndInit();
 
     {
-        const double betas[] = {1., 1., 1., 1., 1., 1.};
-        const int ns[] = {4, 8, 12, 16, 20, 24};
-
         FILE *fileTorus = fopen("data/inftyTorus.dat", "w"); assert(fileTorus);
         FILE *fileMoeb = fopen("data/inftyMoeb.dat", "w"); assert(fileMoeb);
 
@@ -68,9 +43,6 @@ int main()
 
 
     {
-        const double betas[] = {0.8, 1.8, 3.2, 5.0, 7.2, 9.8};
-        const int ns[] = {8, 12, 16, 20, 24, 28};
-
         FILE *fileTorus = fopen("data/contTorus.dat", "w"); assert(fileTorus);
         FILE *fileMoeb = fopen("data/contMoeb.dat", "w"); assert(fileTorus);
 

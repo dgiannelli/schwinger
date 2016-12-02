@@ -1,0 +1,7 @@
+beta 7.2
+n 24
+bounds klein
+sweeps 50000
+getPlaquette 1
+plaquetteHistory ../data/plaquetteKleinHistory.dat
+

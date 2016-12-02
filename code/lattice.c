@@ -4,22 +4,20 @@
  */
 
 #include <stdlib.h>
-#include <math.h>
 #include <string.h>
 #include <assert.h>
+#include <gsl/math.h>
 
 #include "lattice.h"
 #include "random.h"
-
-// Function that move an angle to an equivalent value in (-pi,pi]:
-
-#define ShiftAngle(x) (-ceil((x-M_PI)/2./M_PI) * 2.*M_PI)
-#define FitInterval(x) (x + ShiftAngle(x))
 
 // **** Lattice variables:
 
 static double beta;
 static int n;
+static char bounds[10];
+static int getPlaquette;
+static char plaquetteHistory[40];
 // Global variables to compute the acceptance ratio of the updating steps:
 static int total, succ;
 
@@ -31,61 +29,53 @@ static struct LatticeSite
 
 // **** Implementation only visible functions declarations:
 
-// Set the boundary conditions to torus/moebius:
+// Set the boundary conditions to torus/klein:
 static void SetBoundsTorus();
-static void SetBoundsMoeb();
-
-// Set the program to evaluate plaquette/charge:
-static void SetObsPlaquette();
-static void SetObsCharge();
+static void SetBoundsKlein();
 
 // ** Functions and function pointers to implement one of the boundary conditions:
 
 static double GetRightTLTorus(int nx, int ny);
-static double GetRightTLMoeb(int nx, int ny);
+static double GetRightTLKlein(int nx, int ny);
 static double (*GetRightTL)(int nx, int ny);
 
 static double GetTopRLTorus(int nx, int ny);
-static double GetTopRLMoeb(int nx, int ny);
+static double GetTopRLKlein(int nx, int ny);
 static double (*GetTopRL)(int nx, int ny);
 
 static double GetTopLeftRLTorus(int nx, int ny);
-static double GetTopLeftRLMoeb(int nx, int ny);
+static double GetTopLeftRLKlein(int nx, int ny);
 static double (*GetTopLeftRL)(int nx, int ny);
 
 static double GetLeftRLTorus(int nx, int ny);
-static double GetLeftRLMoeb(int nx, int ny);
+static double GetLeftRLKlein(int nx, int ny);
 static double (*GetLeftRL)(int nx, int ny);
 
 static double GetLeftTLTorus(int nx, int ny);
-static double GetLeftTLMoeb(int nx, int ny);
+static double GetLeftTLKlein(int nx, int ny);
 static double (*GetLeftTL)(int nx, int ny);
 
 static double GetBottomRLTorus(int nx, int ny);
-static double GetBottomRLMoeb(int nx, int ny);
+static double GetBottomRLKlein(int nx, int ny);
 static double (*GetBottomRL)(int nx, int ny);
 
 static double GetBottomTLTorus(int nx, int ny);
-static double GetBottomTLMoeb(int nx, int ny);
+static double GetBottomTLKlein(int nx, int ny);
 static double (*GetBottomTL)(int nx, int ny);
 
 static double GetBottomRightTLTorus(int nx, int ny);
-static double GetBottomRightTLMoeb(int nx, int ny);
+static double GetBottomRightTLKlein(int nx, int ny);
 static double (*GetBottomRightTL)(int nx, int ny);
-
-static char *boundsName;
 
 // **
 
-// ** Functions and functions pointers to evaluate one of observables:
+// ** Functions to evaluate observables:
 
 static double GetPlaquetteMean();
 
-static double GetCharge();
+static double GetChargeSq();
 
-static double (*GetObservable)();
-
-static char *obsName;
+static double GetChargeEvenOdd();
 
 // **
 
@@ -97,23 +87,37 @@ static void SampleRightLink(int nx, int ny);
 
 static void SampleTopLink(int nx, int ny);
 
+// Function that move an angle to an equivalent value in (-pi,pi]:
+
+static double ShiftAngle(x)
+{
+    return -ceil((x-M_PI)/2.0/M_PI) * 2.0*M_PI;
+}
+static double FitInterval(x)
+{
+    return x + ShiftAngle(x);
+}
+
 // **
 
 // **** Implementation of included functions:
 
-void NewLattice(double _beta, int _n, const char *_boundsName, const char *_obsName)
+void NewLattice(char *paramFname)
 {
-    beta = _beta;
-    n = _n;
-    total = 0;
-    succ = 0;
+    FILE *paramFile = fopen(paramFname, "r");
+    char paramName[40], paramValue[40];
+    while ( fscanf(paramFile, "%s %s", &paramName, &paramValue) == 2 )
+    {
+        if (!strcmp(paramName,"beta")) beta = atof(paramValue);
+        else if (!strcmp(paramName,"n")) n = atoi(paramValue);
+        else if (!strcmp(paramName,"bounds")) strcpy(bounds,paramValue);
+        else if (!strcmp(paramName,"sweeps")) sweeps = atoi(paramValue);
+        else if (!strcmp(paramName,"getPlaquette")) getPlaquette = atoi(paramValue);
+        else if (!strcmp(paramName,"plaquetteHistory")) strcpy(plaquetteHistory,paramValue);
+    }
 
-    if (!strcmp(_boundsName,"torus")) SetBoundsTorus();
-    else if (!strcmp(_boundsName,"moebius")) SetBoundsMoeb();
-    else assert(0);
-
-    if (!strcmp(_obsName,"plaquette")) SetObsPlaquette();
-    else if (!strcmp(_obsName,"charge")) SetObsCharge();
+    if (!strcmp(bounds,"torus")) SetBoundsTorus();
+    else if (!strcmp(bounds,"klein")) SetBoundsKlein();
     else assert(0);
 
     lattice = malloc(n*sizeof(struct LatticeSite *));
@@ -125,13 +129,9 @@ void NewLattice(double _beta, int _n, const char *_boundsName, const char *_obsN
     {
         for (int ny=0; ny<n; ny++)
         {
-            lattice[nx][ny].rightLink = 2.*M_PI*(RndUniform()-0.5);
-            lattice[nx][ny].topLink = 2.*M_PI*(RndUniform()-0.5);
+            lattice[nx][ny].rightLink = 2.0*M_PI*(RndUniform()-0.5);
+            lattice[nx][ny].topLink = 2.0*M_PI*(RndUniform()-0.5);
         }
-    }
-    for (int t=0; t<50000; t++)
-    {
-        SweepLattice();
     }
 }
 

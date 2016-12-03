@@ -1,22 +1,18 @@
 /*
- * In this file are declared all the lattice functions that are called in the main program.
+ * In this file are declared all lattice functions that are vivsible in the main program.
  */
 
 #ifndef LATTICE_H
 #define LATTICE_H
 
-#include <stdio.h>
+// Allocate memory for the lattice and initialize it opening the parameter file called paramFname
+// The initial configuration is a hot configuration
+void NewLattice(char *paramFname);
 
-// Allocate memory for the lattice and initialize beta and n.
-// After initialising, 1000 sweeps are performed to thermalize.
-// boundsName = "torus" or "moebius"
-// obsName = "plaquette" of "charge"
-void NewLattice(double beta, int n, const char *boundsName, const char *obsName);
+// Free the memory allocated
+void DeleteLattice(void);
 
-// Free the memory allocated:
-void DeleteLattice();
-
-// Sample different field configuration and save measurements in a file:
-void GetMeasures(double *data, int iters);
+// Sample different field configuration and save measurements
+void GetMeasures(void);
 
 #endif

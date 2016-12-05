@@ -9,6 +9,10 @@ testPlaquette: main.exe analysis.exe
 	parallel ./main.exe ::: params/plaquette*.par 
 	for par in params/plaquette*.par; do ./analysis.exe $$par; done
 
+runCharge: main.exe analysis.exe
+	parallel ./main.exe ::: params/infty*.par
+	for par in params/infty*.par; do ./analysis.exe $$par; done
+
 ####
 
 main.exe: main.o lattice.o random.o

@@ -12,8 +12,14 @@ int n;
 char bounds[10];
 int sweeps;
 int getPlaquette = 0;
+int getChargeSq = 0;
+int getChargeEvenOdd = 0;
 char plaquetteHistory[40];
+char chargeSqHistory[40];
+char chargeEvenOddHistory[40];
 char plaquetteAnalysis[40] = "";
+char chargeSqAnalysis[40] = "";
+char chargeEvenOddAnalysis[40] = "";
 
 void Bunching(FILE *output, FILE *input)
 {
@@ -58,8 +64,14 @@ int main(int argc, char *argv[])
         else if (!strcmp(paramName,"bounds")) strcpy(bounds,paramValue);
         else if (!strcmp(paramName,"sweeps")) sweeps = atoi(paramValue);
         else if (!strcmp(paramName,"getPlaquette")) getPlaquette = atoi(paramValue);
+        else if (!strcmp(paramName,"getChargeSq")) getChargeSq = atoi(paramValue);
+        else if (!strcmp(paramName,"getChargeEvenOdd")) getChargeEvenOdd = atoi(paramValue);
         else if (!strcmp(paramName,"plaquetteHistory")) strcpy(plaquetteHistory,paramValue);
+        else if (!strcmp(paramName,"chargeSqHistory")) strcpy(chargeSqHistory,paramValue);
+        else if (!strcmp(paramName,"chargeEvenOddHistory")) strcpy(chargeEvenOddHistory,paramValue);
         else if (!strcmp(paramName,"plaquetteAnalysis")) strcpy(plaquetteAnalysis,paramValue);
+        else if (!strcmp(paramName,"chargeSqAnalysis")) strcpy(chargeSqAnalysis,paramValue);
+        else if (!strcmp(paramName,"chargeEvenOddAnalysis")) strcpy(chargeEvenOddAnalysis,paramValue);
     }
 
     FILE *plaquetteHistoryFile, *plaquetteAnalysisFile;
@@ -72,6 +84,28 @@ int main(int argc, char *argv[])
         Bunching(plaquetteAnalysisFile, plaquetteHistoryFile);
 
         if (strcmp(plaquetteAnalysis,"")) fclose(plaquetteAnalysisFile);
+    }
+
+    if (getChargeSq)
+    {
+        assert(chargeSqHistoryFile = fopen(chargeSqHistory, "r"));
+        if (strcmp(chargeSqAnalysis,"")) assert(chargeSqAnalysisFile = fopen(chargeSqAnalysis, "a"));
+        else chargeSqAnalysisFile = stdout;
+
+        Bunching(chargeSqAnalysisFile, chargeSqHistoryFile);
+
+        if (strcmp(chargeSqAnalysis,"")) fclose(chargeSqAnalysisFile);
+    }
+
+    if (getChargeEvenOdd)
+    {
+        assert(chargeEvenOddHistoryFile = fopen(chargeEvenOddHistory, "r"));
+        if (strcmp(chargeEvenOddAnalysis,"")) assert(chargeEvenOddAnalysisFile = fopen(chargeEvenOddAnalysis, "a"));
+        else chargeEvenOddAnalysisFile = stdout;
+
+        Bunching(chargeEvenOddAnalysisFile, chargeEvenOddHistoryFile);
+
+        if (strcmp(chargeEvenOddAnalysis,"")) fclose(chargeEvenOddAnalysisFile);
     }
 
     return 0;

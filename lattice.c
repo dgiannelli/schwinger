@@ -19,7 +19,11 @@ static int n;
 static char bounds[10];
 static int sweeps;
 static int getPlaquette;
+static int getChargeSq;
+static int getChargeEvenOdd;
 static char plaquetteHistory[40];
+static char chargeSqHistory[40];
+static char chargeEvenOdd[40];
 // Global variables to compute the acceptance ratio of the updating steps:
 static int total, succ;
 
@@ -75,9 +79,9 @@ static double (*GetBottomRightTL)(int nx, int ny);
 
 static double GetPlaquetteMean(void);
 
-//static double GetChargeSq(void);
+static double GetChargeSq(void);
 
-//static double GetChargeEvenOdd(void);
+static double GetChargeEvenOdd(void);
 
 // **
 
@@ -110,15 +114,19 @@ void NewLattice(char *paramFname)
     char paramName[40], paramValue[40];
     while ( fscanf(paramFile, "%s %s", paramName, paramValue) == 2 )
     {
-        if (!strcmp(paramName,"beta")) beta = atof(paramValue);
+        if      (!strcmp(paramName,"beta")) beta = atof(paramValue);
         else if (!strcmp(paramName,"n")) n = atoi(paramValue);
         else if (!strcmp(paramName,"bounds")) strcpy(bounds,paramValue);
         else if (!strcmp(paramName,"sweeps")) sweeps = atoi(paramValue);
         else if (!strcmp(paramName,"getPlaquette")) getPlaquette = atoi(paramValue);
+        else if (!strcmp(paramName,"getChargeSq")) getChargeSq = atoi(paramValue);
+        else if (!strcmp(paramName,"getChargeEvenOdd")) getChargeEvenOdd = atoi(paramValue);
         else if (!strcmp(paramName,"plaquetteHistory")) strcpy(plaquetteHistory,paramValue);
+        else if (!strcmp(paramName,"chargeSqHistory")) strcpy(chargeSqHistory,paramValue);
+        else if (!strcmp(paramName,"chargeEvenOddHistory")) strcpy(chargeEvenOddHistory,paramValue);
     }
 
-    if (!strcmp(bounds,"torus")) SetBoundsTorus();
+    if      (!strcmp(bounds,"torus")) SetBoundsTorus();
     else if (!strcmp(bounds,"klein")) SetBoundsKlein();
     else assert(0);
 
@@ -149,17 +157,17 @@ void DeleteLattice(void)
 void GetMeasures(void)
 {
     FILE *plaquetteFile = NULL;
-    //FILE *chargeSqFile;
-    //FILE *chargeEvenOddFile;
+    FILE *chargeSqFile = NULL;
+    FILE *chargeEvenOddFile = NULL;
     if (getPlaquette) assert(plaquetteFile = fopen(plaquetteHistory, "w"));
-    //if (getChargeSq) assert(chargeSqFile = fopen(chargeSqHistory, "w"));
-    //if (getChargeEvenOdd) assert(chargeEvenOddFile = fopen(chargeEvenOddHistory, "w"));
+    if (getChargeSq) assert(chargeSqFile = fopen(chargeSqHistory, "w"));
+    if (getChargeEvenOdd) assert(chargeEvenOddFile = fopen(chargeEvenOddHistory, "w"));
     for (int i=0; i<sweeps; i++)
     {
         SweepLattice();
         if (getPlaquette) fprintf(plaquetteFile, "%.16e\n", GetPlaquetteMean());
-        //if (getChargeSq) fprintf(chargeSqFile, "%.16e\n", GetChargeSq());
-        //if (getChargeEvenOdd) fprintf(chargeEvenOdd, "%.16e\n", GetChargeEvenOdd());
+        if (getChargeSq) fprintf(chargeSqFile, "%.16e\n", GetChargeSq());
+        if (getChargeEvenOdd) fprintf(chargeEvenOdd, "%.16e\n", GetChargeEvenOdd());
     }
 
     printf("Acceptance ratio: %f\n", (float)succ/total);
@@ -169,16 +177,16 @@ void GetMeasures(void)
         fclose(plaquetteFile);
         printf("\n**** Collected %i plaquette  measures at beta = %.1f with lattice size %i and %s boundary conditions ****\n\n", sweeps, beta, n, bounds);
     }
-    /*if (getChargeSq)
+    if (getChargeSq)
     {
         fclose(chargeSqFile);
         printf("\n**** Collected %i Q^2  measures at beta = %.1f with lattice size %i and %s boundary conditions ****\n\n", sweeps, beta, n, bounds);
-    }*/
-    /*if (getChargeEvenOdd)
+    }
+    if (getChargeEvenOdd)
     {
         fclose(chargeEvenOddFile);
         printf("\n**** Collected %i Q_eo measures at beta = %.1f with lattice size %i and %s boundary conditions ****\n\n", sweeps, beta, n, bounds);
-    }*/
+    }
 }
 
 // **** Implementation of not included functions:
@@ -222,7 +230,7 @@ double GetPlaquetteMean(void)
     return plaquetteSum/(n*n);
 }
 
-double GetCharge()
+double GetChargeSq()
 {
     double charge = 0.;
 
@@ -235,6 +243,21 @@ double GetCharge()
         }
     }
     return gsl_pow_2(charge/2.0/M_PI);
+}
+
+double GetChargeEvenOdd()
+{
+    double charge = 0.0;
+
+    for (int nx=0; nx<n; nx++)
+    {
+        for (int ny=0; ny<n; ny++)
+        {
+            charge += ShiftAngle( lattice[nx][ny].rightLink - lattice[nx][ny].topLink \
+                                + GetRightTL(nx,ny)         - GetTopRL(nx,ny) );
+        }
+    }
+    return charge/2.0/M_PI;
 }
 
 void SweepLattice()

@@ -1,0 +1,8 @@
+beta 1.0
+n 12
+bounds torus
+sweeps 50000
+getChargeSq 1
+chargeSqHistory ./data/infty1TorusHistory.dat
+chargeSqAnalysis ./data/inftyTorus.dat
+

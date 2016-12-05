@@ -1,0 +1,11 @@
+beta 1.0
+n 28
+bounds klein
+sweeps 50000
+getChargeSq 1
+getChargeEvenOdd 1
+chargeSqHistory ./data/infty5KleinHistory.dat
+chargeEvenOddHistory ./data/infty5EvenOdd.dat
+chargeSqAnalysis ./data/inftyKlein.dat
+chargeEvenOddAnalysis ./data/inftyEvenOdd.dat
+

@@ -17,6 +17,7 @@
 static double beta;
 static int n;
 static char bounds[10];
+static int sweeps;
 static int getPlaquette;
 static char plaquetteHistory[40];
 // Global variables to compute the acceptance ratio of the updating steps:
@@ -90,11 +91,11 @@ static void SampleTopLink(int nx, int ny);
 
 // Function that move an angle to an equivalent value in (-pi,pi]:
 
-static double ShiftAngle(x)
+static double ShiftAngle(double x)
 {
     return -ceil((x-M_PI)/2.0/M_PI) * 2.0*M_PI;
 }
-static double FitInterval(x)
+static double FitInterval(double x)
 {
     return x + ShiftAngle(x);
 }
@@ -107,7 +108,7 @@ void NewLattice(char *paramFname)
 {
     FILE *paramFile = fopen(paramFname, "r");
     char paramName[40], paramValue[40];
-    while ( fscanf(paramFile, "%s %s", &paramName, &paramValue) == 2 )
+    while ( fscanf(paramFile, "%s %s", paramName, paramValue) == 2 )
     {
         if (!strcmp(paramName,"beta")) beta = atof(paramValue);
         else if (!strcmp(paramName,"n")) n = atoi(paramValue);
@@ -147,7 +148,7 @@ void DeleteLattice(void)
 
 void GetMeasures(void)
 {
-    FILE *plaquetteFile;
+    FILE *plaquetteFile = NULL;
     //FILE *chargeSqFile;
     //FILE *chargeEvenOddFile;
     if (getPlaquette) assert(plaquetteFile = fopen(plaquetteHistory, "w"));
@@ -156,9 +157,9 @@ void GetMeasures(void)
     for (int i=0; i<sweeps; i++)
     {
         SweepLattice();
-        if (getPlaquette) fprintf(plaquetteFile, "%lf\n", GetPlaquetteMean());
-        //if (getChargeSq) fprintf(chargeSqFile, "%lf\n", GetChargeSq());
-        //if (getChargeEvenOdd) fprintf(chargeEvenOdd, "%lf\n", GetChargeEvenOdd());
+        if (getPlaquette) fprintf(plaquetteFile, "%.16e\n", GetPlaquetteMean());
+        //if (getChargeSq) fprintf(chargeSqFile, "%.16e\n", GetChargeSq());
+        //if (getChargeEvenOdd) fprintf(chargeEvenOdd, "%.16e\n", GetChargeEvenOdd());
     }
     if (getPlaquette)
     {
@@ -389,7 +390,7 @@ double GetLeftTLTorus(int nx, int ny)
     return lattice[(nx+n-1)%n][ny].topLink;
 }
 
-double GetLeftTLMoeb(int nx, int ny)
+double GetLeftTLKlein(int nx, int ny)
 {
     if (nx==0) return -lattice[n-1][(2*n-2-ny)%n].topLink;
     else return lattice[nx-1][ny].topLink;
@@ -400,7 +401,7 @@ double GetBottomRLTorus(int nx, int ny)
     return lattice[nx][(ny+n-1)%n].rightLink;
 }
 
-double GetBottomRLMoeb(int nx, int ny)
+double GetBottomRLKlein(int nx, int ny)
 {
     return lattice[nx][(ny+n-1)%n].rightLink;
 }
@@ -410,7 +411,7 @@ double GetBottomTLTorus(int nx, int ny)
     return lattice[nx][(ny+n-1)%n].topLink;
 }
 
-double GetBottomTLMoeb(int nx, int ny)
+double GetBottomTLKlein(int nx, int ny)
 {
     return lattice[nx][(ny+n-1)%n].topLink;
 }
@@ -420,7 +421,7 @@ double GetBottomRightTLTorus(int nx, int ny)
     return lattice[(nx+1)%n][(ny+n-1)%n].topLink;
 }
 
-double GetBottomRightTLMoeb(int nx, int ny)
+double GetBottomRightTLKlein(int nx, int ny)
 {
     if (nx==n-1) return -lattice[0][(2*n-1-ny)%n].topLink;
     else return lattice[nx+1][(ny+n-1)%n].topLink;

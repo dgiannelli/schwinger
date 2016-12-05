@@ -1,11 +1,13 @@
 CC = gcc
-CFLAGS = -std=c11 -O3 -Wall -lm -lgsl -lgslcblas
+CFLAGS = -g -std=c11 -O3 -Wall -lm -lgsl -lgslcblas
+
+.PHONY = testPlaquette clean
 
 ####
 
 testPlaquette: main.exe analysis.exe
-	./main.exe params/plaquetteTorus.dat
-	./analysis.exe params/plaquetteTorus.dat
+	./main.exe params/plaquetteTorus.par
+	./analysis.exe params/plaquetteTorus.par
 
 ####
 
@@ -25,3 +27,9 @@ lattice.o: lattice.c lattice.h random.h
 
 random.o: random.c random.h
 	$(CC) $(CFLAGS) -c $< -o $@
+
+####
+
+clean:
+	rm *.o *.exe
+

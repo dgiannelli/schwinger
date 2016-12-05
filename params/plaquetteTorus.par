@@ -3,5 +3,5 @@ n 24
 bounds torus
 sweeps 50000
 getPlaquette 1
-plaquetteHistory ../data/plaquetteTorusHistory.dat
+plaquetteHistory ./data/plaquetteTorusHistory.dat
 

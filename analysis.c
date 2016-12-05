@@ -15,13 +15,13 @@ int getPlaquette = 0;
 char plaquetteHistory[40];
 char plaquetteAnalysis[40] = "";
 
-void Bunching(FILE *file)
+void Bunching(FILE *output, FILE *input)
 {
     const int therm = sweeps*THERMRATIO;
     const int size = sweeps - therm;
     const int binSize = ( size + NBINS - 1 ) / NBINS;
 
-    for (int i=0; i<therm; i++) fscanf(file, "%*f");
+    for (int i=0; i<therm; i++) fscanf(input, "%*f");
 
     double mean = 0.0;
     double meanSq = 0.0;
@@ -29,7 +29,7 @@ void Bunching(FILE *file)
     {
         double meanBin = 0.0;
         int i = 0;
-        for(double temp; i<binSize && fscanf(file, "%lf", &temp); i++)
+        for(double temp; i<binSize && fscanf(input, "%lf", &temp); i++)
         {
             meanBin += temp;
         }
@@ -42,14 +42,14 @@ void Bunching(FILE *file)
 
     const double error = sqrt( (meanSq-gsl_pow_2(mean)) / (NBINS - 1) ); 
 
-    fprintf(file, "%.16e\t%.16e\t%.1f\t%i\t%s\n", mean, error, beta, n, bounds);
+    fprintf(output, "%.16e\t%.16e\t%.1f\t%i\t%s\n", mean, error, beta, n, bounds);
 }
 
 int main(int argc, char *argv[])
 {
     assert(argc==2);
 
-    FILE *paramFile = fopen(argv[1], "r");
+    FILE *paramFile = fopen(argv[1], "r"); assert(paramFile);
     char paramName[40], paramValue[40];
     while ( fscanf(paramFile, "%s %s", paramName, paramValue) == 2 )
     {
@@ -69,7 +69,7 @@ int main(int argc, char *argv[])
         if (strcmp(plaquetteAnalysis,"")) assert(plaquetteAnalysisFile = fopen(plaquetteAnalysis, "a"));
         else plaquetteAnalysisFile = stdout;
 
-        Bunching(plaquetteAnalysisFile);
+        Bunching(plaquetteAnalysisFile, plaquetteHistoryFile);
 
         if (strcmp(plaquetteAnalysis,"")) fclose(plaquetteAnalysisFile);
     }

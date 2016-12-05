@@ -106,7 +106,7 @@ static double FitInterval(double x)
 
 void NewLattice(char *paramFname)
 {
-    FILE *paramFile = fopen(paramFname, "r");
+    FILE *paramFile = fopen(paramFname, "r"); assert(paramFile);
     char paramName[40], paramValue[40];
     while ( fscanf(paramFile, "%s %s", paramName, paramValue) == 2 )
     {
@@ -161,6 +161,9 @@ void GetMeasures(void)
         //if (getChargeSq) fprintf(chargeSqFile, "%.16e\n", GetChargeSq());
         //if (getChargeEvenOdd) fprintf(chargeEvenOdd, "%.16e\n", GetChargeEvenOdd());
     }
+
+    printf("Acceptance ratio: %f\n", (float)succ/total);
+
     if (getPlaquette)
     {
         fclose(plaquetteFile);
@@ -176,8 +179,6 @@ void GetMeasures(void)
         fclose(chargeEvenOddFile);
         printf("\n**** Collected %i Q_eo measures at beta = %.1f with lattice size %i and %s boundary conditions ****\n\n", sweeps, beta, n, bounds);
     }*/
-
-    printf("Acceptance ratio: %f\n", (float)succ/total);
 }
 
 // **** Implementation of not included functions:

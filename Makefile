@@ -6,8 +6,8 @@ CFLAGS = -g -std=c11 -O3 -Wall -lm -lgsl -lgslcblas
 ####
 
 testPlaquette: main.exe analysis.exe
-	./main.exe params/plaquetteTorus.par
-	./analysis.exe params/plaquetteTorus.par
+	parallel ./main.exe ::: params/plaquette*.par 
+	for par in params/plaquette*.par; do ./analysis.exe $$par; done
 
 ####
 

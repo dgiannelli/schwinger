@@ -1,17 +1,20 @@
 CC = gcc
 CFLAGS = -g -std=c11 -O3 -Wall -lm -lgsl -lgslcblas
 
-.PHONY = testPlaquette clean
+.PHONY = testPlaquette runCharge clean cleanData
 
 ####
 
 testPlaquette: main.exe analysis.exe
+	mkdir -p data
 	parallel ./main.exe ::: params/plaquette*.par 
 	for par in params/plaquette*.par; do ./analysis.exe $$par; done
 
-runCharge: main.exe analysis.exe
-	parallel ./main.exe ::: params/infty*.par
-	for par in params/infty*.par; do ./analysis.exe $$par; done
+runCharge: main.exe analysis.exe cleanData
+	mkdir -p data
+	rm -f data/inftyTorus.dat data/contTorus.dat data/inftyKlein.dat data/contKlein.dat data/inftyEvenOdd.dat data/contEvenOdd.dat
+	parallel ./main.exe ::: params/infty*.par params/cont*.par
+	for par in params/infty*.par params/cont*.par; do ./analysis.exe $$par; done
 
 ####
 
@@ -37,3 +40,5 @@ random.o: random.c random.h
 clean:
 	rm *.o *.exe
 
+cleanData:
+	rm -fr data/

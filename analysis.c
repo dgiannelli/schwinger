@@ -75,6 +75,9 @@ int main(int argc, char *argv[])
     }
 
     FILE *plaquetteHistoryFile, *plaquetteAnalysisFile;
+    FILE *chargeSqHistoryFile, *chargeSqAnalysisFile;
+    FILE *chargeEvenOddHistoryFile, *chargeEvenOddAnalysisFile;
+
     if (getPlaquette)
     {
         assert(plaquetteHistoryFile = fopen(plaquetteHistory, "r"));

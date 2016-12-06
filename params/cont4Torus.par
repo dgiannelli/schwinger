@@ -1,0 +1,8 @@
+beta 7.2
+n 24
+bounds torus
+sweeps 50000
+getChargeSq 1
+chargeSqHistory ./data/cont4TorusHistory.dat
+chargeSqAnalysis ./data/contTorus.dat
+

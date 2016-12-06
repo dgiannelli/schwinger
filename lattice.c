@@ -23,7 +23,7 @@ static int getChargeSq;
 static int getChargeEvenOdd;
 static char plaquetteHistory[40];
 static char chargeSqHistory[40];
-static char chargeEvenOdd[40];
+static char chargeEvenOddHistory[40];
 // Global variables to compute the acceptance ratio of the updating steps:
 static int total, succ;
 
@@ -167,7 +167,7 @@ void GetMeasures(void)
         SweepLattice();
         if (getPlaquette) fprintf(plaquetteFile, "%.16e\n", GetPlaquetteMean());
         if (getChargeSq) fprintf(chargeSqFile, "%.16e\n", GetChargeSq());
-        if (getChargeEvenOdd) fprintf(chargeEvenOdd, "%.16e\n", GetChargeEvenOdd());
+        if (getChargeEvenOdd) fprintf(chargeEvenOddFile, "%.16e\n", GetChargeEvenOdd());
     }
 
     printf("Acceptance ratio: %f\n", (float)succ/total);
@@ -257,7 +257,7 @@ double GetChargeEvenOdd()
                                 + GetRightTL(nx,ny)         - GetTopRL(nx,ny) );
         }
     }
-    return charge/2.0/M_PI;
+    return fabs( fmod( round(charge/2.0/M_PI) , 2.0 ) );
 }
 
 void SweepLattice()

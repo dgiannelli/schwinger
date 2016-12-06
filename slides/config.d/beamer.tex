@@ -1,0 +1,21 @@
+%beamer handout definitions
+\mode<handout>{
+  \usetheme{Juelich}
+  \pgfpagesuselayout{2 on 1}[a4paper,border shrink=5mm]
+}
+
+% use the Juelich theme for all slides in presentation mode
+\mode<presentation>{
+  \usetheme{Juelich}
+}
+
+% define \emph as color version, no bold, slanted, italic, please
+\renewcommand{\emph}[1]{\structure{#1}}
+
+% simply incremental slides inside tikz
+\tikzset{
+  onslide/.code args={<#1>#2}{%
+    \only<#1>{\pgfkeysalso{#2}} % \pgfkeysalso doesn't change the path
+  }
+}
+

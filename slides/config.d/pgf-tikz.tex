@@ -1,0 +1,15 @@
+% pgf and tikz configuration and sub-package loading
+\usetikzlibrary{mindmap,arrows, positioning, decorations.markings, shapes.misc,calc}
+
+% externalize feature to speed-up compilation time
+\usetikzlibrary{external}
+\tikzexternalize[prefix=cache/,shell escape=-enable-write18]
+\tikzset{
+  %external/mode=graphics if exists,
+  external/mode=list and make,
+  external/system call={
+    lualatex \tikzexternalcheckshellescape -halt-on-error
+    -interaction=batchmode --shell-escape
+    -jobname "\image" "\texsource"
+  },
+}

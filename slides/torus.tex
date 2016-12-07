@@ -1,0 +1,95 @@
+\part{On a torus}
+\makepart
+
+\begin{frame}
+    \begin{center}
+        \begin{tikzpicture}
+            \begin{axis}
+                [ 
+                    width = 0.7\textwidth,
+                    height = 0.7\textheight,
+                    title = Infinite volume limit,
+                    xlabel = $\displaystyle \frac{1}{N^2}$,
+                    ylabel = $\displaystyle \frac{\left<Q^2\right>}{N^2}$,
+                    mark size = 1.5pt,
+                    xmin = 0, xmax = 0.01,
+                    ymin = 0.035, ymax = 0.045,
+                ]
+                \addplot+
+                [
+                    only marks,
+                    mark = square,
+                    color = fzjblue,
+                    error bars/.cd, y dir = both, y explicit,
+                ] table
+                [
+                    x expr = 1/\thisrowno{3}^2,
+                    y expr = \thisrowno{0}/\thisrowno{3}^2,
+                    y error expr = \thisrowno{1}/\thisrowno{3}^2,
+                    header = false,
+                ] {../data/inftyTorus.dat};
+            \end{axis}
+        \end{tikzpicture}
+    \end{center}
+\end{frame}
+
+\begin{frame}
+    \begin{center}
+        \begin{tikzpicture}
+            \begin{axis}
+                [ 
+                    width = 0.7\textwidth,
+                    height = 0.7\textheight,
+                    title = Continuum limit,
+                    xlabel = $\displaystyle \frac{1}{N^2}$,
+                    ylabel = $\displaystyle \left<Q^2\right>$,
+                    mark size = 1.5pt,
+                    xmin = 0, xmax = 0.01,
+                ]
+                \addplot+
+                [
+                    only marks,
+                    mark = square,
+                    color = fzjblue,
+                    error bars/.cd, y dir = both, y explicit,
+                ] table
+                [
+                    x expr = 1/\thisrowno{3}^2,
+                    y expr = \thisrowno{0},
+                    y error expr = \thisrowno{1},
+                    header = false,
+                ] {../data/contTorus.dat};
+            \end{axis}
+        \end{tikzpicture}
+    \end{center}
+\end{frame}
+
+\begin{frame}
+	\begin{columns}
+		\begin{column}{0.5\textwidth}
+			\begin{tikzpicture}
+				\begin{axis}
+					[
+						width = .95\textwidth,
+						height = .95\textwidth,
+						%ymin = -5, ymax = 5,
+						enlargelimits = false,
+						title = {$\beta = 5.0,\ N = 20$},
+						xlabel = Sweeps,
+						ylabel = $Q$,
+					] \addplot+
+					[
+						mark = none,
+						color = fzjblue,
+					] gnuplot
+					[
+						raw gnuplot,
+					]
+					{
+						plot "../data/cont3TorusHistory.dat" every ::20000::21000 with lines;
+					};
+				\end{axis}
+			\end{tikzpicture}
+		\end{column}
+	\end{columns}
+\end{frame}

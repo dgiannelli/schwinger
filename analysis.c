@@ -5,7 +5,7 @@
 #include <gsl/gsl_math.h>
 
 #define THERMRATIO 0.2
-#define NBINS 20
+#define NBINS 30
 
 double beta;
 int n;
@@ -30,25 +30,31 @@ void Bunching(FILE *output, FILE *input)
     for (int i=0; i<therm; i++) fscanf(input, "%*f");
 
     double mean = 0.0;
-    double meanSq = 0.0;
+    double sqMean = 0.0;
+    double sqMeanBin = 0.0;
     for (int bin=0; bin<NBINS; bin++)
     {
         double meanBin = 0.0;
         int i = 0;
         for(double temp; i<binSize && fscanf(input, "%lf", &temp); i++)
         {
+            if (getChargeSq) temp = gsl_pow_2(temp);
             meanBin += temp;
+            sqMean += gsl_pow_2(temp);
         }
         meanBin /= i;
         mean += meanBin;
-        meanSq += gsl_pow_2(meanBin);
+        sqMeanBin += gsl_pow_2(meanBin);
     }
     mean /= NBINS;
-    meanSq /= NBINS;
+    sqMeanBin /= NBINS;
+    sqMean /= size;
 
-    const double error = sqrt( (meanSq-gsl_pow_2(mean)) / (NBINS - 1) ); 
+    const double errorSq = (sqMeanBin-gsl_pow_2(mean)) / (NBINS - 1); 
+    const double sigmaSq = (sqMean-gsl_pow_2(mean)) / (size - 1);
+    const int tau = round( ( ceil(errorSq/sigmaSq) - 1.0 ) / 2.0 );
 
-    fprintf(output, "%.16e\t%.16e\t%.1f\t%i\t%s\n", mean, error, beta, n, bounds);
+    fprintf(output, "%.16e\t%.16e\t%.1f\t%i\t%s\t%i\n", mean, sqrt(errorSq), beta, n, bounds, tau);
 }
 
 int main(int argc, char *argv[])

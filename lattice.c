@@ -242,7 +242,7 @@ double GetChargeSq()
                                  + GetRightTL(nx,ny)         - GetTopRL(nx,ny) );
         }
     }
-    return gsl_pow_2(charge/2.0/M_PI);
+    return charge/2.0/M_PI;
 }
 
 double GetChargeEvenOdd()

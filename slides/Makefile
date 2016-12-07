@@ -41,20 +41,11 @@ SOURCES		 = $(TARGET:=.tex)
 .PHONY: build clean distclean predepend
 
 ### Build target ###
-build: build-stage0
+build:
 	$(MAKE) build-stage1
 
 check-texmf:
 	@if [ ! -d "$(TEXHOME)" ]; then echo "FATAL ERROR: $(patsubst $(HOME)/%,~/%,$(TEXHOME)) has not been initialized. Run 'make get-texmf' first."; false; fi
-
-# create gitinfo2 hook
-$(GITDIR)/hooks/post-commit: | check-texmf
-	$(TEXHOME)/bin/git-gitinfo2 init
-
-# trigger gitinfo2 hook
-build-stage0: $(GITDIR)/hooks/post-commit
-	@if [ -z "$(SOURCE_BASENAME)" ]; then echo "INTERNAL ERROR: SOURCE_BASENAME is not defined"; false ; fi
-	git checkout
 
 build-target: $(TARGET).pdf
 

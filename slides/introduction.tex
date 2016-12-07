@@ -1,0 +1,72 @@
+\part{Introduction}
+\makepart
+
+\begin{frame}
+    \begin{columns}
+        \begin{column}{.5\textwidth}
+            \centering
+            %$$V = \lambda\left(\phi^*\phi-f_a^2\right)^2$$
+            \begin{tikzpicture}
+                \begin{axis}[
+                        width = \textwidth,
+                    height = \textwidth,
+                    axis equal image,
+                    view={135}{20},
+                    ticks=none,
+                    axis lines = center,
+                    xmax = 1.6,
+                    ymax = 1.6,
+                    zmax = 1.4,
+                    x label style={anchor=east},
+                    y label style={anchor=west},
+                    z label style={anchor=south},
+                    xlabel=$\Re\phi$,
+                    ylabel=$\Im\phi$,
+                    zlabel=$V$,
+                    samples=30,
+                    domain=0:360,
+                    y domain=0:1.25, clip=false,
+                    ]
+                    \addplot3 [surf, shader=flat, draw=black, fill=white, z buffer=sort]
+                    ({cos(x)*y}, {sin(x)*y}, {(y^2-1)^2});
+                \end{axis}
+            \end{tikzpicture}
+        \end{column}%
+        \begin{column}{.5\textwidth}
+            \centering
+            %$$V = \lambda\left(\phi^*\phi-f_a^2\right)^2 -%
+            %\chi_t\frac{\left|\phi\right|}{f_a}\cos\arg\phi$$
+
+            %\vspace{-0.75em}
+
+            \begin{tikzpicture}
+                \begin{axis}[
+                        width = \textwidth,
+                    height = \textwidth,
+                    axis equal image,
+                    view={135}{20},
+                    ticks=none,
+                    axis lines = center,
+                    xmax = 1.6,
+                    ymax = 1.6,
+                    zmax = 1.4,
+                    x label style={anchor=east},
+                    y label style={anchor=west},
+                    z label style={anchor=south},
+                    xlabel=$\Re\phi$,
+                    ylabel=$\Im\phi$,
+                    zlabel=$V$,
+                    samples=30,
+                    domain=0:360,
+                    y domain=0:1.25, clip=false,
+                    ]
+                    \addplot3 [surf, shader=flat, draw=black, fill=white, z buffer=sort]
+                    ({cos(x)*y}, {sin(x)*y}, {(y^2-1)^2 - 0.2*y*cos(x)});
+                \end{axis}
+            \end{tikzpicture}
+
+            \vspace{0.5em}
+
+        \end{column}
+    \end{columns}
+\end{frame}

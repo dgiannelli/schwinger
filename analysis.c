@@ -5,7 +5,7 @@
 #include <gsl/gsl_math.h>
 
 #define THERMRATIO 0.2
-#define NBINS 30
+#define NBINS 10
 
 double beta;
 int n;
@@ -36,7 +36,7 @@ void Bunching(FILE *output, FILE *input)
     {
         double meanBin = 0.0;
         int i = 0;
-        for(double temp; i<binSize && fscanf(input, "%lf", &temp); i++)
+        for(double temp; i<binSize && fscanf(input, "%lf", &temp) == 1; i++)
         {
             if (getChargeSq) temp = gsl_pow_2(temp);
             meanBin += temp;

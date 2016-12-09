@@ -25,7 +25,6 @@ GIT		?= git
 # Find the .git directory
 GITDIR		:= $(shell $(GIT) rev-parse --git-dir)
 
-# defines SOURCE_BASENAME
 
 TARGET		 = slides
 SOURCES		 = $(TARGET:=.tex)

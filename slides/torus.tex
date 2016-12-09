@@ -3,6 +3,28 @@
 
 \begin{frame}
     \begin{center}
+        \textbf{Limite di volume infinito:}\\
+        \vspace{0.5em}
+        \begin{tabular}{cccccc}
+            \toprule
+            $\beta$ & 1.0 & 1.0 & 1.0 & 1.0 & 1.0 \\\midrule
+            $N$     & 12  & 16  & 20  & 24  & 28  \\\bottomrule
+        \end{tabular}
+    \end{center}
+    \vspace{1em}
+    \begin{center}
+        \textbf{Limite continuo:}\\
+        \vspace{0.5em}
+        \begin{tabular}{cccccc}
+            \toprule
+            $\beta$ & 1.8 & 3.2 & 5.0 & 7.2 & 9.8 \\\midrule
+            $N$     & 12  & 16  & 20  & 24  & 28  \\\bottomrule
+        \end{tabular}
+    \end{center}
+\end{frame}
+
+\begin{frame}
+    \begin{center}
         \begin{tikzpicture}
             \begin{axis}
                 [ 
@@ -66,58 +88,122 @@
 \end{frame}
 
 \begin{frame}
-	\begin{columns}
-		\begin{column}{0.5\textwidth}
-			\begin{tikzpicture}
-				\begin{axis}
-					[
-						width = .95\textwidth,
-						height = .95\textwidth,
-						ymin = -5, ymax = 5,
-						enlargelimits = false,
-						title = {$\beta = 5.0,\ N = 20$},
-						xlabel = Sweeps,
-						ylabel = $Q$,
+    \begin{columns}
+        \begin{column}{0.5\textwidth}
+            \begin{tikzpicture}
+                \begin{axis}
+                    [
+                        width = .95\textwidth,
+                        height = .95\textwidth,
+                        ymin = -5, ymax = 5,
+                        enlargelimits = false,
+                        title = {$\beta = 5.0,\ N = 20$},
+                        xlabel = Sweeps,
+                        ylabel = $Q$,
                         xtick = {0,500,1000}
-					] \addplot+
-					[
-						mark = none,
-						color = fzjblue,
-					] gnuplot
-					[
-						raw gnuplot,
-					]
-					{
+                    ] \addplot+
+                    [
+                        mark = none,
+                        color = fzjblue,
+                    ] gnuplot
+                    [
+                        raw gnuplot,
+                    ]
+                    {
                         plot "../data/cont3TorusHistory.dat" every ::20000::21000 with lines;
-					};
-				\end{axis}
-			\end{tikzpicture}
-		\end{column}
-		\begin{column}{0.5\textwidth}
-			\begin{tikzpicture}
-				\begin{axis}
-					[
-						width = .95\textwidth,
-						height = .95\textwidth,
-						ymin = -5, ymax = 5,
-						enlargelimits = false,
-						title = {$\beta = 7.2,\ N = 24$},
-						xlabel = Sweeps,
-						ylabel = $Q$,
+                    };
+                \end{axis}
+            \end{tikzpicture}
+        \end{column}
+        \begin{column}{0.5\textwidth}
+            \begin{tikzpicture}
+                \begin{axis}
+                    [
+                        width = .95\textwidth,
+                        height = .95\textwidth,
+                        ymin = -5, ymax = 5,
+                        enlargelimits = false,
+                        title = {$\beta = 7.2,\ N = 24$},
+                        xlabel = Sweeps,
+                        ylabel = $Q$,
                         xtick = {0,500,1000}
-					] \addplot+
-					[
-						mark = none,
-						color = fzjblue,
-					] gnuplot
-					[
-						raw gnuplot,
-					]
-					{
-						plot "../data/cont4TorusHistory.dat" every ::20000::21000 with lines;
-					};
-				\end{axis}
-			\end{tikzpicture}
-		\end{column}
-	\end{columns}
+                    ] \addplot+
+                    [
+                        mark = none,
+                        color = fzjblue,
+                    ] gnuplot
+                    [
+                        raw gnuplot,
+                    ]
+                    {
+                        plot "../data/cont4TorusHistory.dat" every ::20000::21000 with lines;
+                    };
+                \end{axis}
+            \end{tikzpicture}
+        \end{column}
+    \end{columns}
 \end{frame}
+
+\tikzexternaldisable
+\begin{frame}
+    \begin{columns}
+        \begin{column}{0.4\textwidth}
+            \centering
+            \begin{tikzpicture}[x=0.1\textwidth,y=0.1\textwidth]
+                \draw [very thick,fzjred] (10,0) -- (10,10);
+                \draw [very thick,fzjred] (0,10) -- (0,0);
+                \draw [very thick,fzjblue] (0,0) -- (10,0);
+                \draw [very thick,fzjblue] (0,10) -- (10,10);
+                \draw [->,very thick,fzjblue] (4,0) -- (5,0);
+                \draw [->,very thick,fzjred] (10,4) -- (10,5);
+                \draw [->,very thick,fzjblue] (4,10) -- (5,10);
+                \draw [->,very thick,fzjred] (0,4) -- (0,5);
+                \begin{scope}
+                    \clip (0,0) rectangle (10,10);
+                    \node [circle, radius=1, fill=fzjblue] at (3,5) {$+$};
+                    \uncover<1>{\node [circle, radius=1, fill=fzjred] at (7,8) {$-$};}
+                    \uncover<2>{\node [circle, radius=1, fill=fzjred] at (7,9) {$-$};}
+                    \uncover<3>{\node [circle, radius=1, fill=fzjred] at (7,10) {$-$};}
+                    \uncover<3>{\node [circle, radius=1, fill=fzjred] at (7,0) {$-$};}
+                    \uncover<4>{\node [circle, radius=1, fill=fzjred] at (7,1) {$-$};}
+                    \uncover<5>{\node [circle, radius=1, fill=fzjred] at (7,2) {$-$};}
+                    \uncover<1>{\node [circle, radius=1, fill=fzjblue] at (8,2) {$+$};}
+                    \uncover<2>{\node [circle, radius=1, fill=fzjblue] at (9,2) {$+$};}
+                    \uncover<3>{\node [circle, radius=1, fill=fzjblue] at (10,2) {$+$};}
+                    \uncover<3>{\node [circle, radius=1, fill=fzjblue] at (0,2) {$+$};}
+                    \uncover<4>{\node [circle, radius=1, fill=fzjblue] at (1,2) {$+$};}
+                    \uncover<5>{\node [circle, radius=1, fill=fzjblue] at (2,2) {$+$};}
+                \end{scope}
+            \end{tikzpicture}
+        \end{column}%
+        \begin{column}{0.6\textwidth}
+            \centering
+            \begin{tikzpicture}
+                \begin{axis}
+                    [
+                        xlabel=$x$,
+                        ylabel=$y$,
+                        view/h=-10,
+                        width = .95\textwidth,
+                        height = .95\textwidth,
+                        hide axis,
+                    ] \addplot3
+                    [
+                        surf, shader = flat,
+                        draw = black,
+                        fill = white,
+                        z buffer=sort,
+                        domain=0:360, domain y=0:360,
+                        samples=41, samples y=25,
+                        variable=\u, variable y=\v,
+                        point meta=u,
+                    ]
+                        ({cos(u) * (8 + 2*cos(v))},
+                        { sin(u) * (8 + 2*cos(v))},
+                        {2 * sin(v)});
+                \end{axis}
+            \end{tikzpicture}
+        \end{column}
+    \end{columns}
+\end{frame}
+\tikzexternalenable

@@ -1,4 +1,4 @@
-\part{On a torus}
+\part{Toro}
 \makepart
 
 \begin{frame}
@@ -6,9 +6,10 @@
         \begin{tikzpicture}
             \begin{axis}
                 [ 
-                    width = 0.7\textwidth,
-                    height = 0.7\textheight,
-                    title = Infinite volume limit,
+                    width = 0.8\textwidth,
+                    height = 0.8\textheight,
+                    title style = {xshift=1em},
+                    title = Limite di volume infinito,
                     xlabel = $\displaystyle \frac{1}{N^2}$,
                     ylabel = $\displaystyle \frac{\left<Q^2\right>}{N^2}$,
                     mark size = 1.5pt,
@@ -38,9 +39,9 @@
         \begin{tikzpicture}
             \begin{axis}
                 [ 
-                    width = 0.7\textwidth,
-                    height = 0.7\textheight,
-                    title = Continuum limit,
+                    width = 0.8\textwidth,
+                    height = 0.8\textheight,
+                    title = Limite continuo,
                     xlabel = $\displaystyle \frac{1}{N^2}$,
                     ylabel = $\displaystyle \left<Q^2\right>$,
                     mark size = 1.5pt,
@@ -72,11 +73,12 @@
 					[
 						width = .95\textwidth,
 						height = .95\textwidth,
-						%ymin = -5, ymax = 5,
+						ymin = -5, ymax = 5,
 						enlargelimits = false,
 						title = {$\beta = 5.0,\ N = 20$},
 						xlabel = Sweeps,
 						ylabel = $Q$,
+                        xtick = {0,500,1000}
 					] \addplot+
 					[
 						mark = none,
@@ -86,7 +88,33 @@
 						raw gnuplot,
 					]
 					{
-						plot "../data/cont3TorusHistory.dat" every ::20000::21000 with lines;
+                        plot "../data/cont3TorusHistory.dat" every ::20000::21000 with lines;
+					};
+				\end{axis}
+			\end{tikzpicture}
+		\end{column}
+		\begin{column}{0.5\textwidth}
+			\begin{tikzpicture}
+				\begin{axis}
+					[
+						width = .95\textwidth,
+						height = .95\textwidth,
+						ymin = -5, ymax = 5,
+						enlargelimits = false,
+						title = {$\beta = 7.2,\ N = 24$},
+						xlabel = Sweeps,
+						ylabel = $Q$,
+                        xtick = {0,500,1000}
+					] \addplot+
+					[
+						mark = none,
+						color = fzjblue,
+					] gnuplot
+					[
+						raw gnuplot,
+					]
+					{
+						plot "../data/cont4TorusHistory.dat" every ::20000::21000 with lines;
 					};
 				\end{axis}
 			\end{tikzpicture}

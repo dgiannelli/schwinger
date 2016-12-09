@@ -5,7 +5,7 @@
 #include <gsl/gsl_math.h>
 
 #define THERMRATIO 0.2
-#define NBINS 10
+#define NBINS 20
 
 double beta;
 int n;

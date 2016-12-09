@@ -1,0 +1,221 @@
+\part{bottiglia di Klein}
+\makepart
+
+\begin{frame}
+	\begin{columns}
+		\begin{column}{0.5\textwidth}
+			\begin{tikzpicture}
+				\begin{axis}
+					[
+						width = .95\textwidth,
+						height = .95\textwidth,
+						ymin = -5, ymax = 5,
+						enlargelimits = false,
+						title = {$\beta = 5.0,\ N = 20$},
+						xlabel = Sweeps,
+						ylabel = $Q$,
+                        xtick = {0,500,1000}
+					] \addplot+
+					[
+						mark = none,
+						color = fzjblue,
+					] gnuplot
+					[
+						raw gnuplot,
+					]
+					{
+                        plot "../data/cont3KleinHistory.dat" every ::20000::21000 with lines;
+					};
+				\end{axis}
+			\end{tikzpicture}
+		\end{column}
+		\begin{column}{0.5\textwidth}
+			\begin{tikzpicture}
+				\begin{axis}
+					[
+						width = .95\textwidth,
+						height = .95\textwidth,
+						ymin = -5, ymax = 5,
+						enlargelimits = false,
+						title = {$\beta = 7.2,\ N = 24$},
+						xlabel = Sweeps,
+						ylabel = $Q$,
+                        xtick = {0,500,1000}
+					] \addplot+
+					[
+						mark = none,
+						color = fzjblue,
+					] gnuplot
+					[
+						raw gnuplot,
+					]
+					{
+						plot "../data/cont4KleinHistory.dat" every ::20000::21000 with lines;
+					};
+				\end{axis}
+			\end{tikzpicture}
+		\end{column}
+	\end{columns}
+\end{frame}
+
+\begin{frame}
+	\begin{center}
+		\begin{tikzpicture}
+			\pgfplotsset{every outer x axis line/.style={->}}
+			\begin{axis}
+				[
+                    width = 0.5\textwidth,
+                    height = 0.5\textwidth,
+					name = ax1,
+					x post scale=-1,
+					axis x line = bottom,
+					axis y line = right,
+					hide y axis,
+					mark size = 1pt,
+					xmin = 0, xmax = 0.01,
+					ymin = 0.035, ymax = 0.045,
+                    xtick = {0.005, 0.01},
+				]
+				\addplot+
+				[
+					only marks,
+					mark = square,
+					color = fzjblue,
+					error bars/.cd, y dir = both, y explicit,
+				] table
+				[
+					x expr = 1.0/\thisrowno{3}^2,
+                    y expr = \thisrowno{0}/\thisrowno{3}^2,
+					y error expr = \thisrowno{1}/\thisrowno{3}^2,
+                    header = false,
+				] {../data/inftyTorus.dat};
+			\end{axis}
+			\begin{axis}
+				[ 
+                    width = 0.5\textwidth,
+                    height = 0.5\textwidth,
+					name = ax2,
+					axis x line = bottom,
+					axis y line = left,
+					every axis y label/.style={
+						at={(ticklabel* cs:1.08)},
+					anchor=south,},
+                    ylabel = $\displaystyle \frac{\left<Q^2\right>}{N^2}$,
+					at={(ax1.south east)},
+					anchor=south west,
+					mark size = 1pt,
+					xmin = 0, xmax = 0.01,
+					ymin = 0.035, ymax = 0.045,
+                    xtick = {0, 0.005, 0.01},
+				]
+				\addplot+
+				[
+					only marks,
+					mark = square,
+					color = fzjblue,
+					error bars/.cd, y dir = both, y explicit,
+				] table
+				[
+					x expr = 1.0/\thisrowno{3}^2,
+                    y expr = \thisrowno{0}/\thisrowno{3}^2,
+					y error expr = \thisrowno{1}/\thisrowno{3}^2,
+                    header = false,
+				] {../data/inftyKlein.dat};
+			\end{axis}
+
+			\node [above=4em] at (ax1.north east) {\large Limite di volume infinito};
+			\node [below=0.5em]at (ax1.north) {Toro};
+            \node [below=0.5em] at (ax2.north) {Bottiglia di Klein};
+			\node [below=2em] at (ax1.south east) {$\displaystyle \frac{1}{N^2}$};
+		\end{tikzpicture}
+	\end{center}
+\end{frame}
+
+\begin{frame}
+	\begin{center}
+		\begin{tikzpicture}
+			\pgfplotsset{every outer x axis line/.style={->}}
+			\begin{axis}
+				[
+                    width = 0.5\textwidth,
+                    height = 0.5\textwidth,
+					name = ax1,
+					x post scale=-1,
+					axis x line = bottom,
+					axis y line = right,
+					hide y axis,
+					mark size = 1pt,
+					xmin = 0, xmax = 0.01,
+					ymin = 0, ymax = 6,
+                    xtick = {0.005, 0.01},
+				]
+				\addplot+
+				[
+					only marks,
+					mark = square,
+					color = fzjblue,
+					error bars/.cd, y dir = both, y explicit,
+				] table
+				[
+					x expr = 1.0/\thisrowno{3}^2,
+					y index = 0,
+					y error index = 1,
+                    header = false,
+				] {../data/contTorus.dat};
+			\end{axis}
+			\begin{axis}
+				[ 
+                    width = 0.5\textwidth,
+                    height = 0.5\textwidth,
+					name = ax2,
+					axis x line = bottom,
+					axis y line = left,
+					every axis y label/.style={
+						at={(ticklabel* cs:1.05)},
+					anchor=south,},
+					ylabel = $\left<Q^2\right>$,
+					at={(ax1.south east)},
+					anchor=south west,
+					mark size = 1pt,
+					xmin = 0, xmax = 0.01,
+					ymin = 0, ymax = 6,
+                    xtick = {0, 0.005, 0.01},
+					ytick = {2, 4, 6},
+				]
+				\addplot+
+				[
+					only marks,
+					mark = square,
+					color = fzjblue,
+					error bars/.cd, y dir = both, y explicit,
+				] table
+				[
+					x expr = 1.0/\thisrowno{3}^2,
+					y index = 0,
+					y error index = 1,
+                    header = false,
+				] {../data/contKlein.dat};
+				\addplot[
+                    mark=x,
+                    color=fzjred,
+                    mark size=3pt,
+                ] coordinates {(0,1.84)};
+				\addplot[color=fzjgreen] gnuplot[raw gnuplot]
+				{
+					f(x) = a + b*x;
+					a = 1.8731;
+					b = 186.513; 
+                    set fit noerrorscaling;
+                    fit f(x) "../data/contKlein.dat" u (1.0/$4**2):1:2 via a,b;%#$;
+					plot [0:0.01] f(x);
+				};
+			\end{axis}
+
+			\node [above=3em] at (ax1.north east) {\large Limite continuo};
+			\node at (ax1.north) {Toro};
+			\node at (ax2.north) {Bottiglia di Klein};
+			\node [below=2em] at (ax1.south east) {$\displaystyle \frac{1}{N^2}$};
+		\end{tikzpicture}
+	\end{center}
+\end{frame}
+

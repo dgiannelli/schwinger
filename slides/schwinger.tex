@@ -1,0 +1,55 @@
+\part{Modello di Schwinger}
+\makepart
+
+\begin{frame}
+    \frametitle{Un modello giocattolo}
+    \begin{itemize}
+        \item Idee e algoritmi possono essere testati in un modello semplificato
+        \item Il modello di Schwinger è una teoria $U(1)$ in due dimensioni
+        \item Condivide diverse proprietà con la QCD
+        \item La principale è il confinamento dei fermioni
+        \item $F_{ij}$ è ora il tensore elettromagnetico in 2D
+        \item La carica topologica si riduce a:
+            $$Q = \frac{g}{4\pi}\int\mathrm d^2x\,\epsilon_{ij}F_{ij}$$
+    \end{itemize}
+\end{frame}
+
+\newcommand\plaquette{\raisebox{-0.08em}\Box}
+
+\begin{frame}
+    \frametitle{Sul reticolo}
+    \begin{itemize}
+        \item $F_{ij}$ è contenuto nelle plaquette $\plaquette$:
+            $$\plaquette \simeq e^{iea^2F_{ij}}$$
+        \item La carica topologica è approssimata da:
+            $$Q = \frac{g}{4\pi}\int\mathrm d^2x\,\epsilon_{ij}F_{ij} \simeq %
+            \frac{1}{2\pi}\sum\nolimits_\Box\Im\log\plaquette = %
+            \frac{1}{2\pi}\sum\nolimits_\Box\arg\plaquette$$
+        \item Gli elementi di $U(1)$ sono rappresentati da $e^{i\phi}$, %
+            con $\phi\in(-\pi,\pi]$
+        
+        \item Anche $\arg\plaquette deve essere anch'es
+        %    $$Q \simeq \frac{1}{2\pi}\sum$$
+        %\item Nella mia simulazione ho considerato l'approssimazione quenched:
+        %    $$S_E = \beta\sum\nolimits_{\plaquette}\left(1-\Re\,\plaquette\right)$$
+    \end{itemize}
+\end{frame}
+
+\begin{frame}
+    \begin{tikzpicture}
+        \begin{axis}
+            [
+                domain = -pi:pi,
+                samples = 1000,
+                xlabel = $x$,
+                xtick = {-3.14159, 0, 3.14159},
+                xticklabels = {$-\pi$, $0$, $\pi$},
+                legend style = {draw=none},
+            ]
+            \addplot[fzjblue,thick] {exp(cos(deg(x)))/7.9549};
+            \addlegendentry{$\mathcal{N}\,e^{\cos x}$};
+            \addplot[color=fzjred,thick] {exp(-.5*x^2)/2.50242};
+            \addlegendentry{$\mathcal{N}\,e^{-\frac{x^2}{2}}$};
+        \end{axis}
+    \end{tikzpicture}
+\end{frame}

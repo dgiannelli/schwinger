@@ -17,39 +17,79 @@
 \newcommand\plaquette{\raisebox{-0.08em}\Box}
 
 \begin{frame}
-    \frametitle{Sul reticolo}
+    \frametitle{$Q$ sul reticolo}
     \begin{itemize}
-        \item $F_{ij}$ è contenuto nelle plaquette $\plaquette$:
-            $$\plaquette \simeq e^{iea^2F_{ij}}$$
+        \item $F_{ij}$ è contenuto nelle plaquette: $\plaquette \simeq e^{iga^2F_{ij}}$
         \item La carica topologica è approssimata da:
             $$Q = \frac{g}{4\pi}\int\mathrm d^2x\,\epsilon_{ij}F_{ij} \simeq %
             \frac{1}{2\pi}\sum\nolimits_\Box\Im\log\plaquette = %
             \frac{1}{2\pi}\sum\nolimits_\Box\arg\plaquette$$
-        \item Gli elementi di $U(1)$ sono rappresentati da $e^{i\phi}$, %
-            con $\phi\in(-\pi,\pi]$
-        
-        \item Anche $\arg\plaquette deve essere anch'es
-        %    $$Q \simeq \frac{1}{2\pi}\sum$$
-        %\item Nella mia simulazione ho considerato l'approssimazione quenched:
-        %    $$S_E = \beta\sum\nolimits_{\plaquette}\left(1-\Re\,\plaquette\right)$$
+        \item Gli elementi di $U(1)$ sono rappresentati da $e^{i\varphi}$, %
+            con $\varphi\in(-\pi,\pi]$
+        \item Anche $\arg\plaquette$ deve essere $\in (-\pi,\pi]$
+        \item $\arg\plaquette$ si calcola sommando le anomalie dei quattro link, %
+            e sostituendo l'angolo ottenuto con l'equivalente $\in (-\pi,\pi]$
+            $$\arg\plaquette = \varphi_\Box -\left\lceil\frac{\varphi_\Box-\pi}{2\pi}\right\rceil\,2\pi$$
     \end{itemize}
 \end{frame}
 
 \begin{frame}
-    \begin{tikzpicture}
-        \begin{axis}
-            [
-                domain = -pi:pi,
-                samples = 1000,
-                xlabel = $x$,
-                xtick = {-3.14159, 0, 3.14159},
-                xticklabels = {$-\pi$, $0$, $\pi$},
-                legend style = {draw=none},
-            ]
-            \addplot[fzjblue,thick] {exp(cos(deg(x)))/7.9549};
-            \addlegendentry{$\mathcal{N}\,e^{\cos x}$};
-            \addplot[color=fzjred,thick] {exp(-.5*x^2)/2.50242};
-            \addlegendentry{$\mathcal{N}\,e^{-\frac{x^2}{2}}$};
-        \end{axis}
-    \end{tikzpicture}
+    \frametitle{Proprietà di $Q$}
+    \begin{itemize}
+        \item Con condizioni al bordo periodiche $Q \in \mathbb Z$, perché:
+            $$\sum\nolimits_\Box\varphi_\Box=0\ \Longrightarrow\ %
+            Q=-\sum\nolimits_\Box\left\lceil\frac{\varphi_\Box-\pi}{2\pi}\right\rceil$$
+        \item Invertendo l'orientazione dello spazio: $Q \to -Q$
+        \item Regioni del reticolo contribuiscono a $Q$ ({\color{fzjblue}istantoni})
+        \item Alterando i link interni a un istantone, il suo contributo non cambia
+        \item Nel limite al continuo, gli istantoni non si creano né distruggono, %
+            possono solo muoversi nello spazio
+    \end{itemize}
+\end{frame}
+
+\begin{frame}[allowframebreaks]
+    \frametitle{Campionamento dei link}
+    \begin{itemize}
+        \item Nella mia simulazione mi sono limitato all'approssimazione quenched. %
+            L'azione è pertanto:
+            $$S_E = \beta\sum\nolimits_\Box\left(1-\Re\plaquette\right)$$
+        \item Per campionare i link $U$, ho usato un algoritmo locale:
+            $$P(U)\mathrm dU \propto e^{\beta\Re(US)}\mathrm dU = e^{\beta k\cos\arg U_0}\mathrm dU_0$$
+        \item $S$ è la somma delle due staple connesse a $U$
+        \item $k \equiv \left|S\right|$, \ $U_0 \equiv US/k \in U(1)$, \ $\mathrm dU_0 = \mathrm dU$
+    \end{itemize}
+    \begin{columns}
+        \begin{column}{0.4\textwidth}
+            \centering
+            \begin{itemize}
+                \item Bisogna campionare:
+                    $$P(\varphi_0) \propto e^{\beta k\cos\varphi_0}$$
+                \item È simile a $e^{\beta k\left(1-\frac{\varphi_0^2}{2}\right)}$
+                \item Si campiona $\varphi_0$ dalla gaussiana
+                \item Si accetta/rigetta con Metropolis-Hastings
+            \end{itemize}
+        \end{column}
+        \begin{column}{0.6\textwidth}
+            \centering
+            \begin{tikzpicture}
+                \begin{axis}
+                [
+                    width = 0.85\textwidth,
+                    height = 0.8\textheight,
+                    domain = -pi:pi,
+                    samples = 1000,
+                    xlabel = $x$,
+                    xtick = {-3.14159, 0, 3.14159},
+                    xticklabels = {$-\pi$, $0$, $\pi$},
+                    legend style = {at={(1.15,1.15)}},
+                    %legend style = {draw=none},
+                ]
+                    \addplot[fzjblue,thick] {exp(cos(deg(x)))/7.9549};
+                    \addlegendentry{$\mathcal{N}\,e^{\cos x}$};
+                    \addplot[color=fzjred,thick] {exp(-.5*x^2)/2.50242};
+                    \addlegendentry{$\mathcal{N}\,e^{-\frac{x^2}{2}}$};
+                \end{axis}
+            \end{tikzpicture}
+        \end{column}
+    \end{columns}
 \end{frame}

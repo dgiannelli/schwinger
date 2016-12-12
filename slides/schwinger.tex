@@ -14,8 +14,6 @@
     \end{itemize}
 \end{frame}
 
-\newcommand\plaquette{\raisebox{-0.08em}\Box}
-
 \begin{frame}
     \frametitle{$Q$ sul reticolo}
     \begin{itemize}
@@ -82,7 +80,6 @@
                     xtick = {-3.14159, 0, 3.14159},
                     xticklabels = {$-\pi$, $0$, $\pi$},
                     legend style = {at={(1.15,1.15)}},
-                    %legend style = {draw=none},
                 ]
                     \addplot[fzjblue,thick] {exp(cos(deg(x)))/7.9549};
                     \addlegendentry{$\mathcal{N}\,e^{\cos x}$};
@@ -93,3 +90,17 @@
         \end{column}
     \end{columns}
 \end{frame}
+
+\begin{frame}
+    \frametitle{Misura delle osservabili}
+    \begin{itemize}
+        \item A ogni spazzata, l'algoritmo locale viene iterato su tutti i link
+        \item Le osservabili vengono calcolate dopo ogni spazzata
+        \item Gli errori dei valori medi vengono valutati con il binning (o bunching) %
+            dividendo le misure in 20 bin
+        \item In ogni simulazione sono state iterate 50000 spazzate
+        \item Ogni simulazione è partita da una configurazione iniziale calda
+        \item Le prime 10000 spazzate sono state scartate per termalizzare
+    \end{itemize}
+\end{frame}
+

@@ -2,6 +2,39 @@
 \makepart
 
 \begin{frame}
+    \frametitle{Riassumendo:}
+    \begin{itemize}
+        \item Sul toro e sulla bottiglia di Klein %
+            si ritrovano gli stessi valori per la plaquette e la suscettività topologica
+        \item Gli artefatti alla suscettività dovuti alla scatola finita sono trascurabili
+            anche per reticoli piccoli
+        \item Sulla bottiglia di Klein si evita il problema del freezing
+        \item Gli istantoni che danno contributo alla carica totale, al limite al continuo, %
+            rimangono inalterati su un toro e cambiano di segno su una bottiglia di Klein
+        \item Tuttavia, su varietà non orientabili, $Q$ perde diverse proprietà:
+            \begin{itemize}
+                \item Non assume più solo valori interi
+                \item Non rimane invariata se gli istantoni si spostano
+            \end{itemize}
+    \end{itemize}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Una nuova carica}
+    \begin{itemize}
+        \item È possibile definire una nuova carica che abbia tali proprietà
+        \item Si ottiene sommando alla carica 2 volte il loop di Polyakov %
+            lungo il bordo di M\"obius
+        \item Questa operazione, tuttavia, lascia un grado di libertà di gauge
+            $$Q = \frac{1}{2\pi}\sum\nolimits_\Box\left(\arg\plaquette + 2P_0 + 4k\pi\right)$$
+        \item Che può essere fissata prendendo il resto modulo 2
+            $$Q_\text{eo} = Q \mod 2$$
+        \item È accoppiata anche questa con l'assione?
+    \end{itemize}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Ritorna il freezing}
 	\begin{columns}
 		\begin{column}{0.5\textwidth}
 			\begin{tikzpicture}
@@ -91,3 +124,18 @@
         \end{tikzpicture}
     \end{center}
 \end{frame}
+
+\begin{frame}
+    \frametitle{Estensione a $SU(3)$}
+    \begin{itemize}
+        \item $\left<Q^2\right>/N^2$ ha un BIAS in varietà non orientabili
+        \item Una definizione più generale di suscettività è:
+            $$\chi = \left<\int\mathrm d^4x\,q(x)q(x_0)\right>$$
+        \item $q(x)$ è il contributo alla carica di una singola plaquette
+        \item $\chi = \left<Q^2\right>/N^2$ con condizioni al bordo periodiche
+        \item $\chi \neq \left<Q^2\right>/N^2$ su superfici non orientabili
+        \item Il BIAS di $\chi$ diminuisce se $x_0$ si allontana dal bordo di M\"obius%
+            \footnote{Come mostrato in ``Lattice QCD on Non-Orientable Manifolds'', \mbox{S. Mages},\mbox{K. Szabo, 2015}}
+    \end{itemize}
+\end{frame}
+

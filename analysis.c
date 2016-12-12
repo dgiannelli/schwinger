@@ -30,7 +30,6 @@ void Bunching(FILE *output, FILE *input)
     for (int i=0; i<therm; i++) fscanf(input, "%*f");
 
     double mean = 0.0;
-    double sqMean = 0.0;
     double sqMeanBin = 0.0;
     for (int bin=0; bin<NBINS; bin++)
     {
@@ -40,7 +39,6 @@ void Bunching(FILE *output, FILE *input)
         {
             if (getChargeSq) temp = gsl_pow_2(temp);
             meanBin += temp;
-            sqMean += gsl_pow_2(temp);
         }
         meanBin /= i;
         mean += meanBin;
@@ -48,13 +46,10 @@ void Bunching(FILE *output, FILE *input)
     }
     mean /= NBINS;
     sqMeanBin /= NBINS;
-    sqMean /= size;
 
-    const double errorSq = (sqMeanBin-gsl_pow_2(mean)) / (NBINS - 1); 
-    const double sigmaSq = (sqMean-gsl_pow_2(mean)) / (size - 1);
-    const int tau = round( ( ceil(errorSq/sigmaSq) - 1.0 ) / 2.0 );
+    const double error = sqrt( (sqMeanBin-gsl_pow_2(mean)) / (NBINS - 1) ); 
 
-    fprintf(output, "%.16e\t%.16e\t%.1f\t%i\t%s\t%i\n", mean, sqrt(errorSq), beta, n, bounds, tau);
+    fprintf(output, "%.16e\t%.16e\t%.1f\t%i\t%s\t\n", mean, error, beta, n, bounds);
 }
 
 int main(int argc, char *argv[])

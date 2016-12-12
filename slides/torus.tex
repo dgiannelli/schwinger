@@ -2,6 +2,26 @@
 \makepart
 
 \begin{frame}
+    \frametitle{Test dell'algoritmo}
+    \begin{itemize}
+        \item Il primo test è stato la misura della plaquette media
+        \item Le condizione al bordo sono periodiche, cioè su un toro
+        \item Ho confrontato le mie misure con valori in letteratura:
+            \begin{itemize}
+                \item[] {\color{fzjred} $\beta = 7.2$ in un reticolo $24\times24$}
+                \item $0.927722(54)$ Dürr-Hoelbling, 2005
+				\item $0.927681(78)$ nel mio caso
+            \end{itemize}
+    \end{itemize}
+    \pause
+    {\color{fzjgreen} La mia prima misura della plaquette era distante $7\sigma$ %
+    dal valore ottenuto da Dürr-Hoelbling in un articolo dell'anno precedente. %
+    Solo dopo averli contattati ci hanno detto che il loro bug è stato corretto %
+    l'anno successivo}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Estrapolazione della suscettività topologica}
     \begin{center}
         \textbf{Limite di volume infinito:}\\
         \vspace{0.5em}
@@ -11,9 +31,8 @@
             $N$     & 12  & 16  & 20  & 24  & 28  \\\bottomrule
         \end{tabular}
     \end{center}
-    \vspace{1em}
     \begin{center}
-        \textbf{Limite continuo:}\\
+        \textbf{Limite continuo\footnote{Studio di scaling: D\"urr-Hoelbling, 2005}:}\\
         \vspace{0.5em}
         \begin{tabular}{cccccc}
             \toprule
@@ -88,6 +107,7 @@
 \end{frame}
 
 \begin{frame}
+    \frametitle{Freezing}
     \begin{columns}
         \begin{column}{0.5\textwidth}
             \begin{tikzpicture}
@@ -144,11 +164,11 @@
     \end{columns}
 \end{frame}
 
-\tikzexternaldisable
 \begin{frame}
     \begin{columns}
         \begin{column}{0.4\textwidth}
             \centering
+            \tikzexternaldisable
             \begin{tikzpicture}[x=0.1\textwidth,y=0.1\textwidth]
                 \draw [very thick,fzjred] (10,0) -- (10,10);
                 \draw [very thick,fzjred] (0,10) -- (0,0);
@@ -175,6 +195,7 @@
                     \uncover<5>{\node [circle, radius=1, fill=fzjblue] at (2,2) {$+$};}
                 \end{scope}
             \end{tikzpicture}
+            \tikzexternalenable
         \end{column}%
         \begin{column}{0.6\textwidth}
             \centering
@@ -206,4 +227,4 @@
         \end{column}
     \end{columns}
 \end{frame}
-\tikzexternalenable
+

@@ -1,11 +1,11 @@
-\part{bottiglia di Klein}
+\part{Bottiglia di Klein}
 \makepart
 
-\tikzexternaldisable
 \begin{frame}
     \begin{columns}
         \begin{column}{0.4\textwidth}
             \centering
+            \tikzexternaldisable
             \begin{tikzpicture}[x=0.1\textwidth,y=0.1\textwidth]
                 \draw [very thick,fzjred] (10,0) -- (10,10);
                 \draw [very thick,fzjred] (0,10) -- (0,0);
@@ -32,6 +32,7 @@
 					\uncover<5>{\node [circle, radius=1, fill=fzjred] at (2,8) {$-$};}
                 \end{scope}
             \end{tikzpicture}
+            \tikzexternalenable
         \end{column}%
 		\begin{column}{0.6\textwidth}
 			\centering
@@ -77,9 +78,9 @@
         \end{column}
     \end{columns}
 \end{frame}
-\tikzexternalenable
 
 \begin{frame}
+    \frametitle{Il freezing scompare}
 	\begin{columns}
 		\begin{column}{0.5\textwidth}
 			\begin{tikzpicture}
@@ -142,14 +143,14 @@
 			\pgfplotsset{every outer x axis line/.style={->}}
 			\begin{axis}
 				[
-                    width = 0.5\textwidth,
+                    width = 0.55\textwidth,
                     height = 0.5\textwidth,
 					name = ax1,
 					x post scale=-1,
 					axis x line = bottom,
 					axis y line = right,
 					hide y axis,
-					mark size = 1pt,
+					mark size = 1.5pt,
 					xmin = 0, xmax = 0.01,
 					ymin = 0.035, ymax = 0.045,
                     xtick = {0.005, 0.01},
@@ -170,7 +171,7 @@
 			\end{axis}
 			\begin{axis}
 				[ 
-                    width = 0.5\textwidth,
+                    width = 0.55\textwidth,
                     height = 0.5\textwidth,
 					name = ax2,
 					axis x line = bottom,
@@ -181,7 +182,7 @@
                     ylabel = $\displaystyle \frac{\left<Q^2\right>}{N^2}$,
 					at={(ax1.south east)},
 					anchor=south west,
-					mark size = 1pt,
+					mark size = 1.5pt,
 					xmin = 0, xmax = 0.01,
 					ymin = 0.035, ymax = 0.045,
                     xtick = {0, 0.005, 0.01},
@@ -215,14 +216,14 @@
 			\pgfplotsset{every outer x axis line/.style={->}}
 			\begin{axis}
 				[
-                    width = 0.5\textwidth,
+                    width = 0.55\textwidth,
                     height = 0.5\textwidth,
 					name = ax1,
 					x post scale=-1,
 					axis x line = bottom,
 					axis y line = right,
 					hide y axis,
-					mark size = 1pt,
+					mark size = 1.5pt,
 					xmin = 0, xmax = 0.01,
 					ymin = 0, ymax = 6,
                     xtick = {0.005, 0.01},
@@ -243,7 +244,7 @@
 			\end{axis}
 			\begin{axis}
 				[ 
-                    width = 0.5\textwidth,
+                    width = 0.55\textwidth,
                     height = 0.5\textwidth,
 					name = ax2,
 					axis x line = bottom,
@@ -254,7 +255,7 @@
 					ylabel = $\left<Q^2\right>$,
 					at={(ax1.south east)},
 					anchor=south west,
-					mark size = 1pt,
+					mark size = 1.5pt,
 					xmin = 0, xmax = 0.01,
 					ymin = 0, ymax = 6,
                     xtick = {0, 0.005, 0.01},
@@ -295,5 +296,21 @@
 			\node [below=2em] at (ax1.south east) {$\displaystyle \frac{1}{N^2}$};
 		\end{tikzpicture}
 	\end{center}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Confronto delle misure}
+    {\color{fzjblue}Plaquette:}
+    \begin{itemize}
+		\item 0.927722(54) Dürr-Hoelbling, 2005, su un toro
+		\item 0.927681(78) su un toro
+		\item 0.927729(37) su una bottiglia di Klein
+    \end{itemize}
+    \vspace{0.5em}
+    {\color{fzjblue}$\left<Q^2\right>$ al continuo:}
+    \begin{itemize}
+        \item 1.84(6) Dürr-Hoelbling, 2005, su un toro
+        \item 1.87(6) su una bottiglia di Klein
+    \end{itemize}
 \end{frame}
 

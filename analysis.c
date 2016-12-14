@@ -21,14 +21,14 @@ char plaquetteAnalysis[40] = "";
 char chargeSqAnalysis[40] = "";
 char chargeEvenOddAnalysis[40] = "";
 
-double Bunching(double *mean, double *error, double *data, int size)
+void Bunching(double *mean, double *error, double *data, int size)
 {
     assert(size%NBINS==0);
     const int binSize = size / NBINS;
 
     double meanBin = 0.0;
     double sqMeanBin = 0.0;
-    for (int bin; bin<NBINS; bin++)
+    for (int bin=0; bin<NBINS; bin++)
     {
         double temp = 0.0;
         for (int i=0; i<binSize; i++)
@@ -42,7 +42,8 @@ double Bunching(double *mean, double *error, double *data, int size)
     meanBin /= NBINS;
     sqMeanBin /= NBINS;
 
-    return sqrt( (sqMeanBin-gsl_pow_2(meanBin)) / (NBINS-1) );
+    *mean = meanBin;
+    *error = sqrt( (sqMeanBin-gsl_pow_2(meanBin)) / (NBINS-1) );
 }
         
 
@@ -55,7 +56,7 @@ double Tau(double *data, int size)
     double sqMean = 0.0;
     double meanBin = 0.0;
     double sqMeanBin = 0.0;
-    for (int bin; bin<NBINS; bin++)
+    for (int bin=0; bin<NBINS; bin++)
     {
         double tempBin = 0.0;
         for (int i=0; i<binSize; i++)
@@ -77,7 +78,7 @@ double Tau(double *data, int size)
     const double sigmaSq = ( sqMean - gsl_pow_2(mean) ) / ( size - 1 );
     const double errorSq = ( sqMeanBin - gsl_pow_2(meanBin) ) / ( NBINS - 1);
 
-    return (errorSq/sigmaSq - 1.0) / 2.0;
+    return errorSq/sigmaSq;
 }
 
 void Jackknife(double *mean, double *error, double (*F)(double *data, int size), double *data, int size)
@@ -111,14 +112,16 @@ void Jackknife(double *mean, double *error, double (*F)(double *data, int size),
     meanJack /= NBINS;
     sqMeanJack /= NBINS;
 
-    *mean = NBINS*F(data,size) - (NBINS-1)*meanJack;
+    //*mean = NBINS*F(data,size) - (NBINS-1)*meanJack;
+    *mean = meanJack;
     *error = sqrt( (NBINS-1) * (sqMeanJack-gsl_pow_2(meanJack)) );
 }
 
 void Analysis(FILE *output, double *data, int size)
 {
     double mean, error, tau, dtau;
-    Bunching(&mean, &error, data, size)
+
+    Bunching(&mean, &error, data, size);
     Jackknife(&tau, &dtau, Tau, data, size);
 
     fprintf(output, "%.1f\t%i\t%s\t%.16e\t%.16e\t%.16e\t%.16e\n", beta, n, bounds, mean, error, tau, dtau);

@@ -12,10 +12,10 @@ testPlaquette: main.exe analysis.exe
 
 runCharge: main.exe cleanData
 	mkdir -p data
-	rm -f data/inftyTorus.dat data/contTorus.dat data/inftyKlein.dat data/contKlein.dat data/inftyEvenOdd.dat data/contEvenOdd.dat
 	parallel ./main.exe ::: params/infty*.par params/cont*.par
 
 chargeAnalysis: analysis.exe
+	rm -f data/inftyTorus.dat data/contTorus.dat data/inftyKlein.dat data/contKlein.dat data/inftyEvenOdd.dat data/contEvenOdd.dat
 	for par in params/infty*.par params/cont*.par; do ./analysis.exe $$par; done
 
 ####

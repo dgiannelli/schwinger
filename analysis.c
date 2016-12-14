@@ -11,9 +11,9 @@ double beta;
 int n;
 char bounds[10];
 int sweeps;
-int getPlaquette = 0;
-int getChargeSq = 0;
-int getChargeEvenOdd = 0;
+int getPlaquette;
+int getChargeSq;
+int getChargeEvenOdd;
 char plaquetteHistory[40];
 char chargeSqHistory[40];
 char chargeEvenOddHistory[40];
@@ -21,41 +21,112 @@ char plaquetteAnalysis[40] = "";
 char chargeSqAnalysis[40] = "";
 char chargeEvenOddAnalysis[40] = "";
 
-void Bunching(FILE *output, FILE *input)
+double Bunching(double *mean, double *error, double *data, int size)
 {
-    const int therm = sweeps*THERMRATIO;
-    const int size = sweeps - therm;
-    const int binSize = ( size + NBINS - 1 ) / NBINS;
+    assert(size%NBINS==0);
+    const int binSize = size / NBINS;
 
-    for (int i=0; i<therm; i++) fscanf(input, "%*f");
-
-    double mean = 0.0;
+    double meanBin = 0.0;
     double sqMeanBin = 0.0;
-    for (int bin=0; bin<NBINS; bin++)
+    for (int bin; bin<NBINS; bin++)
     {
-        double meanBin = 0.0;
-        int i = 0;
-        for(double temp; i<binSize && fscanf(input, "%lf", &temp) == 1; i++)
+        double temp = 0.0;
+        for (int i=0; i<binSize; i++)
         {
-            if (getChargeSq) temp = gsl_pow_2(temp);
-            meanBin += temp;
+            temp += data[i+bin*binSize];
         }
-        meanBin /= i;
-        mean += meanBin;
-        sqMeanBin += gsl_pow_2(meanBin);
+        temp /= binSize;
+        meanBin += temp;
+        sqMeanBin += gsl_pow_2(temp);
     }
-    mean /= NBINS;
+    meanBin /= NBINS;
     sqMeanBin /= NBINS;
 
-    const double error = sqrt( (sqMeanBin-gsl_pow_2(mean)) / (NBINS - 1) ); 
+    return sqrt( (sqMeanBin-gsl_pow_2(meanBin)) / (NBINS-1) );
+}
+        
 
-    fprintf(output, "%.16e\t%.16e\t%.1f\t%i\t%s\t\n", mean, error, beta, n, bounds);
+double Tau(double *data, int size)
+{
+    assert(size%NBINS==0);
+    const int binSize = size / NBINS;
+
+    double mean = 0.0;
+    double sqMean = 0.0;
+    double meanBin = 0.0;
+    double sqMeanBin = 0.0;
+    for (int bin; bin<NBINS; bin++)
+    {
+        double tempBin = 0.0;
+        for (int i=0; i<binSize; i++)
+        {
+            const double temp = data[i+bin*binSize];
+            tempBin += temp;
+            mean += temp;
+            sqMean += gsl_pow_2(temp);
+        }
+        tempBin /= binSize;
+        meanBin += tempBin;
+        sqMeanBin += gsl_pow_2(tempBin);
+    }
+    mean /= size;
+    sqMean /= size;
+    meanBin /= NBINS;
+    sqMeanBin /= NBINS;
+
+    const double sigmaSq = ( sqMean - gsl_pow_2(mean) ) / ( size - 1 );
+    const double errorSq = ( sqMeanBin - gsl_pow_2(meanBin) ) / ( NBINS - 1);
+
+    return (errorSq/sigmaSq - 1.0) / 2.0;
+}
+
+void Jackknife(double *mean, double *error, double (*F)(double *data, int size), double *data, int size)
+{
+    assert(size%NBINS==0);
+    const int binSize = size / NBINS;
+    
+    const int dataJackSize = size - binSize;
+
+    double *dataJack;
+    double meanJack = 0.0;
+    double sqMeanJack = 0.0;
+    for (int bin=0; bin<NBINS; bin++)
+    {
+        dataJack = malloc(dataJackSize*sizeof(double));
+        int j=0;
+        for (int i=0; i<bin*binSize; i++)
+        {
+            dataJack[j++] = data[i];
+        }
+        for (int i=(bin+1)*binSize; i<size; i++)
+        {
+            dataJack[j++] = data[i];
+        }
+        const double temp = F(dataJack, dataJackSize);
+        meanJack += temp;
+        sqMeanJack += gsl_pow_2(temp);
+        
+        free(dataJack);
+    }
+    meanJack /= NBINS;
+    sqMeanJack /= NBINS;
+
+    *mean = NBINS*F(data,size) - (NBINS-1)*meanJack;
+    *error = sqrt( (NBINS-1) * (sqMeanJack-gsl_pow_2(meanJack)) );
+}
+
+void Analysis(FILE *output, double *data, int size)
+{
+    double mean, error, tau, dtau;
+    Bunching(&mean, &error, data, size)
+    Jackknife(&tau, &dtau, Tau, data, size);
+
+    fprintf(output, "%.1f\t%i\t%s\t%.16e\t%.16e\t%.16e\t%.16e\n", beta, n, bounds, mean, error, tau, dtau);
 }
 
 int main(int argc, char *argv[])
 {
-    assert(argc==2);
-
+    assert(argc == 2);
     FILE *paramFile = fopen(argv[1], "r"); assert(paramFile);
     char paramName[40], paramValue[40];
     while ( fscanf(paramFile, "%s %s", paramName, paramValue) == 2 )
@@ -75,41 +146,67 @@ int main(int argc, char *argv[])
         else if (!strcmp(paramName,"chargeEvenOddAnalysis")) strcpy(chargeEvenOddAnalysis,paramValue);
     }
 
-    FILE *plaquetteHistoryFile, *plaquetteAnalysisFile;
-    FILE *chargeSqHistoryFile, *chargeSqAnalysisFile;
-    FILE *chargeEvenOddHistoryFile, *chargeEvenOddAnalysisFile;
+    const int therm = sweeps * THERMRATIO;
+    const int binSize = (sweeps-therm) / NBINS;
+    const int size = binSize * NBINS;
 
     if (getPlaquette)
     {
-        assert(plaquetteHistoryFile = fopen(plaquetteHistory, "r"));
+        FILE *plaquetteFile, *plaquetteAnalysisFile;
+        assert( plaquetteFile = fopen(plaquetteHistory, "r") );
+        double *dataPlaquette = malloc(size*sizeof(double));
+        for (int i=0; i<therm; i++) assert( fscanf(plaquetteFile, "%*f") == 0 );
+        for (int i=0; i<size; i++) assert( fscanf(plaquetteFile, "%lf", dataPlaquette+i) == 1 );
+        fclose(plaquetteFile);
+
         if (strcmp(plaquetteAnalysis,"")) assert(plaquetteAnalysisFile = fopen(plaquetteAnalysis, "a"));
         else plaquetteAnalysisFile = stdout;
 
-        Bunching(plaquetteAnalysisFile, plaquetteHistoryFile);
+        Analysis(plaquetteAnalysisFile, dataPlaquette, size);
 
         if (strcmp(plaquetteAnalysis,"")) fclose(plaquetteAnalysisFile);
+        free(dataPlaquette);
     }
 
-    if (getChargeSq)
+    if (getChargeSq) 
     {
-        assert(chargeSqHistoryFile = fopen(chargeSqHistory, "r"));
+        FILE *chargeSqFile, *chargeSqAnalysisFile;
+        assert( chargeSqFile = fopen(chargeSqHistory, "r") );
+        double *dataChargeSq = malloc(size*sizeof(double));
+        for (int i=0; i<therm; i++) assert( fscanf(chargeSqFile, "%*f") == 0 );
+        for (int i=0; i<size; i++) 
+        {
+            double temp;
+            assert( fscanf(chargeSqFile, "%lf", &temp) == 1 );
+            dataChargeSq[i] = gsl_pow_2(temp);
+        }
+        fclose(chargeSqFile);
+
         if (strcmp(chargeSqAnalysis,"")) assert(chargeSqAnalysisFile = fopen(chargeSqAnalysis, "a"));
         else chargeSqAnalysisFile = stdout;
 
-        Bunching(chargeSqAnalysisFile, chargeSqHistoryFile);
+        Analysis(chargeSqAnalysisFile, dataChargeSq, size);
 
         if (strcmp(chargeSqAnalysis,"")) fclose(chargeSqAnalysisFile);
+        free(dataChargeSq);
     }
 
-    if (getChargeEvenOdd)
+    if (getChargeEvenOdd) 
     {
-        assert(chargeEvenOddHistoryFile = fopen(chargeEvenOddHistory, "r"));
+        FILE *chargeEvenOddFile, *chargeEvenOddAnalysisFile;
+        assert( chargeEvenOddFile = fopen(chargeEvenOddHistory, "r") );
+        double *dataChargeEvenOdd = malloc(size*sizeof(double));
+        for (int i=0; i<therm; i++) assert( fscanf(chargeEvenOddFile, "%*f") == 0 );
+        for (int i=0; i<size; i++) assert( fscanf(chargeEvenOddFile, "%lf", dataChargeEvenOdd+i) == 1 );
+        fclose(chargeEvenOddFile);
+
         if (strcmp(chargeEvenOddAnalysis,"")) assert(chargeEvenOddAnalysisFile = fopen(chargeEvenOddAnalysis, "a"));
         else chargeEvenOddAnalysisFile = stdout;
 
-        Bunching(chargeEvenOddAnalysisFile, chargeEvenOddHistoryFile);
+        Analysis(chargeEvenOddAnalysisFile, dataChargeEvenOdd, size);
 
         if (strcmp(chargeEvenOddAnalysis,"")) fclose(chargeEvenOddAnalysisFile);
+        free(dataChargeEvenOdd);
     }
 
     return 0;

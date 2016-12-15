@@ -115,9 +115,9 @@
                     error bars/.cd, y dir = both, y explicit,
                 ] table
                 [
-                    x expr = 1/\thisrowno{3}^2,
-                    y expr = \thisrowno{0},
-                    y error expr = \thisrowno{1},
+                    x expr = 1/\thisrowno{0},
+                    y expr = \thisrowno{3},
+                    y error expr = \thisrowno{4},
                     header = false,
                 ] {../data/contEvenOdd.dat};
             \end{axis}
@@ -128,7 +128,7 @@
 \begin{frame}
     \frametitle{Estensione a $SU(3)$}
     \begin{itemize}
-        \item $\left<Q^2\right>/N^2$ ha un BIAS in varietà non orientabili
+        \item $\left<Q^2\right>/V$ ha un BIAS in varietà non orientabili
         \item Una definizione più generale di suscettività è:
             $$\chi = \left<\int\mathrm d^4x\,q(x)q(x_0)\right>$$
         \item $q(x)$ è il contributo alla carica di una singola plaquette

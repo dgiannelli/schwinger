@@ -1,83 +1,83 @@
 \part{Bottiglia di Klein}
 \makepart
 
-\begin{frame}
-    \begin{columns}
-        \begin{column}{0.4\textwidth}
-            \centering
-            \tikzexternaldisable
-            \begin{tikzpicture}[x=0.1\textwidth,y=0.1\textwidth]
-                \draw [very thick,fzjred] (10,0) -- (10,10);
-                \draw [very thick,fzjred] (0,10) -- (0,0);
-                \draw [very thick,fzjblue] (0,0) -- (10,0);
-                \draw [very thick,fzjblue] (0,10) -- (10,10);
-                \draw [->,very thick,fzjblue] (4,0) -- (5,0);
-                \draw [->,very thick,fzjred] (10,4) -- (10,5);
-                \draw [->,very thick,fzjblue] (4,10) -- (5,10);
-				\draw [->,very thick,fzjred] (0,6) -- (0,5);
-				\begin{scope}
-                    \clip (0,0) rectangle (10,10);
-					\node [circle, radius=1, fill=fzjblue] at (3,5) {$+$};
-					\uncover<1>{\node [circle, radius=1, fill=fzjred] at (7,8) {$-$};}
-					\uncover<2>{\node [circle, radius=1, fill=fzjred] at (7,9) {$-$};}
-					\uncover<3>{\node [circle, radius=1, fill=fzjred] at (7,10) {$-$};}
-					\uncover<3>{\node [circle, radius=1, fill=fzjred] at (7,0) {$-$};}
-					\uncover<4>{\node [circle, radius=1, fill=fzjred] at (7,1) {$-$};}
-					\uncover<5>{\node [circle, radius=1, fill=fzjred] at (7,2) {$-$};}
-					\uncover<1>{\node [circle, radius=1, fill=fzjblue] at (8,2) {$+$};}
-					\uncover<2>{\node [circle, radius=1, fill=fzjblue] at (9,2) {$+$};}
-					\uncover<3>{\node [circle, radius=1, fill=fzjblue] at (10,2) {$+$};}
-					\uncover<3>{\node [circle, radius=1, fill=fzjred] at (0,8) {$-$};}
-					\uncover<4>{\node [circle, radius=1, fill=fzjred] at (1,8) {$-$};}
-					\uncover<5>{\node [circle, radius=1, fill=fzjred] at (2,8) {$-$};}
-                \end{scope}
-            \end{tikzpicture}
-            \tikzexternalenable
-        \end{column}%
-		\begin{column}{0.6\textwidth}
-			\centering
-			\begin{tikzpicture}
-				\begin{axis}
-                [
-                    xlabel=$x$,
-					ylabel=$y$,
-					view/h=-10,
-					width = .95\textwidth,
-					height = .95\textwidth,
-					hide axis,
-				] \addplot3
-                [
-                    surf, shader = flat,
-					draw = black,
-					fill = white,
-					z buffer=sort,
-					domain=0:180, domain y=0:360,
-					samples=41, samples y=25,
-					variable=\u, variable y=\v,
-					point meta=u,
-				]
-					({-2/15 * cos(u) * (
-					3*cos(v) - 30*sin(u)
-					+ 90 *cos(u)^4 * sin(u)
-					- 60 *cos(u)^6 * sin(u)
-					+ 5 * cos(u)*cos(v) * sin(u))
-					},
-					{-1/15 * sin(u) * (3*cos(v)
-					- 3*cos(u)^2 * cos(v)
-					- 48 * cos(u)^4*cos(v)
-					+ 48*cos(u)^6 *cos(v)
-					- 60 *sin(u)
-					+ 5*cos(u)*cos(v)*sin(u)
-					- 5*cos(u)^3 * cos(v) *sin(u)
-					- 80*cos(u)^5 * cos(v)*sin(u)
-					+ 80*cos(u)^7 * cos(v) * sin(u))
-					},
-					{2/15 * (3 + 5*cos(u) *sin(u))*sin(v)});
-				\end{axis}
-			\end{tikzpicture}
-        \end{column}
-    \end{columns}
-\end{frame}
+%\begin{frame}
+%    \begin{columns}
+%        \begin{column}{0.4\textwidth}
+%            \centering
+%            \tikzexternaldisable
+%            \begin{tikzpicture}[x=0.1\textwidth,y=0.1\textwidth]
+%                \draw [very thick,fzjred] (10,0) -- (10,10);
+%                \draw [very thick,fzjred] (0,10) -- (0,0);
+%                \draw [very thick,fzjblue] (0,0) -- (10,0);
+%                \draw [very thick,fzjblue] (0,10) -- (10,10);
+%                \draw [->,very thick,fzjblue] (4,0) -- (5,0);
+%                \draw [->,very thick,fzjred] (10,4) -- (10,5);
+%                \draw [->,very thick,fzjblue] (4,10) -- (5,10);
+%				\draw [->,very thick,fzjred] (0,6) -- (0,5);
+%				\begin{scope}
+%                    \clip (0,0) rectangle (10,10);
+%					\node [circle, radius=1, fill=fzjblue] at (3,5) {$+$};
+%					\uncover<1>{\node [circle, radius=1, fill=fzjred] at (7,8) {$-$};}
+%					\uncover<2>{\node [circle, radius=1, fill=fzjred] at (7,9) {$-$};}
+%					\uncover<3>{\node [circle, radius=1, fill=fzjred] at (7,10) {$-$};}
+%					\uncover<3>{\node [circle, radius=1, fill=fzjred] at (7,0) {$-$};}
+%					\uncover<4>{\node [circle, radius=1, fill=fzjred] at (7,1) {$-$};}
+%					\uncover<5>{\node [circle, radius=1, fill=fzjred] at (7,2) {$-$};}
+%					\uncover<1>{\node [circle, radius=1, fill=fzjblue] at (8,2) {$+$};}
+%					\uncover<2>{\node [circle, radius=1, fill=fzjblue] at (9,2) {$+$};}
+%					\uncover<3>{\node [circle, radius=1, fill=fzjblue] at (10,2) {$+$};}
+%					\uncover<3>{\node [circle, radius=1, fill=fzjred] at (0,8) {$-$};}
+%					\uncover<4>{\node [circle, radius=1, fill=fzjred] at (1,8) {$-$};}
+%					\uncover<5>{\node [circle, radius=1, fill=fzjred] at (2,8) {$-$};}
+%                \end{scope}
+%            \end{tikzpicture}
+%            \tikzexternalenable
+%        \end{column}%
+%		\begin{column}{0.6\textwidth}
+%			\centering
+%			\begin{tikzpicture}
+%				\begin{axis}
+%                [
+%                    xlabel=$x$,
+%					ylabel=$y$,
+%					view/h=-10,
+%					width = .95\textwidth,
+%					height = .95\textwidth,
+%					hide axis,
+%				] \addplot3
+%                [
+%                    surf, shader = flat,
+%					draw = black,
+%					fill = white,
+%					z buffer=sort,
+%					domain=0:180, domain y=0:360,
+%					samples=41, samples y=25,
+%					variable=\u, variable y=\v,
+%					point meta=u,
+%				]
+%					({-2/15 * cos(u) * (
+%					3*cos(v) - 30*sin(u)
+%					+ 90 *cos(u)^4 * sin(u)
+%					- 60 *cos(u)^6 * sin(u)
+%					+ 5 * cos(u)*cos(v) * sin(u))
+%					},
+%					{-1/15 * sin(u) * (3*cos(v)
+%					- 3*cos(u)^2 * cos(v)
+%					- 48 * cos(u)^4*cos(v)
+%					+ 48*cos(u)^6 *cos(v)
+%					- 60 *sin(u)
+%					+ 5*cos(u)*cos(v)*sin(u)
+%					- 5*cos(u)^3 * cos(v) *sin(u)
+%					- 80*cos(u)^5 * cos(v)*sin(u)
+%					+ 80*cos(u)^7 * cos(v) * sin(u))
+%					},
+%					{2/15 * (3 + 5*cos(u) *sin(u))*sin(v)});
+%				\end{axis}
+%			\end{tikzpicture}
+%        \end{column}
+%    \end{columns}
+%\end{frame}
 
 \begin{frame}
     \frametitle{Il freezing scompare}
@@ -137,180 +137,255 @@
 	\end{columns}
 \end{frame}
 
-\begin{frame}
-	\begin{center}
-		\begin{tikzpicture}
-			\pgfplotsset{every outer x axis line/.style={->}}
-			\begin{axis}
-				[
-                    width = 0.55\textwidth,
-                    height = 0.5\textwidth,
-					name = ax1,
-					x post scale=-1,
-					axis x line = bottom,
-					axis y line = right,
-					hide y axis,
-					mark size = 1.5pt,
-					xmin = 0, xmax = 0.01,
-					ymin = 0.035, ymax = 0.045,
-                    xtick = {0.005, 0.01},
-				]
-				\addplot+
-				[
-					only marks,
-					mark = square,
-					color = fzjblue,
-					error bars/.cd, y dir = both, y explicit,
-				] table
-				[
-					x expr = 1.0/\thisrowno{3}^2,
-                    y expr = \thisrowno{0}/\thisrowno{3}^2,
-					y error expr = \thisrowno{1}/\thisrowno{3}^2,
-                    header = false,
-				] {../data/inftyTorus.dat};
-			\end{axis}
-			\begin{axis}
-				[ 
-                    width = 0.55\textwidth,
-                    height = 0.5\textwidth,
-					name = ax2,
-					axis x line = bottom,
-					axis y line = left,
-					every axis y label/.style={
-						at={(ticklabel* cs:1.08)},
-					anchor=south,},
-                    ylabel = $\displaystyle \frac{\left<Q^2\right>}{N^2}$,
-					at={(ax1.south east)},
-					anchor=south west,
-					mark size = 1.5pt,
-					xmin = 0, xmax = 0.01,
-					ymin = 0.035, ymax = 0.045,
-                    xtick = {0, 0.005, 0.01},
-				]
-				\addplot+
-				[
-					only marks,
-					mark = square,
-					color = fzjblue,
-					error bars/.cd, y dir = both, y explicit,
-				] table
-				[
-					x expr = 1.0/\thisrowno{3}^2,
-                    y expr = \thisrowno{0}/\thisrowno{3}^2,
-					y error expr = \thisrowno{1}/\thisrowno{3}^2,
-                    header = false,
-				] {../data/inftyKlein.dat};
-			\end{axis}
-
-			\node [above=4em] at (ax1.north east) {\large Limite di volume infinito};
-			\node [below=0.5em]at (ax1.north) {Toro};
-            \node [below=0.5em] at (ax2.north) {Bottiglia di Klein};
-			\node [below=2em] at (ax1.south east) {$\displaystyle \frac{1}{N^2}$};
-		\end{tikzpicture}
-	\end{center}
-\end{frame}
-
-\begin{frame}
-	\begin{center}
-		\begin{tikzpicture}
-			\pgfplotsset{every outer x axis line/.style={->}}
-			\begin{axis}
-				[
-                    width = 0.55\textwidth,
-                    height = 0.5\textwidth,
-					name = ax1,
-					x post scale=-1,
-					axis x line = bottom,
-					axis y line = right,
-					hide y axis,
-					mark size = 1.5pt,
-					xmin = 0, xmax = 0.01,
-					ymin = 0, ymax = 6,
-                    xtick = {0.005, 0.01},
-				]
-				\addplot+
-				[
-					only marks,
-					mark = square,
-					color = fzjblue,
-					error bars/.cd, y dir = both, y explicit,
-				] table
-				[
-					x expr = 1.0/\thisrowno{3}^2,
-					y index = 0,
-					y error index = 1,
-                    header = false,
-				] {../data/contTorus.dat};
-			\end{axis}
-			\begin{axis}
-				[ 
-                    width = 0.55\textwidth,
-                    height = 0.5\textwidth,
-					name = ax2,
-					axis x line = bottom,
-					axis y line = left,
-					every axis y label/.style={
-						at={(ticklabel* cs:1.05)},
-					anchor=south,},
-					ylabel = $\left<Q^2\right>$,
-					at={(ax1.south east)},
-					anchor=south west,
-					mark size = 1.5pt,
-					xmin = 0, xmax = 0.01,
-					ymin = 0, ymax = 6,
-                    xtick = {0, 0.005, 0.01},
-					ytick = {2, 4, 6},
-				]
-				\addplot+
-				[
-					only marks,
-					mark = square,
-					color = fzjblue,
-					error bars/.cd, y dir = both, y explicit,
-				] table
-				[
-					x expr = 1.0/\thisrowno{3}^2,
-					y index = 0,
-					y error index = 1,
-                    header = false,
-				] {../data/contKlein.dat};
-				\addplot[
-                    mark=x,
-                    color=fzjred,
-                    mark size=3pt,
-                ] coordinates {(0,1.84)};
-				\addplot[color=fzjgreen] gnuplot[raw gnuplot]
-				{
-					f(x) = a + b*x;
-					a = 1.8731;
-					b = 186.513; 
-                    set fit noerrorscaling;
-                    fit f(x) "../data/contKlein.dat" u (1.0/$4**2):1:2 via a,b;%#$;
-					plot [0:0.01] f(x);
-				};
-			\end{axis}
-
-			\node [above=3em] at (ax1.north east) {\large Limite continuo};
-			\node at (ax1.north) {Toro};
-			\node at (ax2.north) {Bottiglia di Klein};
-			\node [below=2em] at (ax1.south east) {$\displaystyle \frac{1}{N^2}$};
-		\end{tikzpicture}
-	\end{center}
-\end{frame}
-
-\begin{frame}
-    \frametitle{Confronto delle misure}
-    {\color{fzjblue}Plaquette:}
-    \begin{itemize}
-		\item 0.927722(54) Dürr-Hoelbling, 2005, su un toro
-		\item 0.927681(78) su un toro
-		\item 0.927729(37) su una bottiglia di Klein
-    \end{itemize}
-    \vspace{0.5em}
-    {\color{fzjblue}$\left<Q^2\right>$ al continuo:}
-    \begin{itemize}
-        \item 1.84(6) Dürr-Hoelbling, 2005, su un toro
-        \item 1.87(6) su una bottiglia di Klein
-    \end{itemize}
-\end{frame}
-
+%\begin{frame}
+%	\begin{center}
+%		\begin{tikzpicture}
+%			\pgfplotsset{every outer x axis line/.style={->}}
+%			\begin{axis}
+%				[
+%                    width = 0.55\textwidth,
+%                    height = 0.5\textwidth,
+%					name = ax1,
+%					x post scale=-1,
+%					axis x line = bottom,
+%					axis y line = right,
+%					hide y axis,
+%					mark size = 1.5pt,
+%                    xmin = 0, xmax = 0.6,
+%                    ymin = 0.04, ymax = 3000,
+%                    %xtick = {0.005, 0.01},
+%                    ymode = log,
+%				]
+%				\addplot+
+%				[
+%					only marks,
+%					mark = square,
+%					color = fzjblue,
+%					error bars/.cd, y dir = both, y explicit,
+%				] table
+%				[
+%					x expr = 1.0/\thisrowno{0},
+%					y index = 5,
+%					y error index = 6,
+%                    header = false,
+%				] {../data/contTorus.dat};
+%			\end{axis}
+%			\begin{axis}
+%				[ 
+%                    width = 0.55\textwidth,
+%                    height = 0.5\textwidth,
+%					name = ax2,
+%					axis x line = bottom,
+%					axis y line = left,
+%					every axis y label/.style={
+%						at={(ticklabel* cs:1.05)},
+%					anchor=south,},
+%                    ylabel = $\tau_\text{int}(Q^2)$,
+%					at={(ax1.south east)},
+%					anchor=south west,
+%					mark size = 1.5pt,
+%                    xmin = 0, xmax = 0.6,
+%                    ymin = 0.04, ymax = 3000,
+%                    %xtick = {0, 0.005, 0.01},
+%					%ytick = {2, 4, 6},
+%                    ymode = log,
+%				]
+%				\addplot+
+%				[
+%					only marks,
+%					mark = square,
+%					color = fzjblue,
+%					error bars/.cd, y dir = both, y explicit,
+%				] table
+%				[
+%					x expr = 1.0/\thisrowno{0},
+%					y index = 5,
+%					y error index = 6,
+%                    header = false,
+%				] {../data/contKlein.dat};
+%			\end{axis}
+%
+%			\node [above=3em] at (ax1.north east) {\large Tempo di autocorrelazione integrato};
+%			\node at (ax1.north) {Toro};
+%			\node at (ax2.north) {Bottiglia di Klein};
+%			\node [below=2em] at (ax1.south east) {$\displaystyle \frac{1}{\beta}$};
+%		\end{tikzpicture}
+%	\end{center}
+%\end{frame}
+%
+%\begin{frame}
+%	\begin{center}
+%		\begin{tikzpicture}
+%			\pgfplotsset{every outer x axis line/.style={->}}
+%			\begin{axis}
+%				[
+%                    width = 0.55\textwidth,
+%                    height = 0.5\textwidth,
+%					name = ax1,
+%					x post scale=-1,
+%					axis x line = bottom,
+%					axis y line = right,
+%					hide y axis,
+%					mark size = 1.5pt,
+%					xmin = 0, xmax = 0.6,
+%					ymin = 0.015, ymax = 0.06,
+%                    %xtick = {0.005, 0.01},
+%				]
+%				\addplot+
+%				[
+%					only marks,
+%					mark = square,
+%					color = fzjblue,
+%					error bars/.cd, y dir = both, y explicit,
+%				] table
+%				[
+%					x expr = 1.0/\thisrowno{0},
+%                    y expr = \thisrowno{3}*\thisrowno{0}/\thisrowno{1}^2,
+%                    y error expr = \thisrowno{4}*\thisrowno{0}/\thisrowno{1}^2,
+%                    header = false,
+%				] {../data/contTorus.dat};
+%			\end{axis}
+%			\begin{axis}
+%				[ 
+%                    width = 0.55\textwidth,
+%                    height = 0.5\textwidth,
+%					name = ax2,
+%					axis x line = bottom,
+%					axis y line = left,
+%					every axis y label/.style={
+%						at={(ticklabel* cs:1.08)},
+%					anchor=south,},
+%                    ylabel = $\displaystyle \frac{\chi}{g^2}$,
+%					at={(ax1.south east)},
+%					anchor=south west,
+%					mark size = 1.5pt,
+%					xmin = 0, xmax = 0.6,
+%					ymin = 0.015, ymax = 0.06,
+%                    %xtick = {0, 0.005, 0.01},
+%					%ytick = {2, 4, 6},
+%				]
+%				\addplot+
+%				[
+%					only marks,
+%					mark = square,
+%					color = fzjblue,
+%					error bars/.cd, y dir = both, y explicit,
+%				] table
+%				[
+%					x expr = 1.0/\thisrowno{0},
+%                    y expr = \thisrowno{3}*\thisrowno{0}/\thisrowno{1}^2,
+%                    y error expr = \thisrowno{4}*\thisrowno{0}/\thisrowno{1}^2,
+%                    header = false,
+%				] {../data/contKlein.dat};
+%				\addplot[
+%                    mark=x,
+%                    color=fzjred,
+%                    mark size=3pt,
+%                ] coordinates {(0,0.023)};
+%				\addplot[color=fzjgreen] gnuplot[raw gnuplot]
+%				{
+%					f(x) = a + b*x;
+%					a = 0.023;
+%                    set fit noerrorscaling;
+%                    fit f(x) "../data/contKlein.dat" u (1.0/$1):($4*$1/$2**2):($5*$1/$2**2) via a,b;%#$;
+%					plot [0:0.6] f(x);
+%				};
+%			\end{axis}
+%
+%			\node [above=4em] at (ax1.north east) {\large Limite continuo};
+%			\node [below=0.5em] at (ax1.north) {Toro};
+%            \node [below=0.5em] at (ax2.north) {Bottiglia di Klein};
+%			\node [below=2em] at (ax1.south east) {$\displaystyle \frac{1}{\beta}$};
+%		\end{tikzpicture}
+%	\end{center}
+%\end{frame}
+%
+%\begin{frame}
+%	\begin{center}
+%		\begin{tikzpicture}
+%			\pgfplotsset{every outer x axis line/.style={->}}
+%			\begin{axis}
+%				[
+%                    width = 0.55\textwidth,
+%                    height = 0.5\textwidth,
+%					name = ax1,
+%					x post scale=-1,
+%					axis x line = bottom,
+%					axis y line = right,
+%					hide y axis,
+%					mark size = 1.5pt,
+%					xmin = 0, xmax = 0.01,
+%					ymin = 0.035, ymax = 0.045,
+%                    xtick = {0.005, 0.01},
+%				]
+%				\addplot+
+%				[
+%					only marks,
+%					mark = square,
+%					color = fzjblue,
+%					error bars/.cd, y dir = both, y explicit,
+%				] table
+%				[
+%					x expr = 1.0/\thisrowno{1}^2,
+%                    y expr = \thisrowno{3}*\thisrowno{0}/\thisrowno{1}^2,
+%					y error expr = \thisrowno{4}*\thisrowno{0}/\thisrowno{1}^2,
+%                    header = false,
+%				] {../data/inftyTorus.dat};
+%			\end{axis}
+%			\begin{axis}
+%				[ 
+%                    width = 0.55\textwidth,
+%                    height = 0.5\textwidth,
+%					name = ax2,
+%					axis x line = bottom,
+%					axis y line = left,
+%					every axis y label/.style={
+%						at={(ticklabel* cs:1.08)},
+%					anchor=south,},
+%                    ylabel = $\displaystyle \frac{\chi}{g^2}$,
+%					at={(ax1.south east)},
+%					anchor=south west,
+%					mark size = 1.5pt,
+%					xmin = 0, xmax = 0.01,
+%					ymin = 0.035, ymax = 0.045,
+%                    xtick = {0, 0.005, 0.01},
+%				]
+%				\addplot+
+%				[
+%					only marks,
+%					mark = square,
+%					color = fzjblue,
+%					error bars/.cd, y dir = both, y explicit,
+%				] table
+%				[
+%					x expr = 1.0/\thisrowno{1}^2,
+%                    y expr = \thisrowno{3}*\thisrowno{0}/\thisrowno{1}^2,
+%                    y error expr = \thisrowno{4}*\thisrowno{0}/\thisrowno{1}^2,
+%                    header = false,
+%				] {../data/inftyKlein.dat};
+%			\end{axis}
+%
+%			\node [above=4em] at (ax1.north east) {\large Limite di volume infinito};
+%			\node [below=0.5em] at (ax1.north) {Toro};
+%            \node [below=0.5em] at (ax2.north) {Bottiglia di Klein};
+%			\node [below=2em] at (ax1.south east) {$\displaystyle \frac{1}{N^2}$};
+%		\end{tikzpicture}
+%	\end{center}
+%\end{frame}
+%
+%\begin{frame}
+%    \frametitle{Confronto delle misure}
+%    {\color{fzjblue}Plaquette:}
+%    \begin{itemize}
+%		\item 0.927722(54) Dürr-Hoelbling, 2005, su un toro
+%		\item 0.927681(78) su un toro
+%		\item 0.927729(37) su una bottiglia di Klein
+%    \end{itemize}
+%    \vspace{0.5em}
+%    {\color{fzjblue}$\displaystyle \frac{\chi}{g^2}$ al continuo:}
+%    \begin{itemize}
+%        \item 0.0230(6) Dürr-Hoelbling, 2005, su un toro
+%        \item 0.0234(8) su una bottiglia di Klein
+%    \end{itemize}
+%\end{frame}
+%

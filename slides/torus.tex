@@ -32,7 +32,8 @@
         \end{tabular}
     \end{center}
     \begin{center}
-        \textbf{Limite continuo\footnote{Studio di scaling: D\"urr-Hoelbling, 2005}:}\\
+        \textbf{Limite continuo\footnote{$\beta=1/(ag)^2 %
+        \Longrightarrow \beta/N^2 = \text{costante}$}:}\\
         \vspace{0.5em}
         \begin{tabular}{cccccc}
             \toprule
@@ -49,10 +50,9 @@
                 [ 
                     width = 0.8\textwidth,
                     height = 0.8\textheight,
-                    title style = {xshift=1em},
                     title = Limite di volume infinito,
                     xlabel = $\displaystyle \frac{1}{N^2}$,
-                    ylabel = $\displaystyle \frac{\left<Q^2\right>}{N^2}$,
+                    ylabel = $\displaystyle \frac{\chi}{g^2}$,
                     mark size = 1.5pt,
                     xmin = 0, xmax = 0.01,
                     ymin = 0.035, ymax = 0.045,
@@ -65,9 +65,9 @@
                     error bars/.cd, y dir = both, y explicit,
                 ] table
                 [
-                    x expr = 1/\thisrowno{3}^2,
-                    y expr = \thisrowno{0}/\thisrowno{3}^2,
-                    y error expr = \thisrowno{1}/\thisrowno{3}^2,
+                    x expr = 1/\thisrowno{1}^2,
+                    y expr = \thisrowno{3}*\thisrowno{0}/\thisrowno{1}^2,
+                    y error expr = \thisrowno{4}*\thisrowno{0}/\thisrowno{1}^2,
                     header = false,
                 ] {../data/inftyTorus.dat};
             \end{axis}
@@ -83,10 +83,10 @@
                     width = 0.8\textwidth,
                     height = 0.8\textheight,
                     title = Limite continuo,
-                    xlabel = $\displaystyle \frac{1}{N^2}$,
-                    ylabel = $\displaystyle \left<Q^2\right>$,
+                    xlabel = $\displaystyle \frac{1}{\beta}$,
+                    ylabel = $\displaystyle \frac{\chi}{g^2}$,
                     mark size = 1.5pt,
-                    xmin = 0, xmax = 0.01,
+                    xmin = 0, xmax = 0.6,
                 ]
                 \addplot+
                 [
@@ -96,9 +96,9 @@
                     error bars/.cd, y dir = both, y explicit,
                 ] table
                 [
-                    x expr = 1/\thisrowno{3}^2,
-                    y expr = \thisrowno{0},
-                    y error expr = \thisrowno{1},
+                    x expr = 1/\thisrowno{0},
+                    y expr = \thisrowno{3}*\thisrowno{0}/\thisrowno{1}^2,
+                    y error expr = \thisrowno{4}*\thisrowno{0}/\thisrowno{1}^2,
                     header = false,
                 ] {../data/contTorus.dat};
             \end{axis}
@@ -162,6 +162,39 @@
             \end{tikzpicture}
         \end{column}
     \end{columns}
+\end{frame}
+
+\begin{frame}
+    \begin{center}
+        \begin{tikzpicture}
+            \begin{axis}
+                [ 
+                    width = 0.8\textwidth,
+                    height = 0.8\textheight,
+                    title = Tempo di autocorrelazione integrato,
+                    xlabel = $\displaystyle \frac{1}{\beta}$,
+                    ylabel = $\tau_\text{int}\left(Q^2\right)$,
+                    mark size = 1.5pt,
+                    xmin = 0, xmax = 0.6,
+                    ymin = 0.04, ymax = 3000,
+                    ymode = log,
+                ]
+                \addplot+
+                [
+                    only marks,
+                    mark = square,
+                    color = fzjblue,
+                    error bars/.cd, y dir = both, y explicit,
+                ] table
+                [
+                    x expr = 1/\thisrowno{0},
+                    y expr = \thisrowno{5},
+                    y error expr = \thisrowno{6},
+                    header = false,
+                ] {../data/contTorus.dat};
+            \end{axis}
+        \end{tikzpicture}
+    \end{center}
 \end{frame}
 
 \begin{frame}

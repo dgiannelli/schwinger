@@ -78,7 +78,7 @@ double Tau(double *data, int size)
     const double sigmaSq = ( sqMean - gsl_pow_2(mean) ) / ( size - 1 );
     const double errorSq = ( sqMeanBin - gsl_pow_2(meanBin) ) / ( NBINS - 1);
 
-    return errorSq/sigmaSq;
+    return (errorSq/sigmaSq - 1.0) / 2.0;
 }
 
 void Jackknife(double *mean, double *error, double (*F)(double *data, int size), double *data, int size)
